@@ -1,0 +1,141 @@
+#This is for including values like architecture, compiler command amd assembler commands etc.
+include ./Make.defs
+
+CFLAGS += -c -O3 -Wall -Wsequence-point -Wunused-function 
+
+LIBS		= ../lib/ia_mpegh_dec_app_$(ARCH).a
+PATH_DEC      = ../../decoder
+PATH_TEST   = ../../test
+
+SRCS_LIBS=$(PATH_DEC)/impeghd_hoa_amb_syn.c\
+    $(PATH_DEC)/impeghd_hoa_ch_reassignment.c\
+    $(PATH_DEC)/impeghd_hoa_common_functions.c\
+    $(PATH_DEC)/impeghd_hoa_config.c\
+    $(PATH_DEC)/impeghd_hoa_decoder.c\
+    $(PATH_DEC)/impeghd_hoa_dec_init.c\
+    $(PATH_DEC)/impeghd_hoa_dir_based_pre_dom_sound_syn.c\
+    $(PATH_DEC)/impeghd_hoa_frame.c\
+    $(PATH_DEC)/impeghd_hoa_inverse_dyn_correction.c\
+    $(PATH_DEC)/impeghd_hoa_matrix.c\
+    $(PATH_DEC)/impeghd_hoa_nfc_filtering.c\
+    $(PATH_DEC)/impeghd_hoa_pre_dom_sound_syn.c\
+    $(PATH_DEC)/impeghd_hoa_renderer.c\
+    $(PATH_DEC)/impeghd_hoa_render_mtrx.c\
+    $(PATH_DEC)/impeghd_hoa_robust_pan.c\
+    $(PATH_DEC)/impeghd_hoa_rom.c\
+    $(PATH_DEC)/impeghd_hoa_simple_mtrx.c\
+    $(PATH_DEC)/impeghd_hoa_space_positions.c\
+    $(PATH_DEC)/impeghd_hoa_spatial_decoder.c\
+    $(PATH_DEC)/impeghd_hoa_vector_based_predom_sound_syn.c\
+    $(PATH_DEC)/impeghd_binaural.c\
+    $(PATH_DEC)/impeghd_binaural_filter_design.c\
+    $(PATH_DEC)/impeghd_binaural_renderer.c\
+    $(PATH_DEC)/impeghd_3d_vec_basic_ops.c\
+    $(PATH_DEC)/impeghd_api.c\
+    $(PATH_DEC)/impeghd_cicp_2_geometry.c\
+    $(PATH_DEC)/impeghd_cicp_2_geometry_rom.c\
+    $(PATH_DEC)/impeghd_dmx_mtx.c\
+    $(PATH_DEC)/impeghd_ele_interaction_intrfc.c\
+    $(PATH_DEC)/impeghd_mae_mp4_intrfc.c\
+    $(PATH_DEC)/impeghd_ext_rend_intrfc.c\
+    $(PATH_DEC)/impeghd_ext_rend_intrfc_util.c\
+    $(PATH_DEC)/impeghd_fft.c\
+    $(PATH_DEC)/impeghd_fft_ifft_rom.c\
+    $(PATH_DEC)/impeghd_format_conv_init.c\
+    $(PATH_DEC)/impeghd_format_conv_rom.c\
+    $(PATH_DEC)/impeghd_ifft.c\
+    $(PATH_DEC)/impeghd_inv_mtx_cicp_rom.c\
+    $(PATH_DEC)/impeghd_metadata_preprocessor.c\
+    $(PATH_DEC)/impeghd_metadata_preprocessor_rom.c\
+    $(PATH_DEC)/impeghd_multichannel.c\
+	$(PATH_DEC)/impeghd_mhas_parse.c\
+    $(PATH_DEC)/impeghd_multichannel_rom.c\
+    $(PATH_DEC)/impeghd_oam_dec.c\
+    $(PATH_DEC)/impeghd_oam_dec_ld.c\
+    $(PATH_DEC)/impeghd_obj_ren_dec.c\
+    $(PATH_DEC)/impeghd_obj_ren_vbap.c\
+    $(PATH_DEC)/impeghd_peak_limiter.c\
+    $(PATH_DEC)/impeghd_resampler.c\
+    $(PATH_DEC)/impeghd_resampler_rom.c\
+    $(PATH_DEC)/impeghd_scene_displacement.c\
+    $(PATH_DEC)/impeghd_tbe_dec.c\
+    $(PATH_DEC)/impeghd_tbe_rom.c\
+    $(PATH_DEC)/ia_core_coder_acelp_bitparse.c\
+    $(PATH_DEC)/ia_core_coder_acelp_decode.c\
+    $(PATH_DEC)/ia_core_coder_acelp_mdct.c\
+    $(PATH_DEC)/ia_core_coder_acelp_tools.c\
+    $(PATH_DEC)/ia_core_coder_arith_dec.c\
+    $(PATH_DEC)/ia_core_coder_avq_dec.c\
+    $(PATH_DEC)/ia_core_coder_avq_rom.c\
+    $(PATH_DEC)/ia_core_coder_basic_ops.c\
+    $(PATH_DEC)/ia_core_coder_bitbuffer.c\
+    $(PATH_DEC)/ia_core_coder_common_initfuncs.c\
+    $(PATH_DEC)/ia_core_coder_create.c\
+    $(PATH_DEC)/ia_core_coder_decode_main.c\
+    $(PATH_DEC)/ia_core_coder_env_extr.c\
+    $(PATH_DEC)/ia_core_coder_ext_ch_ele.c\
+    $(PATH_DEC)/ia_core_coder_function_selector.c\
+    $(PATH_DEC)/ia_core_coder_fwd_alias_cnx.c\
+    $(PATH_DEC)/ia_core_coder_headerdecode.c\
+    $(PATH_DEC)/ia_core_coder_hufftables_rom.c\
+    $(PATH_DEC)/ia_core_coder_huff_tools.c\
+    $(PATH_DEC)/ia_core_coder_igf_dec.c\
+    $(PATH_DEC)/ia_core_coder_imdct.c\
+    $(PATH_DEC)/ia_core_coder_init_config.c\
+    $(PATH_DEC)/ia_core_coder_lpc.c\
+    $(PATH_DEC)/ia_core_coder_lpc_dec.c\
+    $(PATH_DEC)/ia_core_coder_ltpf.c\
+    $(PATH_DEC)/ia_core_coder_process.c\
+    $(PATH_DEC)/ia_core_coder_rom.c\
+    $(PATH_DEC)/ia_core_coder_spectrum_dec.c\
+    $(PATH_DEC)/ia_core_coder_stereo_lpd.c\
+    $(PATH_DEC)/ia_core_coder_tcx_fwd_alcnx.c\
+    $(PATH_DEC)/ia_core_coder_tcx_fwd_mdct.c\
+    $(PATH_DEC)/ia_core_coder_tns.c\
+    $(PATH_DEC)/ia_core_coder_windowing.c\
+	$(PATH_DEC)/impd_drc_dynamic_payload.c\
+	$(PATH_DEC)/impd_drc_extr_delta_coded_info.c\
+	$(PATH_DEC)/impd_drc_filter_bank.c\
+	$(PATH_DEC)/impd_drc_gain_dec.c\
+	$(PATH_DEC)/impd_drc_host_params.c\
+	$(PATH_DEC)/impd_drc_init.c\
+	$(PATH_DEC)/impd_drc_loudness_control.c\
+	$(PATH_DEC)/impd_drc_multiband.c\
+	$(PATH_DEC)/impd_drc_process.c\
+	$(PATH_DEC)/impd_drc_rom.c\
+	$(PATH_DEC)/impd_drc_selection_process.c\
+	$(PATH_DEC)/impd_drc_selection_process_drcset_selection.c\
+	$(PATH_DEC)/impd_drc_selection_process_init.c\
+	$(PATH_DEC)/impd_drc_static_payload.c
+	
+
+ifneq ($(ARCH), armv7)
+INCLUDES += -I$(PATH_PLAT)
+endif
+
+INCLUDES += -I$(PATH_DEC) -I$(PATH_TEST)
+
+OBJS_LIBS		= $(SRCS_LIBS:.c=.o)
+
+CFLAGS += $(INCLUDES)
+
+all: $(LIBS)
+
+$(OBJS_LIBS): %.o: %.c
+	@echo CC `basename $<`
+	@$(CC) $(CFLAGS) $*.c -o $*.o 
+
+	
+$(LIBS): $(OBJS_LIBS)
+	@echo AR `basename $(LIBS)`
+	@$(AR) -r $(LIBS) $(OBJS_LIBS)
+	@rm -f $(OBJS_LIBS)
+
+	
+clean: src_clean 		
+	@echo rm LIBS
+	@rm -f $(LIBS)
+
+src_clean:
+	@echo rm SRCS
+	@rm -f $(OBJS_LIBS)

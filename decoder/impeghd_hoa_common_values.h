@@ -1,0 +1,97 @@
+/* 	Copyright (c) [2020]-[2021] Ittiam Systems Pvt. Ltd.
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted (subject to the limitations in the
+   disclaimer below) provided that the following conditions are met:
+   •	Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+   •	Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+   •	Neither the names of Dolby Laboratories, Inc. (or its affiliates),
+   Ittiam Systems Pvt. Ltd. nor the names of its contributors may be used
+   to endorse or promote products derived from this software without
+   specific prior written permission.
+
+   NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED
+   BY THIS LICENSE. YOUR USE OF THE SOFTWARE MAY REQUIRE ADDITIONAL PATENT
+   LICENSE(S) BY THIRD PARTIES, INCLUDING, WITHOUT LIMITATION, DOLBY
+   LABORATORIES, INC. OR ANY OF ITS AFFILIATES. THIS SOFTWARE IS PROVIDED
+   BY ITTIAM SYSTEMS LTD. AND ITS CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+   IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+   OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+   IN NO EVENT SHALL ITTIAM SYSTEMS LTD OR ITS CONTRIBUTORS BE LIABLE FOR
+   ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+   OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+   STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+   IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   POSSIBILITY OF SUCH DAMAGE.
+---------------------------------------------------------------
+*/
+
+#ifndef __IA_MPEGH_HOA_COMMON_VALUES_H__
+#define __IA_MPEGH_HOA_COMMON_VALUES_H__
+
+#define HOA__M_PI__ ((FLOAT32)(3.14159265358979323846f))
+#define HOA_COSINE_OF_NINETY_DEGREES -0.00000004371139000F
+#define HOA_SINE_OF_NINETY_DEGREES 0.99999999999999911F
+
+#define HOA_MATRIX_MAX_HOA_ORDER 29
+#define HOA_MATRIX_MAX_HOA_COEF_COUNT                                                            \
+  (HOA_MATRIX_MAX_HOA_ORDER + 1) * (HOA_MATRIX_MAX_HOA_ORDER + 1)
+#define HOA_MATRIX_MAX_SPEAKER_COUNT 32
+#define HOA_MATRIX_GAIN_ZERO -256.0f
+#define HOA_MATRIX_BITBUFSIZE 4096 * 2
+#define HOA_MATRIX_LINEAR_GAIN_ZERO 0.0f
+
+#define HOA_DIR_CHANNEL (0)
+#define HOA_VEC_CHANNEL (1)
+#define ADD_HOA_CHANNEL (2)
+#define HOA_VVEC_VQ_WORD (4)
+#define HOA_BIT_QUANTIZER_WORD (5)
+#define HOA_TWO_POW_15 (32768.0f)
+
+#define HOA_SP_PAIR_CENTER (0)
+#define HOA_SP_PAIR_SYMMETRIC (1)
+#define HOA_SP_PAIR_SINGLE (2)
+#define HOA_SP_PAIR_NONE (3)
+#define MAXIMUM_HOA_ORDER (6)
+#define MAX_NUM_HOA_ORDERS (1)
+#define MAXIMUM_FRAME_SIZE (1024)
+#define MAX_HOA_CHANNELS (16)
+#define HOA_MAXIMUM_OUTPUT_LS (24)
+#define HOA_N_PSI_POINTS (324)
+#define HOA_NUM_VIRTMICS (256)
+#define HOA_MAX_PRED_DIR_SIGNALS (4) // 2 bit field in bistream + 1
+#ifndef PI
+#define PI 3.14159265358979323846f
+#endif
+#define MAX_HOA_OUT_SAMP (32767.0f)
+#define MIN_HOA_OUT_SAMP (-32768.0f)
+#define HOA_MAX_ARR_SIZE (HOA_N_PSI_POINTS * 3)
+#define HOA_MAXIMUM_IIR_FILTER (MAXIMUM_HOA_ORDER)
+#define NUM_HOA_DEG_OF_FREEDOM ((MAXIMUM_HOA_ORDER + 1) * (MAXIMUM_HOA_ORDER + 1))
+#define HOA_MAXIMUM_NUM_PERC_CODERS (NUM_HOA_DEG_OF_FREEDOM)
+#define MAXIMUM_NUM_HOA_COEFF (NUM_HOA_DEG_OF_FREEDOM)
+#define HOA_MAXIMUM_NUM_DIR_SIG_FOR_PRED (NUM_HOA_DEG_OF_FREEDOM)
+#define HOA_MAXIMUM_SET_SIZE (NUM_HOA_DEG_OF_FREEDOM)
+#define HOA_MAX_MATRIX_SIZE (MAXIMUM_NUM_HOA_COEFF * MAXIMUM_NUM_HOA_COEFF)
+#define MAX_HOA_LAYERS (MAX_HOA_CHANNELS)
+#define HOA_MAXIMUM_SIG_INDICES (MAX_HOA_CHANNELS)
+#define HOA_MAXIMUM_VECTOR_SIG_INDICES (MAX_HOA_CHANNELS)
+#define HOA_MAXIMUM_PRED_VEC_SIZE (NUM_HOA_DEG_OF_FREEDOM)
+#define HOA_MAXIMUM_MODE_MATRIX_DIMENSION (NUM_HOA_DEG_OF_FREEDOM)
+#define HOA_MAXIMUM_MATRIX_SIZE (NUM_HOA_DEG_OF_FREEDOM)
+#define HOA_MAX_ADDITIONAL_CODERS (MAXIMUM_NUM_HOA_COEFF)
+#define HOA_MAX_VECTOR_SIZE (NUM_HOA_DEG_OF_FREEDOM)
+#define HOA_MAX_ACTIVE_DIRS_IDS 900
+#define HOA_ESC_VAL_BITS_3 (7)
+#define HOA_LS_TYPE_SATELLITE (0)
+#define HOA_LS_TYPE_SUBWOOFER (1)
+#define HOA_REN_VALIDATE_TOLERANCE (0.08744099736213684f)
+#define USE_LOOK_UP_TABLE
+
+#endif //__IA_MPEGH_HOA_COMMON_VALUES_H__

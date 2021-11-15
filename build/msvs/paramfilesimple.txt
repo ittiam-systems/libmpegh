@@ -1,0 +1,19 @@
+@Input_path ..\..\smoke_test_suite\inp\
+@Output_path ..\..\smoke_test_suite\out\
+@Start
+
+//MHAS files
+
+-ifile:sine_1khz_000_cicp1.mhas -ofile:sine_1khz_000_cicp1_mhas.wav
+-ifile:sine_1khz_cicp16.mhas    -ofile:sine_1khz_cicp16_mhas.wav   
+-ifile:sine_1khz_cicp19.mhas    -ofile:sine_1khz_cicp19_mhas.wav   
+-ifile:sine_1khz_cicp6.mhas     -ofile:sine_1khz_cicp6_mhas.wav
+
+//MP4 files
+
+-ifile:sine_1khz_000_cicp1.mp4  -ofile:sine_1khz_000_cicp1.wav  
+-ifile:sine_1khz_cicp16.mp4     -ofile:sine_1khz_cicp16.wav       
+-ifile:sine_1khz_cicp19.mp4     -ofile:sine_1khz_cicp19.wav        
+-ifile:sine_1khz_cicp6.mp4      -ofile:sine_1khz_cicp6.wav 
+
+@Stop
