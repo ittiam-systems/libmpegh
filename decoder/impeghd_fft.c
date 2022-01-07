@@ -56,7 +56,7 @@
 *  \param [in]  inp    Pointer to input data
 *  \param [out] op     Pointer to output data
 *
-*  \return VOID
+*
 *
 */
 static PLATFORM_INLINE VOID impeghd_fft_7(FLOAT32 *inp, FLOAT32 *op)
@@ -242,7 +242,7 @@ static PLATFORM_INLINE VOID impeghd_fft_7(FLOAT32 *inp, FLOAT32 *op)
  *  \param [in]  inp    Pointer to input data
  *  \param [out] op     Pointer to output data
  *
- *  \return VOID
+ *
  *
  */
 static PLATFORM_INLINE VOID impeghd_fft_3(FLOAT32 *inp, FLOAT32 *op)
@@ -286,12 +286,12 @@ static PLATFORM_INLINE VOID impeghd_fft_3(FLOAT32 *inp, FLOAT32 *op)
  *
  *  \brief Radix 2 complex n-point FFT
  *
- *  \param [in/out] ptr_real    Pointer to real part data buffer
- *  \param [in/out] ptr_imag    Pointer to imaginary part data buffer
+ *  \param [in,out] ptr_real    Pointer to real part data buffer
+ *  \param [in,out] ptr_imag    Pointer to imaginary part data buffer
  *  \param [in]     n_points    N-point for FFT
  *  \param [in]     ptr_scratch Pointer to scratch buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_rad2_cplx_fft(FLOAT32 *ptr_real, FLOAT32 *ptr_imag, WORD32 n_points,
@@ -861,12 +861,12 @@ VOID impeghd_rad2_cplx_fft(FLOAT32 *ptr_real, FLOAT32 *ptr_imag, WORD32 n_points
  *
  *  \brief Mixed radix FFT 3nx3
  *
- *  \param [in/out] ptr_real    Pointer to real part data buffer
- *  \param [in/out] ptr_imag    Pointer to imaginary part data buffer
+ *  \param [in,out] ptr_real    Pointer to real part data buffer
+ *  \param [in,out] ptr_imag    Pointer to imaginary part data buffer
  *  \param [in]     n_points    N-point for FFT
  *  \param [in]     ptr_scratch Pointer to scratch buffer
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_mix_rad_fft_3nx3(FLOAT32 *ptr_real, FLOAT32 *ptr_imag, WORD32 n_points,
@@ -985,7 +985,7 @@ static VOID impeghd_mix_rad_fft_3nx3(FLOAT32 *ptr_real, FLOAT32 *ptr_imag, WORD3
  *  \param [in]  dim2   Dimension 2
  *  \param [in]  tw     Pointer to twiddle data
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_mix_rad_fft_tw_mult(FLOAT32 *inp, FLOAT32 *op, WORD32 dim1, WORD32 dim2,
@@ -1025,11 +1025,11 @@ static VOID impeghd_mix_rad_fft_tw_mult(FLOAT32 *inp, FLOAT32 *op, WORD32 dim1, 
  *
  *  \brief Mixed radix FFT 3nx7
  *
- *  \param [in/out] inp         Pointer to input data
+ *  \param [in,out] inp         Pointer to input data
  *  \param [in]     len         Input length
  *  \param [in]     ptr_scratch Pointer to scratch buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_mix_rad_fft_3nx7(FLOAT32 *inp, WORD32 len, FLOAT32 *ptr_scratch)
@@ -1111,7 +1111,7 @@ VOID impeghd_mix_rad_fft_3nx7(FLOAT32 *inp, WORD32 len, FLOAT32 *ptr_scratch)
  *
  *  \brief Real FFT
  *
- *  \param [in/out] fft_data    Pointer to FFT data
+ *  \param [in,out] fft_data    Pointer to FFT data
  *  \param [in]     sin_table   Pointer to Sine table
  *  \param [in]     len         Input length
  *  \param [in]     i_sign      Sign
@@ -1247,10 +1247,10 @@ IA_ERRORCODE ia_core_coder_real_fft(FLOAT32 *fft_data, const FLOAT32 *sin_table,
  *
  *  \brief 4-Point complex FFT
  *
- *  \param [in/out] x_r Pointer to real part data buffer
- *  \param [in/out] x_i Pointer to imaginary part data buffer
+ *  \param [in,out] x_r Pointer to real part data buffer
+ *  \param [in,out] x_i Pointer to imaginary part data buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_cplx_fft_4(FLOAT32 *x_r, FLOAT32 *x_i)
@@ -1295,10 +1295,10 @@ VOID impeghd_cplx_fft_4(FLOAT32 *x_r, FLOAT32 *x_i)
  *
  *  \brief 8-Point complex FFT
  *
- *  \param [in/out] x_r Pointer to real part data buffer
- *  \param [in/out] x_i Pointer to imaginary part data buffer
+ *  \param [in,out] x_r Pointer to real part data buffer
+ *  \param [in,out] x_i Pointer to imaginary part data buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_cplx_fft_8(FLOAT32 *x_r, FLOAT32 *x_i)
@@ -1404,12 +1404,12 @@ VOID impeghd_cplx_fft_8(FLOAT32 *x_r, FLOAT32 *x_i)
  *
  *  \brief Generic radix-2 complex FFT for sizes greater than 1024 upto 16384
  *
- *  \param [in/out] ptr_in_buf_real Pointer to real part data buffer
- *  \param [in/out] ptr_in_buf_imag Pointer to imaginary part data buffer
+ *  \param [in,out] ptr_in_buf_real Pointer to real part data buffer
+ *  \param [in,out] ptr_in_buf_imag Pointer to imaginary part data buffer
  *  \param [in]     ptr_scratch_buf Pointer to scratch buffer
  *  \param [in]     fft_len         FFT length.
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_cplx_fft_16k(FLOAT32 *ptr_in_buf_real, FLOAT32 *ptr_in_buf_imag,

@@ -35,7 +35,7 @@
 #ifndef IMPEGHD_ERROR_HANDLER_H
 #define IMPEGHD_ERROR_HANDLER_H
 
-#define IA_MAX_ERROR_SUB_CODE 55
+#define IA_MAX_ERROR_SUB_CODE 70
 
 typedef struct
 {

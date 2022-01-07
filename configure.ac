@@ -1,4 +1,4 @@
-AC_INIT(MPEGHDecoder, 1.0)
+AC_INIT(MPEGHDecoder, 1.1)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AM_PROG_AS

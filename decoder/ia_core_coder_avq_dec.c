@@ -60,7 +60,7 @@
  *  \param [in]  count Data length parameter.
  *  \param [out] ptr_rem   Pointer to data buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_nearest_2d_neighbor(WORD32 *ptr_x, WORD32 *ptr_y, WORD32 count,
@@ -117,7 +117,7 @@ static VOID ia_core_coder_nearest_2d_neighbor(WORD32 *ptr_x, WORD32 *ptr_y, WORD
  *  \param [in]  ptr_rem1  Pointer to interim data buffer.
  *  \param [in]  ptr_rem2  Pointer to interim data buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_search_voronoi(WORD32 *ptr_x, WORD32 *ptr_y, WORD32 count, WORD32 *ptr_rem1,
@@ -173,7 +173,7 @@ VOID ia_core_coder_search_voronoi(WORD32 *ptr_x, WORD32 *ptr_y, WORD32 count, WO
  *  \param [out] ptr_y     Pointer to output buffer.
  *  \param [in]  count Data length parameter.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_decode_voronoi_idx(WORD32 *ptr_kv, WORD32 m, WORD32 *ptr_y,
@@ -217,9 +217,9 @@ static VOID ia_core_coder_decode_voronoi_idx(WORD32 *ptr_kv, WORD32 m, WORD32 *p
  *  \brief AVQ Gosset lattice ranking.
  *
  *  \param [in]  rank Rank value.
- *  \param [i/o] ptr_xs   Pointer to data buffer
+ *  \param [in,out] ptr_xs   Pointer to data buffer
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_gosset_rank_of_permutation(WORD32 rank, WORD32 *ptr_xs)
@@ -278,9 +278,9 @@ static VOID ia_core_coder_gosset_rank_of_permutation(WORD32 rank, WORD32 *ptr_xs
  *
  *  \brief AVQ helper function.
  *
- *  \param [in] table         Pointer to ROM table.
- *  \param [in] code_book_idx Code book index value.
- *  \param [in] size          Data size parameter.
+ *  \param [in] ptr_table          Pointer to ROM table.
+ *  \param [in] code_book_idx      Code book index value.
+ *  \param [in] data_size          Data size parameter.
  *
  *  \return WORD32 Index value.
  *
@@ -312,7 +312,7 @@ static WORD32 ia_core_coder_get_abs_leader_tbl(const UWORD32 *ptr_table, UWORD32
  *  \param [in]  code_book_ind Code book index value.
  *  \param [out] ptr_ya            Pointer to output buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_gosset_decode_base_index(WORD32 n, UWORD32 code_book_ind,
@@ -371,7 +371,7 @@ static VOID ia_core_coder_gosset_decode_base_index(WORD32 n, UWORD32 code_book_i
  *  \param [out] ptr_kv            Pointer to voronoi data buffer.
  *  \param [out] ptr_b             Pointer to intermediate data buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_rotated_gosset_mtx_dec(WORD32 qn, WORD32 code_book_idx, WORD32 *ptr_kv,

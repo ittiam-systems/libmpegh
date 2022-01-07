@@ -81,7 +81,7 @@
  *  \param [in]    cos_ptr          pointer to cos table
  *  \param [in]    sin_ptr          pointer to sin table
 *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_calc_pre_twid_dec(FLOAT32 *ptr_x, FLOAT32 *r_ptr, FLOAT32 *i_ptr,
@@ -189,7 +189,7 @@ VOID ia_core_coder_calc_pre_twid_dec(FLOAT32 *ptr_x, FLOAT32 *r_ptr, FLOAT32 *i_
  *
  *  \brief Calculate post twiddle in FFT processing
  *
- *  \param [in/out]    xptr          data buffer
+ *  \param [in,out]    xptr          data buffer
  *  \param [in]      r_ptr          real data buffer
  *  \param [in]      i_ptr          imag data buffer
  *  \param [in]      nlength          FFT length
@@ -197,7 +197,7 @@ VOID ia_core_coder_calc_pre_twid_dec(FLOAT32 *ptr_x, FLOAT32 *r_ptr, FLOAT32 *i_
  *  \param [in]      cos_ptr          pointer to cos table
  *  \param [in]      sin_ptr          pointer to sin table
  *
- *  \return VOID
+ *
  *
  */
 void ia_core_coder_calc_post_twid_dec(FLOAT32 *xptr, FLOAT32 *r_ptr, FLOAT32 *i_ptr,
@@ -280,7 +280,7 @@ void ia_core_coder_calc_post_twid_dec(FLOAT32 *xptr, FLOAT32 *r_ptr, FLOAT32 *i_
  *
  *  \brief Performs MDCT using fft
  *
- *  \param [in/out]    data          in/out data
+ *  \param [in,out]    data          in/out data
  *  \param [in]      transform_kernel_type  Kernel type
  *  \param [in]      npoints          FFT points
  *  \param [in]      tmp_data        temporary buffer for data
@@ -351,7 +351,7 @@ static IA_ERRORCODE ia_core_coder_fft_based_imdct(FLOAT32 *data, WORD16 transfor
  *
  *  \brief Performs IMDCT in FD processing path
  *
- *  \param [in/out]    imdct_in        imdct in/out buffer
+ *  \param [in,out]    imdct_in        imdct in/out buffer
  *  \param [in]      npoints          number of FFT points
  *  \param [in]      transform_kernel_type  kernel type
  *  \param [in]      tmp_data        Scratch buffer for
@@ -386,7 +386,7 @@ WORD32 ia_core_coder_acelp_imdct(FLOAT32 *imdct_in, WORD32 npoints, WORD16 trans
  *
  *  \brief Calculates MDCT for short window in FD processing
  *
- *  \param [in/out]    usac_data        USAC data structure
+ *  \param [in,out]    usac_data        USAC data structure
  *  \param [in]      i_ch          Channel under process
  *  \param [in]      fac_data_out      buffer for FAC data out
  *  \param [in]      ia_core_coder_drc_offset    offset length
@@ -668,7 +668,7 @@ IA_ERRORCODE impeghd_lpd_bpf(WORD32 isShort, FLOAT32 out_buffer[], ia_usac_lpd_d
  *
  *  \brief IMDCT for long windowin FD processing
  *
- *  \param [in/out]    usac_data        usac data structure
+ *  \param [in,out]    usac_data        usac data structure
  *  \param [in]      i_ch          Channel under process
  *  \param [in]      fac_idata        pointer to FAC data buffer
  *  \param [in]      ia_core_coder_drc_offset    pointer to offset lengths
@@ -822,7 +822,7 @@ static IA_ERRORCODE ia_core_coder_fd_imdct_long(ia_usac_data_struct *usac_data, 
  *
  *  \brief Performs FD frame processing
  *
- *  \param [in/out]  usac_data  USAC data structure
+ *  \param [in,out]  usac_data  USAC data structure
  *  \param [in]    i_ch    Channel for processing
  *  \param [in]    ele_id    element id in the total number of elements present
  *

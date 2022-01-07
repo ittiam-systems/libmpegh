@@ -136,7 +136,7 @@ IA_ERRORCODE impeghd_hoa_table_get_mode_mat(pFLOAT32 ptr_mode_mat, UWORD32 row_m
  *
  *  \brief Computation of HOA representation of direction signals
  *
- *  \param [in/out] dec_handle      Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle      Pointer to spatial decoder handle
  *  \param [in]     sig_indices_set Pointer to indices set
  *
  *  \return IA_ERRORCODE                  Error
@@ -295,7 +295,7 @@ IA_ERRORCODE impeghd_hoa_compute_hoa_repr_of_dir_sigs(ia_spatial_dec_str *dec_ha
  *
  *  \param [in]  dec_handle                             Pointer to spatial decoder handle
  *  \param [in]  sig_indices_set                        Pointer to indices set
- *  \param [out] out_dir_based_pre_dom_sounds_hoa_frame Direction based pre-dom sounds frame ptr
+ *  \param [out] out_dir_based_pre_dom_sounds           Direction based pre-dom sounds frame ptr
  *
  *  \return IA_ERRORCODE                                      Error
  *
@@ -353,7 +353,7 @@ impeghd_hoa_dir_based_pre_dom_sound_syn_process(ia_spatial_dec_str *dec_handle,
  *  \brief Computation of smoothed HOA representation of spatial
  *         prediction signals
  *
- *  \param [in/out] dec_handle  Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle  Pointer to spatial decoder handle
  *
  *  \return IA_ERRORCODE              Error
  *
@@ -511,11 +511,11 @@ impeghd_hoa_compute_smoothed_hoa_representation_of_spat_pred_sigs(ia_spatial_dec
  *  \param [in]     dec_handle                          Pointer to spatial decoder handle
  *  \param [in]     prediction_type_vec                 Pointer to prediction type vector
  *  \param [in]     prediction_indices_mat              Pointer to prediction indices matrix
- *  \param [in/out] prediction_factors_mat              Pointer to prediction factors matrix
+ *  \param [in,out] prediction_factors_mat              Pointer to prediction factors matrix
  *  \param [in]     ptr_fade_win                        Pointer to fade window
  *  \param [out]    ptr_pred_grid_dir_sigs              Pointer to prediction grid direction
  * signal
- *  \param [in]     spat_prediction_in_current_frame    Pointer to spatial pred val in cur frame
+ *  \param [in]     spat_prediction_in_curr_frame       Pointer to spatial pred val in cur frame
  *
  *  \return IA_ERRORCODE                                     Error
  *

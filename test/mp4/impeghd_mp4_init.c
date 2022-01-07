@@ -60,7 +60,7 @@ extern WORD32 g_mhm1_tag;
 *
 *  \brief Total initialization of MP4 structures
 *
-*  \param m
+*  \param [in,out] m Pointer to mp4 info structure
 *
 *  \return WORD32
 *
@@ -169,8 +169,8 @@ WORD32 impeghd_mp4_init_wrap(mp4_info *m)
 *
 *  \brief Gives header information
 *
-*  \param buf
-*  \param m
+*  \param [out] buf Buffer pointer
+*  \param [in]  m   Pointer to track info structure
 *
 *  \return WORD32
 *
@@ -193,7 +193,7 @@ WORD32 impeghd_mp4_read_header_info(pUWORD8 buf, trak_info *m)
 *
 *  \brief Initialize MP4 structures from the input file
 *
-*  \param m
+*  \param [in,out] m Pointer to mp4 info structure
 *
 *  \return WORD32
 *
@@ -285,12 +285,12 @@ WORD32 impeghd_mp4_init(mp4_info *m)
 *
 *  \brief Reads MP4 Atoms from the input MP4 file.
 *
-*  \param m_info
-*  \param fp
-*  \param n
-*  \param p
-*  \param m
-*  \param prev_state
+*  \param [in,out] m_info Pointer to mp4 info structure
+*  \param [in]  fp        Filepointer
+*  \param [out] n         Pointer to mp4 node pointer
+*  \param [out] p         Pointer to mp4 trak init structure pointer
+*  \param [in]  m         Pointer to mp4 memory node pointer
+*  \param [in]  prev_state Previous state
 *
 *  \return WORD32
 *
@@ -2099,10 +2099,11 @@ WORD32 impeghd_mp4_read_atom(mp4_info *m_info, VOID **fp, ia_mp4_node **n, ia_mp
 *
 *  \brief Reads the sample entries in 'stsd' ia_mp4_atom
 *
-*  \param fp
-*  \param n
-*  \param m
-*  \param p
+*  \param [in]  fp        Filepointer
+*  \param [out] n         Pointer to mp4 sample entry structure pointer
+*  \param [in]  m         Pointer to mp4 memory node pointer
+*  \param [in,out] p          Pointer to trak info structure
+*  \param [in] ptr_mae_info   Pointer to mae info structure
 *
 *  \return WORD32
 *
@@ -2739,10 +2740,10 @@ static WORD32 impeghd_mp4_get_ipmp_desc_pointer(pVOID fp, ia_mp4_ipmp_desc_point
 *
 *  \brief Reads the elementary streams
 *
-*  \param fp
-*  \param n
-*  \param m
-*  \param p
+*  \param [in]  fp        Filepointer
+*  \param [out] n         Pointer to mp4 es descriptor structure pointer
+*  \param [in]  m         Pointer to mp4 memory node pointer
+*  \param [in,out] p      Pointer to trak info structure
 *
 *  \return WORD32
 *
@@ -2956,7 +2957,7 @@ WORD32 impeghd_mp4_get_es(pVOID fp, ia_mp4_es_desc **n, ia_mp4_mem_node **m, tra
 *  \brief Function to read the Decoder Specific Information
 *
 *  \param [in]     fp Pointer to AVI file context
-*  \param [in/out] n  Pointer to ES descriptor object pointer
+*  \param [in,out] n  Pointer to ES descriptor object pointer
 *  \param [in]     m  Pointer to memory node pointer
 *  \param [out]    p  Pointer to trak information
 *
@@ -3017,10 +3018,10 @@ static WORD32 impeghd_mp4_decoder_specific_info(pVOID fp, ia_mp4_es_desc **n, ia
 *
 *  \brief Reads the Decoder Configuration Descriptor
 *
-*  \param fp
-*  \param n
-*  \param m
-*  \param p
+*  \param [in]  fp        Filepointer
+*  \param [out] n         Pointer to mp4 es descriptor structure pointer
+*  \param [in]  m         Pointer to mp4 memory node pointer
+*  \param [in,out] p      Pointer to trak info structure
 *
 *  \return WORD32
 *
@@ -3225,8 +3226,8 @@ WORD32 get_unknown_config_descr(void *fp, ia_mp4_es_desc **n)
 *
 *  \brief Reads the ia_mp4_sl_config_desc
 *
-*  \param fp
-*  \param n
+*  \param [in]  fp        Filepointer
+*  \param [out] n         Pointer to mp4 es descriptor structure pointer
 *
 *  \return WORD32
 *
@@ -3497,9 +3498,9 @@ static WORD32 impeghd_mp4_get_es_id_inctag(VOID **fp, ia_mp4_es_id_inc_desc *n)
 *
 *  \brief Reads the ia_mp4_initial_obj_desc info from the file
 *
-*  \param fp
-*  \param n
-*  \param m
+*  \param [in]  fp        Filepointer
+*  \param [out] n         Pointer to mp4 initial object descriptor pointer
+*  \param [in]  m         Pointer to mp4 memory node pointer
 *
 *  \return WORD32
 *

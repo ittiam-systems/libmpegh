@@ -56,6 +56,7 @@
 #include "impeghd_hoa_matrix.h"
 #include "impeghd_intrinsics_flt.h"
 #include "ia_core_coder_config.h"
+#include "impeghd_mhas_parse.h"
 
 /* Decoder interfaces */
 #include "impeghd_binaural.h"
@@ -100,11 +101,12 @@ const WORD32 ia_loud_speaker_subset_D[LS_SUBSET_D_LEN] = {CH_M_L135, CH_U_R135, 
  *
  *  \brief Copying flexible speaker parameter to corresponding structure
  *
- *  \param [i/o]  ia_cicp_ls_geo_str structure
- *  \param [in]  ia_speaker_config_3d structure
- *  \param [i/o] num_channel
- *  \param [out] num_lfe
- *  \param [out] channel_names
+ *  \param [in,out]  array_cicp_ls_geometry Pointer to ia_cicp_ls_geo_str structure
+ *  \param [in]      ptr_ref_spk_layout     Pointer to ia_speaker_config_3d structure
+ *  \param [out]     pp_cicp_ls_geometry    Double pointer to ia_cicp_ls_geo_str structure
+ *  \param [in,out]  num_channels           Number of channels
+ *  \param [out]     num_lfe                Number of LFE
+ *  \param [out]     channel_names          Channel names
  *
  *  \return IA_ERRORCODE error code if any
  */
@@ -168,11 +170,11 @@ static IA_ERRORCODE impeghd_flex_spk_2_ls_geometry(ia_cicp_ls_geo_str *array_cic
  *
  *  \brief Simple quick sort implementation.
  *
- *  \param [i/o] io_buf      Buffer containing elements to be sorted.
+ *  \param [in,out] io_buf      Buffer containing elements to be sorted.
  *  \param [in]  scratch_buf Pointer to scratch buffer for processing.
  *  \param [in]  num_ele     Number of elements to be sorted
  *
- *  \return VOID
+ *
  *
  */
 VOID impegh_quick_sort_idx(ia_ls_ord_idx_params *io_buf, ia_ls_ord_idx_params *scratch_buf,
@@ -220,11 +222,11 @@ VOID impegh_quick_sort_idx(ia_ls_ord_idx_params *io_buf, ia_ls_ord_idx_params *s
  *
  *  \brief Simple quick sort implementation for azimuth values.
  *
- *  \param [i/o] io_buf      Buffer containing elements to be sorted.
+ *  \param [in,out] io_buf      Buffer containing elements to be sorted.
  *  \param [in]  scratch_buf Pointer to scratch buffer for processing.
  *  \param [in]  num_ele     Number of elements to be sorted
  *
- *  \return VOID
+ *
  *
  */
 VOID impegh_quick_sort_azi(ia_spk_azi_idx_str *io_buf, ia_spk_azi_idx_str *scratch_buf,
@@ -457,7 +459,7 @@ static WORD32 impeghd_ls_subset_exist(ia_renderer_ls_params *ptr_ls_vertex, WORD
  *
  *  \brief Addjust ele,azi,idx of speaker.
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object rederer state structurem,number of
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structurem,number of
 *imaginary ls,
 *				\max_ele_speak_idx min_ele_speak_idx
  *
@@ -571,7 +573,7 @@ static FLOAT32 impeghd_cicpidx_calc_ls_mean_azi(WORD32 *ptr_ls_idx, WORD32 num_s
  *
  *  \brief Add imaginary loud speakers.
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
  *
  *  \return IA_ERRORCODE Error code if any.
  *
@@ -784,11 +786,11 @@ impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state)
  *
  *  \brief Unique loudspeaker edge extraction.
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
  *  \param [in]  ptr_triangle_order    Order of the loudspeaker triangles.
  *  \param [in]  num_triangles         Number of loudspeaker triangles.
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_extract_unique_edges(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state,
@@ -848,9 +850,9 @@ VOID impeghd_extract_unique_edges(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_s
  *
  *  \brief Remap the imaginary loud speakers
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_remap_imag_spks(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state)
@@ -960,7 +962,7 @@ VOID impeghd_remap_imag_spks(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state)
  *  \param [in]  row3  Pointer to elements of third row of matrix.
  *  \param [out] inv_mtx_row Pointer to store inverse matrix.
  *
- *  \return VOID
+ *
  *
  */
 
@@ -1008,7 +1010,7 @@ VOID impeghd_calc_inv_matrix(ia_cart_coord_str *row1, ia_cart_coord_str *row2,
  *
  *  \brief Vector base amplitude panning core init function.
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
  *
  *  \return IA_ERRORCODE Error code if any.
  *
@@ -1042,7 +1044,7 @@ static IA_ERRORCODE impeghd_vbap_core_init(ia_obj_ren_dec_state_struct *ptr_obj_
  *
  *  \brief Object renderer decoder state init function.
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
  *
  *  \return IA_ERRORCODE Error code if any.
  *
@@ -1288,9 +1290,9 @@ IA_ERRORCODE impeghd_obj_renderer_dec_init(ia_obj_ren_dec_state_struct *ptr_obj_
 /**
  *  impeghd_obj_renderer_dec
  *
- *  \brief Brief description
+ *  \brief Object renderer decode function
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
  *  \param [in]  p_in_buf              Pointer to input buffer - audio object data.
  *  \param [out] p_out_buf             Pointer to rendered output buffer.
  *  \param [in]  cc_frame_len          Core coder frame length.

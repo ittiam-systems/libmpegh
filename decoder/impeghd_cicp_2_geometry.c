@@ -65,7 +65,7 @@
  *  \brief Fetch channels, lfe and other details from table
  *
  *  \param [in]     cicp_idx                CICP index
- *  \param [in/out] pp_cicp_ls_geometry     Pointer to CICP Loudspeaker geometry
+ *  \param [in,out] pp_cicp_ls_geometry     Pointer to CICP Loudspeaker geometry
  *  \param [out]    num_channels            Pointer to number of channels
  *  \param [out]    num_lfe                 Pointer to number of low-frequency elements
  *  \param [out]    channel_names           Pointer to channel names

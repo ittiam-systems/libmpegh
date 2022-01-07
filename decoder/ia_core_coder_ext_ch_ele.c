@@ -47,6 +47,7 @@
 #include "ia_core_coder_interface.h"
 #include "ia_core_coder_info.h"
 #include "ia_core_coder_tns_usac.h"
+#include "ia_core_coder_rom.h"
 #include "impeghd_tbe_dec.h"
 #include "ia_core_coder_igf_data_struct.h"
 #include "ia_core_coder_stereo_lpd.h"
@@ -80,14 +81,14 @@
  *
  *  \brief Save previous complex prediction data
  *
- *  \param [i/o] info        Pointer to scale factor band info structure.
+ *  \param [in,out] info        Pointer to scale factor band info structure.
  *  \param [in]  l_spec      Pointer to left spectrum data.
  *  \param [in]  r_spec      Pointer to right spectrum data.
  *  \param [out] l_spec_prev Pointer to left spectrum previous data.
  *  \param [out] r_spec_prev Pointer to right spectrum previous data.
  *  \param [in]  save_zeros  Flag to set previous data to zeros.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_usac_cplx_save_prev(ia_sfb_info_struct *info, FLOAT32 *l_spec,
@@ -114,13 +115,13 @@ static VOID ia_core_coder_usac_cplx_save_prev(ia_sfb_info_struct *info, FLOAT32 
  *
  *  \brief Complex predication data
  *
- *  \param [i/o] usac_data         Pointer to USAC data structure.
- *  \param [i/o] pstr_core_coder   Pointer to core coder data.
+ *  \param [in,out] usac_data         Pointer to USAC data structure.
+ *  \param [in,out] pstr_core_coder   Pointer to core coder data.
  *  \param [in]  num_win_groups    Number of window groups.
  *  \param [in]  it_bit_buff       Pointer to bit buffer structure.
  *  \param [in]  chn               Channel value.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_cplx_pred_data(ia_usac_data_struct *usac_data,
@@ -257,8 +258,8 @@ static VOID ia_core_coder_cplx_pred_data(ia_usac_data_struct *usac_data,
  *
  *  \brief Reads M/S coding or predication mask
  *
- *  \param [i/o] usac_data       Pointer to USAC data structure.
- *  \param [i/o] pstr_core_coder Pointer to core coder data structure.
+ *  \param [in,out] usac_data       Pointer to USAC data structure.
+ *  \param [in,out] pstr_core_coder Pointer to core coder data structure.
  *  \param [in]  it_bit_buff     Pointer to bit buffer structure.
  *  \param [in]  chn             Channel index.
  *
@@ -323,7 +324,7 @@ static WORD32 ia_core_coder_read_ms_mask(ia_usac_data_struct *usac_data,
  *
  *  \brief Reads intelligent gap filling mask
  *
- *  \param [i/o] usac_data       Pointer to USAC data structure.
+ *  \param [in,out] usac_data       Pointer to USAC data structure.
  *  \param [in]  it_bit_buff     Pointer to bit buffer structure.
  *  \param [in]  chn             Channel index.
  *  \param [in]  elem_idx        Element index.
@@ -407,7 +408,7 @@ WORD32 ia_core_coder_read_igf_mask(ia_usac_data_struct *usac_data, ia_bit_buf_st
  *  \param [out] out         Pointer to output buffer.
  *  \param [in]  factor_even Multiplication factor.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_filter_and_add(const FLOAT32 *in, const WORD32 length,
@@ -488,7 +489,7 @@ static VOID ia_core_coder_filter_and_add(const FLOAT32 *in, const WORD32 length,
  *  \param [in]  w_shape       Window shape.
  *  \param [in]  prev_w_shape  Previous window shape.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_estimate_dmx_im(const FLOAT32 *dmx_re, const FLOAT32 *dmx_re_prev,
@@ -544,17 +545,17 @@ static VOID ia_core_coder_estimate_dmx_im(const FLOAT32 *dmx_re, const FLOAT32 *
  *
  *  \brief Computes complex prediction upmixing
  *
- *  \param [i/o] usac_data       Pointer to USAC data structure.
+ *  \param [in,out] usac_data       Pointer to USAC data structure.
  *  \param [out] left_spec       Pointer to left spectrum data.
  *  \param [out] right_spec      Pointer to right spectrum data.
- *  \param [i/o] pstr_core_coder Pointer to core coder structure.
+ *  \param [in,out] pstr_core_coder Pointer to core coder structure.
  *  \param [in]  chn             Channel index.
  *  \param [in]  pred_dir        Prediction direction flag.
  *  \param [in]  complex_coef    Complext coefficient flag.
  *  \param [in]  sfb_start       Scale factor band start position.
  *  \param [in]  sfb_stop        Scale factor band stop position.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_cplx_pred_upmixing(ia_usac_data_struct *usac_data, FLOAT32 *left_spec,
@@ -696,7 +697,7 @@ static VOID ia_core_coder_cplx_pred_upmixing(ia_usac_data_struct *usac_data, FLO
  *  \param [in]  pred_dir      Prediction direction flag.
  *  \param [in]  save_zeros    Save zeros flag.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_cplx_prev_mdct_dmx(ia_sfb_info_struct *pstr_sfb_info, FLOAT32 *left_spec,
@@ -736,7 +737,7 @@ VOID ia_core_coder_cplx_prev_mdct_dmx(ia_sfb_info_struct *pstr_sfb_info, FLOAT32
  *  \brief Syntax of USAC syntactic element of ics info
  *      Defined in ISO/IEC 23003?3:2012, 5.3, Table 22
  *
- *  \param [in/out] usac_data     Pointer to USAC data structure.
+ *  \param [in,out] usac_data     Pointer to USAC data structure.
  *  \param [in]  chn           Channel index.
  *  \param [out] max_sfb       Max Scale factor band.
  *  \param [in]  it_bit_buff   Pointer to bit buffer structure.
@@ -770,6 +771,12 @@ IA_ERRORCODE ia_core_coder_ics_info(ia_usac_data_struct *usac_data, WORD32 chn, 
     *max_sfb = (UWORD8)ia_core_coder_read_bits_buf(it_bit_buff, 4);
 
     scf_grp = ia_core_coder_read_bits_buf(it_bit_buff, 7);
+    /*max_sfb shall be <= num_swb_long_window or num_swb_short_window as appropriate for
+      window_sequence and sampling frequency and core coder frame length*/
+    if (*max_sfb > ia_core_coder_samp_rate_info[usac_data->sampling_rate_idx].num_sfb_128)
+    {
+      return IA_MPEGH_DEC_INIT_FATAL_INVALID_MAX_SFB;
+    }
 
     for (scf_idx = 1; scf_idx < 8; scf_idx++)
     {
@@ -787,6 +794,12 @@ IA_ERRORCODE ia_core_coder_ics_info(ia_usac_data_struct *usac_data, WORD32 chn, 
   {
     *max_sfb = (UWORD8)ia_core_coder_read_bits_buf(it_bit_buff, 6);
     *scf_group_ptr = 1;
+    /*max_sfb shall be <= num_swb_long_window or num_swb_short_window as appropriate for
+     window_sequence and sampling frequency and core coder frame length*/
+    if (*max_sfb > ia_core_coder_samp_rate_info[usac_data->sampling_rate_idx].num_sfb_1024)
+    {
+      return IA_MPEGH_DEC_INIT_FATAL_INVALID_MAX_SFB;
+    }
   }
 
   if (*max_sfb > usac_data->pstr_sfb_info[chn]->sfb_per_sbk)
@@ -803,13 +816,13 @@ IA_ERRORCODE ia_core_coder_ics_info(ia_usac_data_struct *usac_data, WORD32 chn, 
  *  \brief Compute core coder LPD/FD data
  *
  *  \param [in]  id                     USAC syntactic element id
- *  \param [in/out] usac_data              Pointer USAC data structure.
+ *  \param [in,out] usac_data              Pointer USAC data structure.
  *  \param [in]  elem_idx               Element index value.
  *  \param [in]  chan_offset            Channel offset.
  *  \param [in]  it_bit_buff            Pointer to bit buffer structure.
  *  \param [in]  nr_core_coder_channels Number of core coder channels.
  *  \param [in]  pstr_usac_dec_config   Pointer to USAC decoder config.
- *  \param [in/out] pstr_core_coder        Pointer to core coder data structure.
+ *  \param [in,out] pstr_core_coder        Pointer to core coder data structure.
  *  \param [in]     pscr                   Pointer to scratch buffers
  *  \param [in]     td_frame_data          Pointer to scratch buffers
  *
@@ -1120,13 +1133,13 @@ static IA_ERRORCODE ia_core_coder_read_lpd_fd_data(
  *  \brief Compute core coder data
  *
  *  \param [in]  id                     USAC syntactic element id
- *  \param [i/o] usac_data              Pointer USAC data structure.
+ *  \param [in,out] usac_data              Pointer USAC data structure.
  *  \param [in]  elem_idx               Element index value.
  *  \param [in]  chan_offset            Channel offset.
  *  \param [in]  it_bit_buff            Pointer to bit buffer structure.
  *  \param [in]  nr_core_coder_channels Number of core coder channels.
  *  \param [in]  pstr_usac_dec_config   Pointer to USAC decoder config.
- *  \param [i/o] pstr_core_coder        Pointer to core coder data structure.
+ *  \param [in,out] pstr_core_coder        Pointer to core coder data structure.
  *
  *  \return IA_ERRORCODE Error code if any.
  *
@@ -1254,6 +1267,26 @@ ia_core_coder_data(WORD32 id, ia_usac_data_struct *usac_data, WORD32 elem_idx, W
 
       pstr_core_coder->ms_mask_present[0] =
           (UWORD8)ia_core_coder_read_ms_mask(usac_data, pstr_core_coder, it_bit_buff, left);
+
+      /*If	 the	 independent	 noise	 filling	 (INF)	 of
+      the	 intelligent	 gap	 filling	 (IGF)	 is	 activated
+      (i.e.	 if	igfUseEnf==1),	 then	 the	 complex	 prediction	 tool
+      shall be restricted	 to	 real-only	 prediction,
+      i.e. complex_coef	shall	be	0*/
+
+      /*If	 stereo	 filling	 is	 activated	 (i.e.	 if
+      stereo_filling==1),	 then	 the	 complex	 prediction	 tool	 shall be
+      restricted	to	real-only	prediction,	i.e.	complex_coef	shall	be
+      0*/
+
+      if (((pstr_usac_dec_config->str_usac_element_config->str_usac_ele_igf_init_config
+                .igf_use_enf == 1) ||
+           (usac_data->igf_config[elem_idx].igf_stereo_filling == 1)) &&
+          (pstr_core_coder->complex_coef != 0))
+      {
+        return IA_MPEGH_DEC_INIT_FATAL_COMP_PRED_NOT_SUPPORTED;
+      }
+
       if (usac_data->igf_config[elem_idx].igf_independent_tiling == 0 &&
           usac_data->igf_config[elem_idx].igf_active)
       {
@@ -1388,7 +1421,7 @@ ia_core_coder_data(WORD32 id, ia_usac_data_struct *usac_data, WORD32 elem_idx, W
  *  \param [out] right_spec Pointer to right channel spectrum data.
  *  \param [out] left_spec  Pointer to left channel spectrum data.
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_ms_stereo(ia_sfb_info_struct *info, WORD8 *group, WORD8 *mask, WORD32 first_band,
@@ -1454,15 +1487,15 @@ VOID impeghd_ms_stereo(ia_sfb_info_struct *info, WORD8 *group, WORD8 *mask, WORD
  *
  *  \brief Core coder data processing - IGF Joint stereo before TNS
  *
- *  \param [in/out]   usac_data              Poitner to USAC data structure.
+ *  \param [in,out]   usac_data              Poitner to USAC data structure.
  *  \param [in]       elem_idx               Element index value.
  *  \param [in]       chan_offset            Channel offset value.
  *  \param [in]       nr_core_coder_channels Number of core coder channels.
- *  \param [in/out]   pstr_core_coder        Pointer to core coder structure.
+ *  \param [in,out]   pstr_core_coder        Pointer to core coder structure.
  *  \param [in]       igf_start_sfb          SFB start offset for IGF
  *  \param [in]       igf_stop_sfb           SFB stop offset for IGF
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_data_process_igf_joint_stereo_before_tns(
@@ -1550,15 +1583,15 @@ static VOID ia_core_coder_data_process_igf_joint_stereo_before_tns(
  *
  *  \brief Core coder data processing - IGF Joint stereo after TNS
  *
- *  \param [in/out]   usac_data              Poitner to USAC data structure.
+ *  \param [in,out]   usac_data              Poitner to USAC data structure.
  *  \param [in]       elem_idx               Element index value.
  *  \param [in]       chan_offset            Channel offset value.
  *  \param [in]       nr_core_coder_channels Number of core coder channels.
- *  \param [in/out]   pstr_core_coder        Pointer to core coder structure.
+ *  \param [in,out]   pstr_core_coder        Pointer to core coder structure.
  *  \param [in]       igf_start_sfb          SFB start offset for IGF
  *  \param [in]       igf_stop_sfb           SFB stop offset for IGF
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_data_process_igf_joint_stereo_after_tns(
@@ -1650,11 +1683,11 @@ static VOID ia_core_coder_data_process_igf_joint_stereo_after_tns(
  *
  *  \brief Process core coder data
  *
- *  \param [i/o] usac_data              Poitner to USAC data structure.
+ *  \param [in,out] usac_data              Poitner to USAC data structure.
  *  \param [in]  elem_idx               Element index value.
  *  \param [in]  chan_offset            Channel offset value.
  *  \param [in]  nr_core_coder_channels Number of core coder channels.
- *  \param [i/o] pstr_core_coder        Pointer to core coder structure.
+ *  \param [in,out] pstr_core_coder        Pointer to core coder structure.
  *
  *  \return IA_ERRORCODE Error code if any.
  *

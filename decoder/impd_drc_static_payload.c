@@ -35,7 +35,9 @@
 #include <string.h>
 #include <impeghd_type_def.h>
 #include "ia_core_coder_bitbuffer.h"
+#include "ia_core_coder_cnst.h"
 #include "impeghd_error_codes.h"
+#include "impeghd_mhas_parse.h"
 #include "impd_drc_extr_delta_coded_info.h"
 #include "impd_drc_struct.h"
 #include "impd_drc_filter_bank.h"
@@ -58,7 +60,7 @@
  *
  *  \param [out]  pstr_drc_config   Pointer to drc config structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID impd_drc_gen_instructions_for_drc_off(ia_drc_config *pstr_drc_config)
@@ -114,8 +116,8 @@ static VOID impd_drc_gen_instructions_for_drc_off(ia_drc_config *pstr_drc_config
  *
  *  \brief Function to parse drc config extension payload
  *
- *  \param [out]  pstr_drc_config   Pointer to drc config structure
- *  \param [in]  pstr_it_bit_buff   Pointer to bit buffer structure
+ *  \param [out]  pstr_drc_config_ext Pointer to drc config ext structure
+ *  \param [in]   pstr_it_bit_buff    Pointer to bit buffer structure
  *
  *  \return IA_ERRORCODE errorcode
  *
@@ -307,7 +309,7 @@ static IA_ERRORCODE impd_drc_decode_method_value(FLOAT32 *method_value,
  *
  *  \brief Function to parse loudness measure
  *
- *  \param [in/out]  pstr_loudness_measure   Pointer to loudness measure structure
+ *  \param [in,out]  pstr_loudness_measure   Pointer to loudness measure structure
  *  \param [in]  pstr_it_bit_buff   Pointer to bit buffer structure
  *
  *  \return IA_ERRORCODE errorcode
@@ -418,7 +420,7 @@ static IA_ERRORCODE impd_drc_parse_loudness_info(ia_drc_loudness_info_struct *ps
  *
  *  \brief Function to parse loudness info set extension payload
  *
- *  \param [in/out]  pstr_loudness_info_set   Pointer to loudness info set structure
+ *  \param [in,out]  pstr_loudness_info_set   Pointer to loudness info set structure
  *  \param [in]  pstr_it_bit_buff   Pointer to bit buffer structure
  *
  *  \return IA_ERRORCODE errorcode
@@ -475,7 +477,8 @@ impd_drc_parse_loudness_info_set_ext(ia_drc_loudness_info_set_struct *pstr_loudn
  */
 IA_ERRORCODE
 impd_drc_mpegh3da_parse_loudness_info_set(ia_drc_loudness_info_set_struct *pstr_loudness_info_set,
-                                          ia_bit_buf_struct *pstr_it_bit_buff)
+                                          ia_bit_buf_struct *pstr_it_bit_buff,
+                                          ia_mae_audio_scene_info *pstr_mae_asi)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 cnt;
@@ -502,6 +505,7 @@ impd_drc_mpegh3da_parse_loudness_info_set(ia_drc_loudness_info_set_struct *pstr_
       pstr_loudness_info_set->loudness_info[cnt].mae_group_preset_id = -1;
       break;
     }
+
     err_code = impd_drc_parse_loudness_info(&(pstr_loudness_info_set->loudness_info[cnt]),
                                             pstr_it_bit_buff);
     if (err_code)
@@ -545,8 +549,8 @@ impd_drc_mpegh3da_parse_loudness_info_set(ia_drc_loudness_info_set_struct *pstr_
  *
  *  \brief Function to parse drc channel layout
  *
- *  \param [out]  pstr_loudness_info_set   Pointer to loudness info set structure
- *  \param [in]  pstr_it_bit_buff   Pointer to bit buffer structure
+ *  \param [out] pstr_channel_layout   Pointer to channel layout structure
+ *  \param [in]  pstr_it_bit_buff      Pointer to bit buffer structure
  *
  *  \return IA_ERRORCODE errorcode
  *
@@ -697,6 +701,12 @@ impd_drc_parse_coeff(ia_drc_uni_drc_coeffs_struct *pstr_p_loc_drc_coefficients_u
   {
     temp = ia_core_coder_read_bits_buf(pstr_it_bit_buff, 5);
     pstr_p_loc_drc_coefficients_uni_drc->drc_frame_size_present = temp & 1;
+
+    /*drcFrameSizePresent shall	be	set	to	0*/
+    if (pstr_p_loc_drc_coefficients_uni_drc->drc_frame_size_present != 0)
+    {
+      return IA_MPEGD_DRC_INIT_FATAL_INVALID_DRC_PARAM_FOR_LC_PROFILE;
+    }
     pstr_p_loc_drc_coefficients_uni_drc->drc_location = (temp >> 1) & 0xf;
 
     if (1 == pstr_p_loc_drc_coefficients_uni_drc->drc_frame_size_present)
@@ -717,6 +727,14 @@ impd_drc_parse_coeff(ia_drc_uni_drc_coeffs_struct *pstr_p_loc_drc_coefficients_u
 
       if (err_code)
         return (err_code);
+
+      /*timeDeltaMinPresent shall	be	set	to	0 and
+       * gainInterpolationType	shall	be	set	to	1*/
+      if ((pstr_p_loc_drc_coefficients_uni_drc->gain_set_params[cnt].time_delt_min_flag != 0) ||
+          (pstr_p_loc_drc_coefficients_uni_drc->gain_set_params[cnt].gain_interp_type != 1))
+      {
+        return IA_MPEGD_DRC_INIT_FATAL_INVALID_DRC_PARAM_FOR_LC_PROFILE;
+      }
 
       if (pstr_p_loc_drc_coefficients_uni_drc->gain_set_params[cnt].time_delt_min_flag)
       {
@@ -918,7 +936,7 @@ static IA_ERRORCODE impd_drc_update_ch_count(WORD32 *ch_cnt,
  *
  *  \brief Function to decode gain modifiers
  *
- *  \param [in/out]  pstr_gain_modifiers   Pointer to gain modifiers structure
+ *  \param [in,out]  pstr_gain_modifiers   Pointer to gain modifiers structure
  *  \param [in]  pstr_it_bit_buff   Pointer to bit buffer structure
  *  \param [in]  band_cnt   band count
  *
@@ -1080,7 +1098,7 @@ static IA_ERRORCODE impd_drc_parse_instrns_effect_not_self_other(
   if (ia_min_flt(CHANNEL_GROUP_COUNT_MAX, MAX_CHANNEL_COUNT) <
       pstr_drc_instruction->num_drc_ch_groups)
   {
-    return IA_MPEGD_DRC_INIT_NONFATAL_UNEXPECTED_ERROR;
+    return IA_MPEGD_DRC_INIT_NONFATAL_UNSUPPORTED_CH_GROUPS;
   }
   for (grp = 0; grp < pstr_drc_instruction->num_drc_ch_groups; grp++)
   {
@@ -1164,7 +1182,7 @@ static IA_ERRORCODE impd_drc_decode_ducking_scaling(WORD32 *ducking_scaling_flag
  *  \param [in]  unique_idx   unique index
  *  \param [in]  ch_cnt   channel count
  *
- *  \return VOID
+ *
  *
  */
 static VOID
@@ -1448,6 +1466,15 @@ impd_drc_parse_drc_instructions(ia_drc_instructions_struct *pstr_drc_instruction
   pstr_drc_instruction->depends_on_drc_set_present =
       ia_core_coder_read_bits_buf(pstr_it_bit_buff, 1);
 
+  /*dependsOnDrcSetPresent	shall	be	set	to	0	for
+   * drcInstructionsUniDrc()
+   * with	downmixId	==	0*/
+  if ((pstr_drc_instruction->downmix_id[0] == 0) &&
+      (pstr_drc_instruction->depends_on_drc_set_present != 0))
+  {
+    return IA_MPEGD_DRC_INIT_FATAL_INVALID_DRC_PARAM_FOR_LC_PROFILE;
+  }
+
   pstr_drc_instruction->no_independent_use = 0;
   if (!pstr_drc_instruction->depends_on_drc_set_present)
   {
@@ -1492,6 +1519,15 @@ impd_drc_parse_drc_instructions(ia_drc_instructions_struct *pstr_drc_instruction
       return (err_code);
   }
 
+  /*nDrcChannelGroups	shall	be	restricted	to	1	for
+   * drcInstructionsUniDrc()
+   * with	downmixId	!=	0*/
+  if ((pstr_drc_instruction->downmix_id[0] != 0) &&
+      (pstr_drc_instruction->num_drc_ch_groups != 1))
+  {
+    return IA_MPEGD_DRC_INIT_FATAL_INVALID_DRC_PARAM_FOR_LC_PROFILE;
+  }
+
   return IA_MPEGH_DEC_NO_ERROR;
 }
 
@@ -1512,7 +1548,8 @@ IA_ERRORCODE
 impd_drc_parse_config(ia_drc_config *pstr_drc_config,
                       ia_drc_loudness_info_set_struct *pstr_loudness_info_set,
                       ia_bit_buf_struct *pstr_it_bit_buff,
-                      ia_drc_params_bs_dec_struct *pstr_ia_drc_params)
+                      ia_drc_params_bs_dec_struct *pstr_ia_drc_params,
+                      ia_mae_audio_scene_info *pstr_mae_asi)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 cnt, version = 0;
@@ -1527,6 +1564,11 @@ impd_drc_parse_config(ia_drc_config *pstr_drc_config,
 
   pstr_drc_config->drc_instructions_uni_drc_count =
       ia_core_coder_read_bits_buf(pstr_it_bit_buff, 6);
+
+  if (DRC_INSTRUCTIONS_COUNT_MAX < pstr_drc_config->drc_instructions_uni_drc_count)
+  {
+    return IA_MPEGD_DRC_INIT_NONFATAL_DRC_INSTR_MAX_EXCEEDED;
+  }
 
   err_code = impd_drc_mpegh3da_parse_drc_channel_layout(&pstr_drc_config->channel_layout,
                                                         pstr_it_bit_buff);
@@ -1584,10 +1626,16 @@ impd_drc_parse_config(ia_drc_config *pstr_drc_config,
 
   pstr_drc_config->loudness_infoset_present = ia_core_coder_read_bits_buf(pstr_it_bit_buff, 1);
 
+  /*loudnessInfoSetPresent	within	mpegh3daUniDrcConfig()	shall	be	set	to 0*/
+  if (pstr_drc_config->loudness_infoset_present != 0)
+  {
+    return IA_MPEGD_DRC_INIT_FATAL_INVALID_DRC_PARAM_FOR_LC_PROFILE;
+  }
+
   if (1 == pstr_drc_config->loudness_infoset_present)
   {
-    err_code =
-        impd_drc_mpegh3da_parse_loudness_info_set(pstr_loudness_info_set, pstr_it_bit_buff);
+    err_code = impd_drc_mpegh3da_parse_loudness_info_set(pstr_loudness_info_set, pstr_it_bit_buff,
+                                                         pstr_mae_asi);
     if (err_code)
       return (err_code);
   }
@@ -1603,7 +1651,7 @@ impd_drc_parse_config(ia_drc_config *pstr_drc_config,
   if (DRC_INSTRUCTIONS_COUNT_MAX <= (pstr_drc_config->drc_instructions_uni_drc_count +
                                      pstr_drc_config->drc_dwnmix_instructions_count))
   {
-    return (IA_MPEGD_DRC_INIT_NONFATAL_UNEXPECTED_ERROR);
+    return (IA_MPEGD_DRC_INIT_NONFATAL_DRC_INSTR_MAX_EXCEEDED);
   }
   impd_drc_gen_instructions_for_drc_off(pstr_drc_config);
   return IA_MPEGH_DEC_NO_ERROR;

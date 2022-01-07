@@ -59,9 +59,9 @@
 *  \brief Clears the contents of trak_info structure, which is used
 *         to store the important trak information.
 *
-*  \param m
+*  \param [out] m Pointer to track info structure
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_mp4_clear_buffer(trak_info *m)
@@ -90,9 +90,9 @@ VOID impeghd_mp4_clear_buffer(trak_info *m)
 *  \brief Fills the trak_info structure with the ia_mp4_trak_init info of
 *         trak_type = mediatype (gets the trak by mediatype)
 *
-*  \param m
-*  \param n
-*  \param media_type
+*  \param [out] m Pointer to track info structure
+*  \param [in]  n Pointer to mp4 track init structure
+*  \param [in]  media_type Media type
 *
 *  \return WORD32
 *
@@ -134,8 +134,8 @@ WORD32 impeghd_mp4_get_needed_trak(trak_info *m, ia_mp4_trak_init **n, UWORD32 m
 *
 *  \brief Function to fill the 'stco' atom (ChunkOffset) info in trak_info
 *
-*  \param [in]  fp Pointer to AVI file context
-*  \param [out] n  Pointer to trak info
+*  \param [in]  fp Pointer to file context
+*  \param [out] m  Pointer to trak info
 *
 *  \return WORD32  Error if any
 *
@@ -175,8 +175,8 @@ static WORD32 impeghd_mp4_get_stco(pVOID fp, trak_info *m)
 *
 *  \brief Presently it skips the stss atom [Sync(key, I-frame)], needs to be incorporated
 *
-*  \param [in]  fp Pointer to AVI file context
-*  \param [out] n  Pointer to trak info
+*  \param [in]  fp Pointer to file context
+*  \param [out] m  Pointer to trak info
 *
 *  \return WORD32  Error if any
 *
@@ -218,8 +218,8 @@ static WORD32 impeghd_mp4_get_stss(pVOID fp, trak_info *m)
 *
 *  \brief Function to fill the 'stsz' atom (Samplesize) info in trak_info
 *
-*  \param [in]  fp Pointer to AVI file context
-*  \param [out] n  Pointer to trak info
+*  \param [in]  fp Pointer to file context
+*  \param [out] m  Pointer to trak info
 *
 *  \return WORD32  Error if any
 *
@@ -263,10 +263,11 @@ static WORD32 impeghd_mp4_get_stsz(pVOID fp, trak_info *m)
 *
 *  \brief Fills the important trak info structure
 *
-*  \param fp
-*  \param m
-*  \param req_child
-*  \param n
+*  \param [in]  fp Pointer to file context
+*  \param [out] m  Pointer to trak info
+*  \param [in]  req_child required child
+*  \param [in]  n  Pointer to mp4 mem node structure pointer
+*  \param [in]  ptr_mae_info  Pointer to mae info structure
 *
 *  \return WORD32
 *
@@ -509,8 +510,8 @@ WORD32 impeghd_mp4_fill_imp_trak_info(pVOID fp, trak_info *m, UWORD32 req_child,
 *  \brief Fills the 'stts' atom (DecodingTimeStamp) info in
 *         trak_info.
 *
-*  \param fp
-*  \param m
+*  \param [in]  fp Pointer to file context
+*  \param [out] m  Pointer to trak info
 *
 *  \return WORD32
 *
@@ -555,8 +556,8 @@ WORD32 impeghd_mp4_get_stts(pVOID fp, trak_info *m)
 *  \brief fills the 'ctts' atom (CompositionTimeStamp) info in
 *         trak_info.
 *
-*  \param fp
-*  \param m
+*  \param [in]  fp Pointer to file context
+*  \param [out] m  Pointer to trak info
 *
 *  \return WORD32
 *
@@ -600,8 +601,8 @@ WORD32 impeghd_mp4_get_ctts(pVOID fp, trak_info *m)
 *
 *  \brief Fills the 'stsc' atom info in trak_info
 *
-*  \param fp
-*  \param m
+*  \param [in]  fp Pointer to file context
+*  \param [out] m  Pointer to trak info
 *
 *  \return WORD32
 *
@@ -651,9 +652,10 @@ WORD32 impeghd_mp4_get_stsc(pVOID fp, trak_info *m)
 *
 *  \brief Reads the 'stsd' atom
 *
-*  \param fp
-*  \param m
-*  \param n
+*  \param [in]  fp Pointer to file context
+*  \param [out] m  Pointer to trak info
+*  \param [in]  n  Pointer to mp4 mem node structure pointer
+*  \param [in]  ptr_mae_info  Pointer to mae info structure
 *
 *  \return WORD32
 *
@@ -804,9 +806,9 @@ static WORD32 impeghd_mp4_get_cts(mp4_info *m_mp4, UWORD32 media)
 *  \brief Function to update 'stss' atom
 *
 *  \param [in] m  Pointer to trak info
-*  \param [in] fp Pointer to AVI file context
+*  \param [in] fp Pointer to file context
 *
-*  \return VOID
+*
 *
 */
 static VOID impeghd_mp4_update_stss(trak_info *m, pVOID fp)
@@ -833,11 +835,11 @@ static VOID impeghd_mp4_update_stss(trak_info *m, pVOID fp)
 *  impeghd_mp4_read_media_sample
 *
 *  \brief Fills the 'buf' with Data frame by frame
-*
-*  \param buf
-*  \param to_write
-*  \param m
-*  \param fp
+* 
+*  \param [out] buf Pointer to buffer to be filled
+*  \param [in]  to_write Number of bytes to write to buf
+*  \param [out] m  Pointer to trak info
+*  \param [in]  fp Pointer to file context
 *
 *  \return WORD32
 *
@@ -996,7 +998,7 @@ WORD32 impeghd_mp4_read_media_sample(UWORD8 **buf, WORD32 to_write, trak_info *m
 *
 *  \brief Gets composition time stamp
 *
-*  \param mp4_cntxt
+*  \param [in,out] mp4_cntxt Pointer to mp4 context
 *
 *  \return UWORD32
 *

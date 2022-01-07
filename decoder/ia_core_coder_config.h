@@ -42,7 +42,9 @@
 // Currently this is limited to 3 considering:
 // Audio Channels, Objects and HOA Transport channels.
 #define MAX_NUM_SIGNALGROUPS (16)
-#define MAX_NUM_MC_BOXES (28)
+/*The	multi‐channel	coding	tool	(MCT)	shall	not	employ
+ * more	stereo	boxes	than 16 for LC profile lvl 3*/
+#define MAX_NUM_MC_BOXES (16)
 #define MAX_NUM_MC_BANDS (64)
 #define MAX_TIME_CHANNELS (MAX_NUM_CHANNELS)
 #define DEFAULT_BETA (48) /*equals 45 degrees */
@@ -502,7 +504,7 @@ typedef struct
   ia_struct_compatible_profile_config str_compatible_profile_config;
   WORD32 preroll_flag;
   WORD32 hoa_matrix_ext_config_present;
-
+  UWORD32 mpegh_profile_lvl;
 } ia_usac_decoder_config_struct;
 typedef struct
 {

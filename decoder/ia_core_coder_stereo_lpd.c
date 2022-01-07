@@ -80,7 +80,7 @@
  *  \param [in]			buf_size		Size of buffer
  *  \param [in]			filt_type   Filter type
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_update_synth_out(FLOAT32 *synth_out, FLOAT32 *synth, FLOAT32 *noise,
@@ -130,7 +130,7 @@ static VOID ia_core_coder_update_synth_out(FLOAT32 *synth_out, FLOAT32 *synth, F
  *  \param [in]			l_next		length of next subframe
  *  \param [in]			mem_bpf		prev noise buff
  *
- *  \return VOID
+ *
  *
  */
 
@@ -267,9 +267,9 @@ static VOID ia_core_coder_stereo_lpd_bass_pf(FLOAT32 *synth, WORD32 fac_fb, WORD
  *
  *  \brief Calculate Stereo LPD band limits
  *
- *  \param [in/out]		band_limit	Stereo band info bandlimit
- *  \param [in]			res_mode	Stereo LPD ERB mode
- *  \param [in]			N			DFT size
+ *  \param [in,out]	band_limits	Stereo band info bandlimit
+ *  \param [in]			res_mode	  Stereo LPD ERB mode
+ *  \param [in]			N			      DFT size
  *
  *  \return WORD32
  *
@@ -305,10 +305,10 @@ static WORD32 ia_core_coder_slpd_band_config(WORD32 *band_limits, WORD32 res_mod
  *
  *  \brief Calculate Stereo LPD code book indices
  *
- *  \param [in/out]		res_sig		residual signal
+ *  \param [in,out]		res_sig		residual signal
  *  \param [in]			it_bit_buf	Bit buffer stream
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_slpd_code_book_indices(FLOAT32 *res_sig, ia_bit_buf_struct *it_bit_buf)
@@ -363,7 +363,7 @@ static VOID ia_core_coder_slpd_code_book_indices(FLOAT32 *res_sig, ia_bit_buf_st
  *  \param [in]		full_band_lpd	Flag to check full band LPD
  *  \param [in]		ccfl			Frame length
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_slpd_init(ia_usac_slpd_dec_data_handle slpd_dec_data, WORD32 fs,
@@ -415,12 +415,12 @@ VOID ia_core_coder_slpd_init(ia_usac_slpd_dec_data_handle slpd_dec_data, WORD32 
  *
  *  \brief Update previous left and right stereo LPD data buffers
  *
- *  \param [in/out]		slpd_dec_data	Stereo LPD data
+ *  \param [in,out]		slpd_dec_data	Stereo LPD data
  *  \param [in]			olap_data_l		Left Overlap data buffer
  *  \param [in]			olap_data_r		Right Overlap data buffer
  *  \param [in]			length			length of the buffer to be updated
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_slpd_set_past(ia_usac_slpd_dec_data_handle slpd_dec_data, FLOAT32 *olap_data_l,
@@ -446,9 +446,9 @@ VOID ia_core_coder_slpd_set_past(ia_usac_slpd_dec_data_handle slpd_dec_data, FLO
  *
  *  \brief SLPD data de-quantization
  *
- *  \param [in/out]		slpd_dec_data	Stereo LPD structure
+ *  \param [in,out]		slpd_dec_data	Stereo LPD structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_slpd_data_dequant(ia_usac_slpd_dec_data_handle slpd_dec_data)
@@ -521,7 +521,7 @@ static VOID ia_core_coder_slpd_data_dequant(ia_usac_slpd_dec_data_handle slpd_de
  *
  *  \brief Read SLPD data from bit stream
  *
- *  \param [in/out]		slpd_dec_data	Stereo LPD structure
+ *  \param [in,out]		slpd_dec_data	Stereo LPD structure
  *  \param [in]		it_bit_buff		Bit buffer stream
  *
  *  \return IA_ERRORCODE
@@ -605,7 +605,7 @@ IA_ERRORCODE ia_core_coder_slpd_data_read(ia_usac_slpd_dec_data_handle slpd_dec_
  *
  *  \brief Decode SLPD data by reading bit stream
  *
- *  \param [in/out]		slpd_dec_data	Stereo LPD structure
+ *  \param [in,out]		slpd_dec_data	Stereo LPD structure
  *  \param [in]		it_bit_buff		Bit buffer stream
  *  \param [in]		td_start_flag	Flag to check if prev frame is TD
  *
@@ -636,12 +636,12 @@ IA_ERRORCODE ia_core_coder_slpd_data(ia_usac_slpd_dec_data_handle slpd_dec_data,
  *  \brief Update dft buffers of 'band'
  *
  *  \param [in]		slpd_dec_data	stereo lpd structure
- *  \param [in/out]	pscr			scratch structure containing dft buffers
+ *  \param [in,out]	pscr			scratch structure containing dft buffers
  *  \param [in]		band			band number
  *  \param [in]		alpha			alpha
  *  \param [in]		beta			beta
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_update_dft(ia_usac_slpd_dec_data_handle slpd_dec_data,
@@ -698,13 +698,13 @@ static VOID ia_core_coder_update_dft(ia_usac_slpd_dec_data_handle slpd_dec_data,
  *  \brief Update dft buffers of 'band' with gain
  *
  *  \param [in]		slpd_dec_data	stereo lpd structure
- *  \param [in/out]	pscr			scratch structure containing dft buffers
+ *  \param [in,out]	pscr			scratch structure containing dft buffers
  *  \param [in]		sub_frm			Sub-frame index
  *  \param [in]		band			band number
  *  \param [in]		gain_1			Gain 1
  *  \param [in]		gain_2			Gain 2
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_update_dft_gain(ia_usac_slpd_dec_data_handle slpd_dec_data,
@@ -752,14 +752,14 @@ static VOID ia_core_coder_update_dft_gain(ia_usac_slpd_dec_data_handle slpd_dec_
  *  \brief Apply stereo LPD and update stereo buffer
  *
  *  \param [in]		slpd_dec_data	stereo lpd structure
- *  \param [in/out]	pscr			scratch structure containing time buffers
+ *  \param [in,out]	pscr			scratch structure containing time buffers
  *  \param [in]		sub_frm			Sub-frame index
  *  \param [in]		td_start_flag	flag to check prev frame is TD
  *  \param [in]		delay			Delay
  *  \param [in]		offset			offset
  *  \param [in]		fft_scratch		Scratch buffer for fft
  *
- *  \return VOID
+ *
  *
  */
 
@@ -854,12 +854,12 @@ static VOID ia_core_coder_slpd_calc_time_sig(ia_usac_slpd_dec_data_handle slpd_d
  *  \brief Apply stereo LPD and update stereo buffer
  *
  *  \param [in]		slpd_dec_data	stereo lpd structure
- *  \param [in/out]	synth_left		synth_stereo buffer for left
- *  \param [in/out]	synth_right		synth_stereo buffer for right
+ *  \param [in,out]	synth_left		synth_stereo buffer for left
+ *  \param [in,out]	synth_right		synth_stereo buffer for right
  *  \param [in]		td_start_flag	flag to check prev frame is TD
  *  \param [in]		ptr_scratch		Scratch buffer for processing
  *
- *  \return VOID
+ *
  *
  */
 

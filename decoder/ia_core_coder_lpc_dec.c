@@ -72,7 +72,7 @@ static const FLOAT32 factor_table[4] = {60.0f, 65.0f, 64.0f, 63.0f};
  *  \brief Performs avq decoding
  *
  *  \param [in]    read_arr  LPC approximaton index
- *  \param [in/out]  nvecq    Vector quantized values
+ *  \param [in,out]  nvecq    Vector quantized values
  *
  *  \return WORD32
  *
@@ -111,7 +111,7 @@ static WORD32 ia_core_coder_decoding_avq_tool(WORD32 *read_arr, WORD32 *nvecq)
  *
  *  \brief gives avq first stage approximation of LSF based on wt table
  *
- *  \param [in/out]  lsf      LSF coefficients
+ *  \param [in,out]  lsf      LSF coefficients
  *  \param [in]    indx    LPC approximation index
  *
  *  \return WORD32
@@ -148,7 +148,7 @@ static WORD32 ia_core_coder_avq_first_approx_abs(FLOAT32 *lsf, WORD32 *indx)
  *
  *  \brief gives avq first stage approximation of LSF coeff
  *
- *  \param [in/out]  lsf      LSF coefficients
+ *  \param [in,out]  lsf      LSF coefficients
  *  \param [in]    indx    LPC index
  *  \param [in]    mode    LPD mode
  *
@@ -195,16 +195,16 @@ WORD32 ia_core_coder_avq_first_approx_rel(FLOAT32 *lsf, WORD32 *indx, WORD32 mod
  *
  *  \brief Vector dequantization
  *
- *  \param [in/out]    pstr_td_frame_data    Time domain frame data structure
+ *  \param [in,out]    pstr_td_frame_data    Time domain frame data structure
  *  \param [in]      first_lpd_flag      Flag to detect first LPD frame
- *  \param [in/out]    lsf            Line spectral
+ *  \param [in,out]    lsf            Line spectral
  * Frequency
  * coeffs
  *  \param [in]      mod            LPD mode
  *  \param [in]      num_div          Number of division in a
  * frame
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_alg_vec_dequant(ia_td_frame_data_struct *pstr_td_frame_data,

@@ -78,11 +78,11 @@
  *
  *  \brief Bubble sorting array in asending order to new given array
  *
- *  \param src    [in]  Unsorted input array.
- *  \param dst    [out] Sorted output array.
- *  \param set_sz [in]  size of the input array.
+ *  \param [in]  src Unsorted input array.
+ *  \param [out] dst Sorted output array.
+ *  \param [in]  sz  Size of the input array.
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_hoa_spatial_sort_array_ascending(pUWORD32 src, pUWORD32 dst, UWORD32 sz)
@@ -230,9 +230,9 @@ IA_ERRORCODE impeghd_hoa_spatial_init(pVOID handle, ia_hoa_config_struct *pstr_h
 /**
  *  impeghd_hoa_get_exponents
  *
- *  \brief Brief description
+ *  \brief Function to get exponents
  *
- *  \param [in]    coded_gain_correction_exp
+ *  \param [in]  coded_gain_correction_exp coded gain correction exponent
  *
  *  \return WORD32 exponents
  *
@@ -250,7 +250,7 @@ static WORD32 impeghd_hoa_get_exponents(WORD32 coded_gain_correction_exp)
 /**
  *  impeghd_hoa_spatial_decode_frame_side_info
  *
- *  \brief Brief description
+ *  \brief Function to decode frame side info
  *
  *  \param [out]  handle        Spatial decoder handle
  *  \param [in]    ia_hoa_frame_ptr  HOA frame data
@@ -613,7 +613,7 @@ impeghd_hoa_spatial_decode_frame_side_info(pVOID handle, ia_hoa_frame_struct *ia
  *
  *  \brief Process the spatial decoder
  *
- *  \param [in/out]  handle            Spatial decoder handle
+ *  \param [in,out]  handle            Spatial decoder handle
  *  \param [in]    in_sample_buf        Input sample buffer
  *  \param [out]  out_final_comp_coeffs_buf  Output coefficient buffer
  *  \param [in]    scratch            Pointer to scratch buffer

@@ -68,10 +68,10 @@
  *
  *  \brief Pitch sharpening function.
  *
- *  \param [in/out] x       Pointer to input buffer.
+ *  \param [in,out] x       Pointer to input buffer.
  *  \param [in]     pit_lag Pitch lag value.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_acelp_pitch_sharpening(FLOAT32 *x, WORD32 pit_lag)
@@ -95,7 +95,7 @@ static VOID ia_core_coder_acelp_pitch_sharpening(FLOAT32 *x, WORD32 pit_lag)
  *  \param [in]  track        Track index.
  *  \param [out] ptr_code_vec Pointer to code vector.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_acelp_decode_1sp_per_track(WORD32 idx_1p, WORD32 M, WORD32 drc_offset,
@@ -123,7 +123,7 @@ static VOID ia_core_coder_acelp_decode_1sp_per_track(WORD32 idx_1p, WORD32 M, WO
  *  \param [in]  track        Track index.
  *  \param [out] ptr_code_vec Pointer to code vector.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_acelp_decode_2sp_per_track(WORD32 idx_2p, WORD32 M, WORD32 drc_offset,
@@ -180,7 +180,7 @@ static VOID ia_core_coder_acelp_decode_2sp_per_track(WORD32 idx_2p, WORD32 M, WO
  *  \param [in]  track        Track index.
  *  \param [out] ptr_code_vec Pointer to code vector.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_acelp_decode_3sp_per_track(WORD32 idx_3p, WORD32 M, WORD32 drc_offset,
@@ -212,7 +212,7 @@ static VOID ia_core_coder_acelp_decode_3sp_per_track(WORD32 idx_3p, WORD32 M, WO
  *  \param [in]  track        Track index.
  *  \param [out] ptr_code_vec Pointer to code vector.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_d_acelp_decode_4sp_per_track_section(WORD32 index, WORD32 drc_offset,
@@ -242,7 +242,7 @@ static VOID ia_core_coder_d_acelp_decode_4sp_per_track_section(WORD32 index, WOR
  *  \param [in]  track        Track index.
  *  \param [out] ptr_code_vec Pointer to code vector.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_acelp_decode_4sp_per_track(WORD32 idx_4p, WORD32 track,
@@ -291,7 +291,7 @@ static VOID ia_core_coder_acelp_decode_4sp_per_track(WORD32 idx_4p, WORD32 track
  *  \param [in]  track        Track value.
  *  \param [out] ptr_code_vec Pointer to code vector.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_d_acelp_add_pulse(WORD32 *ptr_pos, WORD32 nb_pulse, WORD32 track,
@@ -317,7 +317,7 @@ static VOID ia_core_coder_d_acelp_add_pulse(WORD32 *ptr_pos, WORD32 nb_pulse, WO
  *  \param [in]  drc_offset Offset value.
  *  \param [out] ptr_pos    Pointer to position values.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_d_acelp_decode_1p_n1(WORD32 index, WORD32 N, WORD32 drc_offset,
@@ -345,7 +345,7 @@ static VOID ia_core_coder_d_acelp_decode_1p_n1(WORD32 index, WORD32 N, WORD32 dr
  *  \param [in]  code_bits      Code bits.
  *  \param [out] ptr_code_vec   Pointer to code vector.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_acelp_decode_pulses_per_track(WORD32 *ptr_cb_index, const WORD16 code_bits,
@@ -449,7 +449,7 @@ VOID ia_core_coder_acelp_decode_pulses_per_track(WORD32 *ptr_cb_index, const WOR
  *  \param [in]  mean_exc_energy   Mean excitation energy.
  *  \param [out] ptr_energy        Pointer to average innovation energy computed.
  *
- *  \return VOID
+ *
  *
  */
 static void ia_core_coder_acelp_decode_gains(WORD32 index, FLOAT32 *ptr_code_vec,
@@ -484,7 +484,7 @@ static void ia_core_coder_acelp_decode_gains(WORD32 index, FLOAT32 *ptr_code_vec
  *  \param [in]  pitch_lag          Pitch lag value.
  *  \param [in]  frac               Fraction value.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_cb_exc_calc(FLOAT32 *ptr_xcitation_curr, WORD32 pitch_lag, WORD32 frac)
@@ -521,16 +521,16 @@ static VOID ia_core_coder_cb_exc_calc(FLOAT32 *ptr_xcitation_curr, WORD32 pitch_
  *
  *  \brief Forward alias cancellation
  *
- *  \param [in/out] ptr_usac_data      Pointer to USAC data structure.
- *  \param [in/out] pstr_td_frame_data Pointer to TD frame data.
+ *  \param [in,out] ptr_usac_data      Pointer to USAC data structure.
+ *  \param [in,out] pstr_td_frame_data Pointer to TD frame data.
  *  \param [in]     k                  Index value.
- *  \param [in/out] lp_filt_coeff      Pointer to filter coefficients.
+ *  \param [in,out] lp_filt_coeff      Pointer to filter coefficients.
  *  \param [in]     stability_factor   Factor value used by processing algorithm.
- *  \param [in/out] ptr_st             Pointer to LPD decoder state structure.
- *  \param [in/out] ptr_td_config      Pointer to TD config structure.
- *  \param [in/out] ptr_synth_fb       Pointer to synthesis buffer.
- *  \param [in/out] ptr_pitch_buffer   Pointer to pitch buffer.
- *  \param [in/out] ptr_voice_factors  Pointer to voice factors buffer.
+ *  \param [in,out] ptr_st             Pointer to LPD decoder state structure.
+ *  \param [in,out] ptr_td_config      Pointer to TD config structure.
+ *  \param [in,out] ptr_synth_fb       Pointer to synthesis buffer.
+ *  \param [in,out] ptr_pitch_buffer   Pointer to pitch buffer.
+ *  \param [in,out] ptr_voice_factors  Pointer to voice factors buffer.
  *  \param [in]     ptr_temp_scratch   Pointer to scratch buffer used for processing.
  *
  *  \return IA_ERRORCODE                     Processing error if any.

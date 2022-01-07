@@ -69,7 +69,7 @@
  *  \param [in]  ptr_it_bit_buff Pointer to bit buffer structure.
  *  \param [in]  tbe_frame_class TBE frame class type.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_tbe_data(ia_usac_tbe_data_handle tbe_dec_data,
@@ -116,13 +116,13 @@ VOID ia_core_coder_tbe_data(ia_usac_tbe_data_handle tbe_dec_data,
  *
  *  \brief Function for FIR Filter implementation.
  *
- *  \param [in/out] ptr_input       Pointer to Input / Output buffer.
+ *  \param [in,out] ptr_input       Pointer to Input / Output buffer.
  *  \param [in]     ptr_filt_coeff  Pointer to filter coefficient array.
  *  \param [in]     ptr_filter_mem  Pointer to filter states.
  *  \param [in]     order           Order of filter.
  *  \param [in]     length          Length of Input buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_fir_filter(FLOAT32 *ptr_input, FLOAT32 *ptr_filt_coeff,
@@ -164,7 +164,7 @@ static VOID ia_core_coder_fir_filter(FLOAT32 *ptr_input, FLOAT32 *ptr_filt_coeff
  *  \param [in]  ptr_mem           Pointer to states memory.
  *  \param [in]  ptr_synth_scratch Pointer to sratch memory used for intermediate storage.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_synth_plus(FLOAT32 *ptr_coeff, WORD32 length, FLOAT32 *ptr_input,
@@ -227,7 +227,7 @@ static WORD32 ia_core_coder_tbe_random_sign(WORD16 *ptr_seed, WORD16 *ptr_scaled
  *  \param [out] ptr_output Pointer to output buffer.
  *  \param [in]  gamma      Step value used by shaping algo.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_gamma_shaping(FLOAT32 *ptr_input, FLOAT32 *ptr_output,
@@ -256,7 +256,7 @@ static VOID ia_core_coder_tbe_gamma_shaping(FLOAT32 *ptr_input, FLOAT32 *ptr_out
  *  \param [in]  length     Length of output buffer.
  *  \param [in]  ptr_seed   Seed value used by the processing function.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_gen_random_vec(FLOAT32 *ptr_output, WORD32 length, WORD16 *ptr_seed)
@@ -351,7 +351,7 @@ static FLOAT32 ia_core_coder_tbe_find_mean(FLOAT32 *ptr_input, WORD32 length)
  *  \param [out] ptr_out  Pointer to line spectral frequencies buffer.
  *  \param [in]  conv_dir Flag that indicates LSP to LSF conversion or vice versa.
  *
- *  \return VOID
+ *
  *
  */
 
@@ -383,9 +383,9 @@ static VOID ia_core_coder_tbe_lsp_lsf_conv(FLOAT32 *ptr_in, FLOAT32 *ptr_out, WO
  *
  *  \brief Helper function to apply shift on LSF.
  *
- *  \param [in/out] ptr_lsf Pointer to LSF buffer.
+ *  \param [in,out] ptr_lsf Pointer to LSF buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_shift_lsf(FLOAT32 *ptr_lsf)
@@ -437,7 +437,7 @@ static VOID ia_core_coder_tbe_shift_lsf(FLOAT32 *ptr_lsf)
  *  \param [in]  length    Length of the output.
  *  \param [out] ptr_out   Pointer to output buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_interpol(FLOAT32 *ptr_in, FLOAT32 *ptr_state, WORD32 length,
@@ -493,7 +493,7 @@ static VOID ia_core_coder_tbe_interpol(FLOAT32 *ptr_in, FLOAT32 *ptr_state, WORD
  *  \param [in]  ptr_scratch              Pointer to scratch buffer.
  *  \param [in]  length                   Pointer to TBE data length.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_nonlinearity(ia_usac_tbe_bitstream_handle bit_stream,
@@ -632,13 +632,13 @@ static VOID ia_core_coder_tbe_nonlinearity(ia_usac_tbe_bitstream_handle bit_stre
  *
  *  \brief Helper function used by LSF 2 LPC converter function.
  *
- *  \param [in/out] ptr_set_a Pointer to intermediate buffer set ptr_coeff.
- *  \param [in/out] ptr_set_b Pointer to intermediate buffer set b.
+ *  \param [in,out] ptr_set_a Pointer to intermediate buffer set ptr_coeff.
+ *  \param [in,out] ptr_set_b Pointer to intermediate buffer set b.
  *  \param [in]     ptr_p     Pointer to even parts of LSP.
  *  \param [in]     ptr_q     Pointer to odd parts of LSP.
  *  \param [in]     length    Order of the data to be processed.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_conv_lsf_kernel(FLOAT32 *ptr_set_a, FLOAT32 *ptr_set_b,
@@ -677,7 +677,7 @@ static VOID ia_core_coder_tbe_conv_lsf_kernel(FLOAT32 *ptr_set_a, FLOAT32 *ptr_s
  *  \param [out] ptr_lpc Pointer to LPC buffer.
  *  \param [in]  ptr_lsf Pointer to LSF buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_lsf2lpc_conv(FLOAT32 *ptr_lpc, FLOAT32 *ptr_lsf)
@@ -743,7 +743,7 @@ static VOID ia_core_coder_tbe_lsf2lpc_conv(FLOAT32 *ptr_lpc, FLOAT32 *ptr_lsf)
  *  \param [in]  length    Length of the input buffer.
  *  \param [out] ptr_out   Pointer to output buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_decim_allpass_steep(FLOAT32 *ptr_in, FLOAT32 *ptr_state,
@@ -812,7 +812,7 @@ static VOID ia_core_coder_tbe_decim_allpass_steep(FLOAT32 *ptr_in, FLOAT32 *ptr_
  *  \param [out] ptr_scratch          Pointer to scratch buffer.
  *  \param [in]  ptr_mem_gen_exc      Pointer to excitation memory.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_gen_nonlinear_exc(FLOAT32 *ptr_tbe_exc_extended, FLOAT32 *ptr_exc,
@@ -842,7 +842,7 @@ static VOID ia_core_coder_tbe_gen_nonlinear_exc(FLOAT32 *ptr_tbe_exc_extended, F
  *  \param [in] ptr_window  Pointer to windowing coefficients.
  *  \param [in] ptr_scratch Pointer to scratch buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_auto_corr(FLOAT32 *ptr_input, FLOAT32 *ptr_acf, WORD32 order,
@@ -880,7 +880,7 @@ static VOID ia_core_coder_tbe_auto_corr(FLOAT32 *ptr_input, FLOAT32 *ptr_acf, WO
  *  \param [in]  ptr_acf Pointer to autocorrelation buffer.
  *  \param [in]  order   Auto correlation order - max lag/delay value.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_levinson_durbin(FLOAT32 *ptr_lpc, FLOAT32 *ptr_acf, WORD32 order)
@@ -927,15 +927,15 @@ static VOID ia_core_coder_tbe_levinson_durbin(FLOAT32 *ptr_lpc, FLOAT32 *ptr_acf
  *
  *  \param [in]     ptr_exc_whtnd     Pointer to excitation buffer.
  *  \param [in]     ptr_voice_factors Pointer to buffer representing voice factors.
- *  \param [in/out] ptr_mem_csfilt    Pointer to filter states buffer.
+ *  \param [in,out] ptr_mem_csfilt    Pointer to filter states buffer.
  *  \param [in]     ptr_tbe_seed      Pointer to TBE seed value buffer.
  *  \param [in]     ptr_lpc_sf        Pointer to LPC parameter scale factors buffer.
- *  \param [in/out] ptr_wn_ana_mem    Pointer to analysis window memory.
- *  \param [in/out] ptr_wn_syn_mem    Pointer to synthesis window memory.
- *  \param [in/out] ptr_white_exc     Pointer to white excitation data.
+ *  \param [in,out] ptr_wn_ana_mem    Pointer to analysis window memory.
+ *  \param [in,out] ptr_wn_syn_mem    Pointer to synthesis window memory.
+ *  \param [in,out] ptr_white_exc     Pointer to white excitation data.
  *  \param [in]     ptr_scratch       Pointer to scratch buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_gen_nmod_exc(FLOAT32 *ptr_exc_whtnd, FLOAT32 *ptr_voice_factors,
@@ -1009,7 +1009,7 @@ static VOID ia_core_coder_tbe_gen_nmod_exc(FLOAT32 *ptr_exc_whtnd, FLOAT32 *ptr_
  *  \param [in]  pow1              Scalar power factor used in calculation of excitation.
  *  \param [in]  pow2              Scalar power factor used in calculation of excitation.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_gen_exc(FLOAT32 *ptr_exc_whtnd, FLOAT32 *ptr_white_exc,
@@ -1039,16 +1039,16 @@ static VOID ia_core_coder_tbe_gen_exc(FLOAT32 *ptr_exc_whtnd, FLOAT32 *ptr_white
  *
  *  \brief Function for TBE module's LPC synthesis.
  *
- *  \param [in/out] ptr_exc_whtnd        Pointer to excitation buffer.
+ *  \param [in,out] ptr_exc_whtnd        Pointer to excitation buffer.
  *  \param [in]     ptr_lpc_sf           Pointer to LPC coefficients buffer.
  *  \param [in]     ptr_hb_target_energy Pointer to highband buffer.
  *  \param [in]     harm_ext_mode        Harmonic extension mode indicator.
  *  \param [in]     hr_config            High Resolution configuration flag.
- *  \param [in/out] ptr_state_lpc_syn    Pointer to lpc synthesis states.
+ *  \param [in,out] ptr_state_lpc_syn    Pointer to lpc synthesis states.
  *  \param [in]     ptr_excitation       Pointer to excitation buffer.
  *  \param [in]     ptr_scratch          Pointer to scratch buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_lpc_synth(FLOAT32 *ptr_exc_whtnd, FLOAT32 *ptr_lpc_sf,
@@ -1135,7 +1135,7 @@ static VOID ia_core_coder_tbe_lpc_synth(FLOAT32 *ptr_exc_whtnd, FLOAT32 *ptr_lpc
  *  \param [out] ptr_q_mix_factors      Pointer to mix factors.
  *  \param [out] ptr_q_exc_resp         Pointer to excitation response.
  *
- *  \return VOID
+ *
  *
  */
 static VOID
@@ -1223,7 +1223,7 @@ ia_core_coder_tbe_dequantize_params(ia_usac_tbe_bitstream_handle bit_stream, FLO
  *  \param [in]  ptr_subwin  Pointer to subwindown coefficients.
  *  \param [in]  ptr_scratch Pointer to scratch buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tbe_scale_shaping(WORD32 length, FLOAT32 *ptr_output,
@@ -1295,9 +1295,9 @@ static VOID ia_core_coder_tbe_scale_shaping(WORD32 length, FLOAT32 *ptr_output,
  *
  *  \brief Function to reset TBE states.
  *
- *  \param [in/out] tbe_dec_data TBE state structure handle
+ *  \param [in,out] tbe_dec_data TBE state structure handle
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_reset_tbe_state(ia_usac_tbe_data_handle tbe_dec_data)
@@ -1323,15 +1323,15 @@ VOID ia_core_coder_reset_tbe_state(ia_usac_tbe_data_handle tbe_dec_data)
  *
  *  \brief Function to apply time domain bandwidth extension.
  *
- *  \param [in/out] tbe_dec_data         Pointer to TBE decoder data structure.
+ *  \param [in,out] tbe_dec_data         Pointer to TBE decoder data structure.
  *  \param [in]     frame_class          Frame class type.
  *  \param [in]     ptr_tbe_exc_extended Pointer to extended TBE excitation buffer.
- *  \param [in/out] ptr_voice_factors    Pointer to voice factors buffer.
+ *  \param [in,out] ptr_voice_factors    Pointer to voice factors buffer.
  *  \param [in]     ptr_synth            Pointer to synthesis buffer.
  *  \param [in]     first_frame          First frame flag.
  *  \param [in]     ptr_scratch          Pointer to scratch buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_tbe_apply(ia_usac_tbe_data_handle tbe_dec_data, WORD32 frame_class,
@@ -1519,7 +1519,7 @@ VOID ia_core_coder_tbe_apply(ia_usac_tbe_data_handle tbe_dec_data, WORD32 frame_
  *  \param [out] ptr_output   Pointer to output buffer.
  *  \param [in]  ptr_scratch  Pointer to scratch buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_tbe_gen_transition(ia_usac_tbe_data_handle tbe_dec_data, WORD32 length,
@@ -1554,9 +1554,9 @@ VOID ia_core_coder_tbe_gen_transition(ia_usac_tbe_data_handle tbe_dec_data, WORD
  *
  *  \brief TBE initialization function.
  *
- *  \param [in/out] tbe_dec_data Pointer to TBE decoder data structure.
+ *  \param [in,out] tbe_dec_data Pointer to TBE decoder data structure.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_tbe_init(ia_usac_tbe_data_handle tbe_dec_data)
@@ -1587,13 +1587,13 @@ VOID ia_core_coder_tbe_init(ia_usac_tbe_data_handle tbe_dec_data)
  *
  *  \brief Function to mix past TBE excitation values.
  *
- *  \param [in/out] tbe_dec_data   TBE decoder data structure.
+ *  \param [in,out] tbe_dec_data   TBE decoder data structure.
  *  \param [out]    ptr_error      Pointer to error signal.
  *  \param [in]     subfr_idx      Sub-frame index value
  *  \param [in]     pitch_lag      Integer part of pitch lag value.
  *  \param [in]     pitch_lag_frac Fractional part of pitch lag value
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_mix_past_exc(ia_usac_tbe_data_handle tbe_dec_data, FLOAT32 *ptr_error,
@@ -1635,7 +1635,7 @@ VOID ia_core_coder_mix_past_exc(ia_usac_tbe_data_handle tbe_dec_data, FLOAT32 *p
  *  \param [in] voice_fac         Voice factor value
  *  \param [in] ptr_voice_factors Pointer to voice factors buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_tbe_prep_exc(ia_usac_tbe_data_handle tbe_dec_data, WORD32 i_subfr,
@@ -1685,11 +1685,11 @@ VOID ia_core_coder_tbe_prep_exc(ia_usac_tbe_data_handle tbe_dec_data, WORD32 i_s
  *  \param [in]     fs_in          Input signal's sampling frequency.
  *  \param [out]    ptr_output     Pointer to output buffer
  *  \param [in]     fs_out         Output signal's sampling frequency.
- *  \param [in/out] ptr_filter_mem Pointer to resampling filter states.
+ *  \param [in,out] ptr_filter_mem Pointer to resampling filter states.
  *  \param [in]     interp_only    Flag that indicates interpolation processing.
  *  \param [in]     ptr_scratch    Pointer to scratch buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_td_resampler(FLOAT32 *ptr_input, WORD16 num_samples_in, WORD32 fs_in,

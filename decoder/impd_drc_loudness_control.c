@@ -99,7 +99,7 @@ static WORD32 impd_drc_check_if_match(ia_drc_instructions_struct *pstr_drc_instr
  *  \param [in]  num_compression_eq_count   no of compression count
  *  \param [in]  num_compression_eq_id   compression id
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_signal_peak_level_info(WORD32 *peak_info_count, WORD32 eq_set_id[],
@@ -427,7 +427,7 @@ VOID impd_drc_signal_peak_level_info(WORD32 *peak_info_count, WORD32 eq_set_id[]
  *  \param [out]  loudness_pk_2_avg_val   loudness peak to average value
  *  \param [out]  loudness_pk_2_avg_val_flag   flag to update if loudness peak to average value
  * present
- *  \param [in]  pstr_loudness_info   Pointer to loudness info structure
+ *  \param [in]  pstr_ia_loudness_info   Pointer to loudness info structure
  *  \param [in]  dyn_range_measure_type   dynamic range measurement type
  *
  *  \return IA_ERRORCODE error
@@ -593,8 +593,7 @@ IA_ERRORCODE impd_drc_loudness_pk_to_avg_info(FLOAT32 *loudness_pk_2_avg_val,
  *
  *  \brief Function to check if loudness information present
  *
- *  \param [out]  loudness_info_flag   flag to update if loudness info is present
- *  \param [in]  pstr_loudness_info   Pointer to loudness info structure
+ *  \param [in]  pstr_ia_loudness_info   Pointer to loudness info structure
  *
  *  \return WORD32 loudness_info_flag
  *

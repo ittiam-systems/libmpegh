@@ -73,11 +73,11 @@
  *  \param [in]    order    tns max order
  *  \param [in]    coef_res residual coeff
  *  \param [in]    coef     tns coeff
- *  \param [in/out]  spec    Input Spectrum which will be filtered
+ *  \param [in,out]  spec    Input Spectrum which will be filtered
  *  \param [in]    size    Number of samples
  *  \param [in]    inc    Index increment
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_tns_decode_coeff_ar_filter(WORD32 order, WORD32 coef_res, WORD16 *coef,
@@ -141,7 +141,7 @@ static VOID impeghd_tns_decode_coeff_ar_filter(WORD32 order, WORD32 coef_res, WO
  *  \param [in]    pstr_sfb_info  sfb info structure
  *  \param [in]    igf_config    IGF config structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_nbands(WORD32 *nbands, ia_sfb_info_struct *pstr_sfb_info,
@@ -192,7 +192,7 @@ static VOID ia_core_coder_igf_nbands(WORD32 *nbands, ia_sfb_info_struct *pstr_sf
  *  \brief TNS decoding of one frame in a channel
  *
  *  \param [in]    usac_data    USAC data structure
- *  \param [in/out]  spec        Input Spectrum which will be filtered
+ *  \param [in,out]  spec        Input Spectrum which will be filtered
  *  \param [in]    nbands      Number of bands
  *  \param [in]    pstr_sfb_info  sfb info structure
  *  \param [in]    pstr_tns      tns frame info_struct

@@ -63,9 +63,9 @@
  *
  *  \brief Checks if the OMD parameters are within the valid value range.
  *
- *  \param [i/o] ptr_oam_dec_state Object metadata decoder state structure.
+ *  \param [in,out] ptr_oam_dec_state Object metadata decoder state structure.
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_limit_range_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state)
@@ -147,7 +147,7 @@ static VOID impeghd_limit_range_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_s
  *
  *  \brief Object Metadata descaling and limiting
  *
- *  \param [in/out] ptr_oam_dec_state Object metadata decoder state structure.
+ *  \param [in,out] ptr_oam_dec_state Object metadata decoder state structure.
  *
  *  \return IA_ERRORCODE Error code if any.
  *
@@ -195,7 +195,7 @@ static WORD32 impeghd_oam_read_sign_param(ia_bit_buf_struct *ptr_bit_buf, WORD32
  *  \param [in]  num_objects  Number of objects.
  *  \param [in]  ptr_bit_buf  Pointer to bit buffer structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_ic_oam_ld_signed_param_dec(WORD32 fix_val_flag, WORD32 param_bits,
@@ -245,7 +245,7 @@ static VOID impeghd_ic_oam_ld_signed_param_dec(WORD32 fix_val_flag, WORD32 param
  *  \param [in]  num_objects  Number of objects.
  *  \param [in]  ptr_bit_buf  Pointer to bit buffer structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_ic_oam_ld_unsigned_param_dec(WORD32 fix_val_flag, WORD32 param_bits,
@@ -666,9 +666,9 @@ static IA_ERRORCODE impeghd_ic_obj_md_ld_dec(ia_oam_dec_state_struct *ptr_oam_de
  *
  *  \brief Descale extracted bit stream parameters
  *
- *  \param [i/o] ptr_oam_dec_state
+ *  \param [in,out] ptr_oam_dec_state Pointer to oam dec state structure
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_descale_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state)
@@ -720,7 +720,7 @@ VOID impeghd_descale_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state)
  *
  *  \brief Object Metadata bit stream decoder for low delay mode
  *
- *  \param [i/o] ptr_oam_dec_state Object metadata decoder state structure.
+ *  \param [in,out] ptr_oam_dec_state Object metadata decoder state structure.
  *  \param [in]  ptr_bit_buf       Pointer to bit buffer structure.
  *
  *  \return IA_ERRORCODE Error code if any.

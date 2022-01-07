@@ -55,11 +55,9 @@
 *  \brief Function for printing to both log file and console.
 *         will exit if given an exit code
 *
-*  \param dfp
-*  \param format
-*  \param ...
+*  \param [in] dfp    File pointer
+*  \param [in] format Format
 *
-*  \return VOID
 *
 */
 VOID impeghd_mp4_error_hdl(FILE *dfp, pWORD8 format, ...)
@@ -80,7 +78,7 @@ VOID impeghd_mp4_error_hdl(FILE *dfp, pWORD8 format, ...)
 *  \brief Change big endian to small endian and vice-versa.
 *         Input is 2 bytes
 *
-*  \param l
+*  \param [in] l big/small endian input
 *
 *  \return WORD32
 *
@@ -100,7 +98,7 @@ UWORD16 impeghd_mp4_rev16(UWORD16 l)
 *  \brief Change big endian to small endian and vice-versa.
 *         Input is 4 bytes
 *
-*  \param l
+*  \param [in] l big/small endian input
 *
 *  \return WORD32
 *
@@ -122,7 +120,7 @@ UWORD32 impeghd_mp4_rev24(UWORD32 l)
 *  \brief Change big endian to small endian and vice-versa.
 *         Input is 4 bytes
 *
-*  \param l
+*  \param [in] l big/small endian input
 *
 *  \return WORD32
 *
@@ -143,7 +141,7 @@ UWORD32 impeghd_mp4_rev32(UWORD32 l)
 *  \brief Change big endian to small endian and vice-versa.
 *         Input is 8 bytes
 *
-*  \param l
+*  \param [in] l big/small endian input
 *
 *  \return WORD32
 *
@@ -155,10 +153,10 @@ UWORD32 impeghd_mp4_rev64(UWORD32 l) { return impeghd_mp4_rev32(l); }
 *
 *  \brief Function to add allocated pointers to a linked list (m) which is of type 'ia_mp4_mem_node' in a view to free them at a stretch at a later stage
 *
-*  \param [in/out] m   Pointer to memory node pointer
+*  \param [in,out] m   Pointer to memory node pointer
 *  \param [in]     ptr Pointer to node to be added to list
 *
-*  \return VOID
+*
 *
 */
 static VOID impeghd_mp4_add_mem_node(ia_mp4_mem_node **m, pVOID ptr)
@@ -177,8 +175,8 @@ static VOID impeghd_mp4_add_mem_node(ia_mp4_mem_node **m, pVOID ptr)
 *  \brief Allocates the memory requested for node, and returns a void
 *         pointer to it
 *
-*  \param m
-*  \param size
+*  \param [in,out] m    Pointer to memory node pointer
+*  \param [in]     size Size to be allocated
 *
 *  \return pVOID
 *
@@ -196,9 +194,9 @@ pVOID impeghd_mp4_mem_node_malloc(ia_mp4_mem_node **m, WORD32 size)
 *  \brief Allocates the memory requested, and returns a void
 *         pointer to it
 *
-*  \param m
-*  \param count
-*  \param size
+*  \param [in,out] m     Pointer to memory node pointer
+*  \param [in]     count count
+*  \param [in]     size  Size to be allocated
 *
 *  \return pVOID
 *
@@ -215,10 +213,10 @@ pVOID impeghd_mp4_mem_node_calloc(ia_mp4_mem_node **m, WORD32 count, WORD32 size
 *
 *  \brief Deletes the node from linked list, and frees the ptr
 *
-*  \param ptr
-*  \param m
+*  \param [in]     ptr   node to be freed
+*  \param [in,out] m     Pointer to memory node pointer
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_mp4_free_mem_node(pVOID ptr, ia_mp4_mem_node **m)
@@ -253,9 +251,8 @@ VOID impeghd_mp4_free_mem_node(pVOID ptr, ia_mp4_mem_node **m)
 *         impeghd_mp4_mem_node_malloc/calloc(), whose pointers
 *         are stored in ia_mp4_mem_node->ptr.
 *
-*  \param m
+*  \param [in,out] m     Pointer to memory node pointer
 *
-*  \return WORD32
 *
 */
 VOID impeghd_mp4_free_all_nodes(ia_mp4_mem_node **m)
@@ -280,7 +277,7 @@ VOID impeghd_mp4_free_all_nodes(ia_mp4_mem_node **m)
 *
 *  \brief Allocates the memory requested, and returns a void pointer to it.
 *
-*  \param size
+*  \param [in] size Size to be allocated
 *
 *  \return pVOID
 *
@@ -297,8 +294,8 @@ pVOID impeghd_mp4_malloc_wrapper(WORD32 size)
 *  \brief Allocates the memory requested for count of object,
 *        and returns a void pointer to it
 *
-*  \param cnt
-*  \param size
+*  \param [in] cnt  count
+*  \param [in] size Size to be allocated
 *
 *  \return pVOID
 *
@@ -314,9 +311,9 @@ pVOID impeghd_mp4_calloc_wrapper(WORD32 cnt, WORD32 size)
 *
 *  \brief Frees the memory allocated to the void pointer
 *
-*  \param ptr
+*  \param [in] ptr Pointer to be freed
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_mp4_free_wrapper(pVOID ptr) { free(ptr); }
@@ -326,8 +323,8 @@ VOID impeghd_mp4_free_wrapper(pVOID ptr) { free(ptr); }
 *
 *  \brief Read given str from file
 *
-*  \param pfp
-*  \param buf
+*  \param [in] pfp File pointer
+*  \param [in] buf Buffer pointer
 *
 *  \return WORD32
 *
@@ -375,7 +372,7 @@ WORD32 impeghd_mp4_find_str_file(VOID **pfp, pWORD8 buf)
 *  \param [in]  a1  Pointer to input1
 *  \param [in]  b1  Pointer to input2
 *
-*  \return VOID
+*
 *
 */
 static VOID impeghd_mp4_sub64_64(it_uint64 *ans, it_uint64 *a1, it_uint64 *b1)
@@ -409,10 +406,10 @@ static VOID impeghd_mp4_sub64_64(it_uint64 *ans, it_uint64 *a1, it_uint64 *b1)
 *
 *  \brief Multiplies 1k
 *
-*  \param a
-*  \param b
+*  \param [out] a Output pointer
+*  \param [in]  b Input
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_mp4_multi_1k(it_uint64 *a, it_uint64 b)
@@ -441,11 +438,11 @@ VOID impeghd_mp4_multi_1k(it_uint64 *a, it_uint64 b)
 *  \brief Divides two number of type it_uint64
 *         Assumes dividend.msw < divisor
 *
-*  \param ans
-*  \param divident
-*  \param divisor
+*  \param [out] ans       Output
+*  \param [in]  dividend  Dividend
+*  \param [in]  divisor   Divisor
 *
-*  \return WORD32
+*  \return UWORD32
 *
 */
 UWORD32 impeghd_mp4_div64(pUWORD32 ans, it_uint64 dividend, UWORD32 divisor)
@@ -483,11 +480,11 @@ UWORD32 impeghd_mp4_div64(pUWORD32 ans, it_uint64 dividend, UWORD32 divisor)
 *
 *  \brief Adds two number of type it_uint64
 *
-*  \param ans
-*  \param a
-*  \param b
+*  \param [out] ans   Output
+*  \param [in]  a     Input 1
+*  \param [in]  b     Input 2
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_mp4_add64(it_uint64 *ans, it_uint64 a, UWORD32 b)

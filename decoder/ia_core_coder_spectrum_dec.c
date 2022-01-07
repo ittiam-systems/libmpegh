@@ -118,7 +118,7 @@ static UWORD32 ia_core_coder_mpeghd_showbits_32(UWORD8 *ptr_read_next, WORD32 cn
  *  \param [in]    ptr_sfb_info    sfb info structure
  *  \param [in]    group        sfb group buffer pointer
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_calc_grp_offset(ia_sfb_info_struct *ptr_sfb_info, pUWORD8 group)
@@ -159,7 +159,7 @@ VOID ia_core_coder_calc_grp_offset(ia_sfb_info_struct *ptr_sfb_info, pUWORD8 gro
  *  \brief Read tns data and fill tns frame info structure in tcx coding
  *
  *  \param [in]    sfb_per_sbk        scale factor band per subblock
- *  \param [in/out]  pstr_tns_frame_info    tns frame info structure
+ *  \param [in,out]  pstr_tns_frame_info    tns frame info structure
  *  \param [in]    it_bit_buff        bit stream buffer
  *  \param [in]    sbk_index        subblock index
  *
@@ -336,7 +336,7 @@ IA_ERRORCODE ia_core_coder_read_tns_u(ia_sfb_info_struct *ptr_sfb_info,
  *  \param [in]    sfb_per_sbk    sfb per sub block
  *  \param [in]    ptr_code_book  pointer to code book
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_scale_factor_data(ia_sfb_info_struct *info, WORD32 tot_sfb,
@@ -367,7 +367,7 @@ static VOID ia_core_coder_scale_factor_data(ia_sfb_info_struct *info, WORD32 tot
  *
  *  \brief Win sequence selection logic based on past window
  *
- *  \param [in/out]    window_sequence_curr  Present window sequence
+ *  \param [in,out]    window_sequence_curr  Present window sequence
  *  \param [in]      window_sequence_last  Past window sequence
  *
  *  \return WORD32
@@ -417,15 +417,15 @@ ia_core_coder_win_seq_select(WORD32 window_sequence_curr, WORD32 window_sequence
  *
  *  \brief Section data
  *
- *  \param [in/out]  usac_data    USAC data structure
- *  \param [in]    g_bs      bit stream buffer
- *  \param [in]    info      sfb info structure
- *  \param [in]    global_gain    global gain from bitstream
- *  \param [in/out]  factors      scale factor buffer pointer
- *  \param [in]    groups      scale factor group buffer
- *  \param [in]    ptr_code_book  Codebook pointer
+ *  \param [in,out] usac_data     USAC data structure
+ *  \param [in]     it_bit_buff   bit stream buffer
+ *  \param [in]     info          sfb info structure
+ *  \param [in]     global_gain   global gain from bitstream
+ *  \param [in,out] factors       scale factor buffer pointer
+ *  \param [in]     groups        scale factor group buffer
+ *  \param [in]     ptr_code_book Codebook pointer
  *
- *  \return VOID
+ *
  *
  */
 IA_ERRORCODE ia_core_coder_section_data(ia_usac_data_struct *usac_data,
@@ -560,7 +560,7 @@ IA_ERRORCODE ia_core_coder_section_data(ia_usac_data_struct *usac_data,
  *
  *  \brief Parse and analyse FD related parameters
  *
- *  \param [in/out]  usac_data        USAC data structure
+ *  \param [in,out]  usac_data        USAC data structure
  *  \param [in]    pstr_core_coder      corecoder data struct
  *  \param [in]    max_sfb          max sfb buffer
  *  \param [in]    window_sequence_last  Previous window sequence

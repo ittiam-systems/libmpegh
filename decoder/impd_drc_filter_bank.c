@@ -61,7 +61,7 @@
  *  \param [in] filter_type  filter type
  *  \param [in] co_freq_idx  cross over frequency index
  *
- *  \return VOID
+ *
  *
  */
 static VOID impd_drc_compute_filt_coeff(ia_iir_filter_struct *pstr_lp_filt,
@@ -356,12 +356,12 @@ IA_ERRORCODE impd_drc_init_all_filter_banks(ia_filter_banks_struct *pstr_ia_filt
  *  \brief IIR second order all pass filter function
  *
  *  \param [out] output  output buffer
- *  \param [in/out] filter  Pointer to iir filter structure
+ *  \param [in,out] pstr_filter  Pointer to iir filter structure
  *  \param [in] ch_idx  channel index
  *  \param [in] frame_len window length
  *  \param [in] input input buffer
  *
-  *  \return VOID
+  *
  *
  */
 static VOID impd_drc_iir_second_order_all_pass_filter(FLOAT32 *output,
@@ -398,13 +398,13 @@ static VOID impd_drc_iir_second_order_all_pass_filter(FLOAT32 *output,
  *  \brief Low high filter function
  *
  *  \param [out] output  output buffer
- *  \param [in/out] pstr_lp_filt  Pointer to iir lowpass filter structure
- *  \param [in/out] pstr_hp_filt  Pointer to iir highpass filter structure
+ *  \param [in,out] pstr_lp_filt  Pointer to iir lowpass filter structure
+ *  \param [in,out] pstr_hp_filt  Pointer to iir highpass filter structure
  *  \param [in] ch_idx  channel index
  *  \param [in] frame_len window length
  *  \param [in] input input buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_apply_low_high_filter(FLOAT32 *output[], ia_iir_filter_struct *pstr_lp_filt,
@@ -475,12 +475,12 @@ VOID impd_drc_apply_low_high_filter(FLOAT32 *output[], ia_iir_filter_struct *pst
  *  \brief two band filter process function
  *
  *  \param [out] output  output buffer
- *  \param [in/out] str_two_band_filt_bank  Pointer to two band filter structure
+ *  \param [in,out] str_two_band_filt_bank  Pointer to two band filter structure
  *  \param [in] ch_idx  channel index
  *  \param [in] frame_len window length
  *  \param [in] input input buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_two_band_filter_process(FLOAT32 *output[],
@@ -500,12 +500,12 @@ VOID impd_drc_two_band_filter_process(FLOAT32 *output[],
  *  \brief three band filter process function
  *
  *  \param [out] output  output buffer
- *  \param [in/out] str_three_band_filt_bank  Pointer to three band filter structure
+ *  \param [in,out] str_three_band_filt_bank  Pointer to three band filter structure
  *  \param [in] ch_idx  channel index
- *  \param [in] frame_len window length
+ *  \param [in] size window length
  *  \param [in] input input buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_three_band_filter_process(FLOAT32 *output[],
@@ -539,12 +539,12 @@ VOID impd_drc_three_band_filter_process(FLOAT32 *output[],
  *  \brief four band filter process function
  *
  *  \param [out] output  output buffer
- *  \param [in/out] str_four_band_filt_bank  Pointer to four band filter structure
+ *  \param [in,out] str_four_band_filt_bank  Pointer to four band filter structure
  *  \param [in] ch_idx  channel index
  *  \param [in] win_size window length
  *  \param [in] input input buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_four_band_filter_process(FLOAT32 *output[],
@@ -590,12 +590,12 @@ VOID impd_drc_four_band_filter_process(FLOAT32 *output[],
  *
  *  \brief all pass cascade process function
  *
- *  \param [in/out] str_all_pass_cascade  Pointer to all pass cascade structure
+ *  \param [in,out] str_all_pass_cascade  Pointer to all pass cascade structure
  *  \param [in] ch_idx  channel index
  *  \param [in] win_size window length
  *  \param [in] input input buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_all_pass_cascade_process(ia_all_pass_cascade_struct *str_all_pass_cascade,

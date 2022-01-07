@@ -72,7 +72,7 @@
  *  \param [in]		lsp				LSP coefficients
  *  \param [out]	lp_flt_coff_a	LPC filter coefficient
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_lsp_to_lp_conversion(FLOAT32 *lsp, FLOAT32 *lp_flt_coff_a)
@@ -186,14 +186,14 @@ IA_ERRORCODE ia_core_coder_lpc_to_mdct(FLOAT32 *coeff, WORD32 order, FLOAT32 *ga
  *
  *  \brief Interpolates the noise between 2 spectral represetation of noise
  *
- *  \param [in/out]		r			Input/output
+ *  \param [in,out]		r			Input/output
  *  \param [in]			lg			subframe length
  *  \param [in]			fdns_pts	Noise shaping resolution
  *  \param [in]			gain1		Lower gain
  *  \param [in]			gain2		Upper gain
  *  \param [in]			ptr_scratch	Scratch buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_noise_shaping(FLOAT32 *r, WORD32 lg, WORD32 fdns_pts, FLOAT32 *gain1,
@@ -231,13 +231,13 @@ VOID ia_core_coder_noise_shaping(FLOAT32 *r, WORD32 lg, WORD32 fdns_pts, FLOAT32
  *
  *  \brief Find TCX interpolated LPC coeff in every subframes from the LSF coeff
  *
- *  \param [in]			lsf_old		Previous Line Spectral Frequencies
- *  \param [in]			lsf_new		Present Line Spectral Frequencies
- *  \param [out]		a			interpolated LPC coeff
- *  \param [in]			nb_subfr	Number of subframe
- *  \param [in]			m			ORDER
+ *  \param [in]			lsf_prev		Previous Line Spectral Frequencies
+ *  \param [in]			lsf_curr		Present Line Spectral Frequencies
+ *  \param [out]		lpc_coeff		Interpolated LPC coeff
+ *  \param [in]			nb_subfr	  Number of subframe
+ *  \param [in]			order			  ORDER
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_interpolate_lpc_coef(FLOAT32 *lsf_prev, FLOAT32 *lsf_curr, FLOAT32 *lpc_coeff,
@@ -271,12 +271,12 @@ VOID ia_core_coder_interpolate_lpc_coef(FLOAT32 *lsf_prev, FLOAT32 *lsf_curr, FL
  *
  *  \brief Interpolate LSP coeffs in every subframe
  *
- *  \param [in]			lsp_old			Previous LSP coeff
- *  \param [in]			lsp_new			Present LSP coeff
+ *  \param [in]			lsp_prev			Previous LSP coeff
+ *  \param [in]			lsp_curr			Present LSP coeff
  *  \param [in]			lp_flt_coff_a	LPC coeff
- *  \param [in]			nb_subfr		Number of subframes
+ *  \param [in]			nb_subfr		  Number of subframes
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_interpolate_lsp_params(FLOAT32 *lsp_prev, FLOAT32 *lsp_curr,

@@ -98,7 +98,7 @@
  *  \param [in]  bins_per_sbk      Bin per scale factor band
  *  \param [in]  ptr_sbk_sfb_top   Pointer to scale factor band table
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_mc_stereofilling_add(FLOAT32 *ptr_coef, FLOAT32 *ptr_dmx_prev,
@@ -317,7 +317,7 @@ IA_ERRORCODE impeghd_mc_init(ia_usac_decoder_config_struct *pstr_usac_dec_config
  *  \param [in]  num_ch_to_apply Number of channel to apply pair
  *  \param [in]  ptr_it_bit_buff Pointer to bit buffer handle
  *
- *  \return VOID
+ *
  *
  */
 static IA_ERRORCODE impeghd_mc_parse_ch_pair(WORD32 code_pair[2], WORD32 num_ch_to_apply,
@@ -649,7 +649,7 @@ IA_ERRORCODE impeghd_mc_parse(ia_multichannel_data *ptr_mc_data, UWORD8 *ptr_bit
  *  \param [in]  alpha_idx   Cosine of alpha table index
  *  \param [in]  num_samples Number of samples
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_apply_mc_inverse_rotation(FLOAT32 *ptr_data_l, FLOAT32 *ptr_data_r,
@@ -692,17 +692,18 @@ static VOID impeghd_apply_mc_inverse_rotation(FLOAT32 *ptr_data_l, FLOAT32 *ptr_
  *  \param [in]  total_sfb         Total scale factor band
  *  \param [in]  ptr_sfb_offset    Pointer to scale factor band offset
  *
- *  \return VOID
+ *  \return IA_ERRORCODE
  *
  */
-VOID impeghd_mc_get_prev_dmx(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_prev_spec1,
-                             FLOAT32 *ptr_prev_spec2, FLOAT32 *ptr_prev_dmx,
-                             const WORD32 bands_per_window, const WORD32 *ptr_mask,
-                             const WORD32 *ptr_coeff_sfb_idx, const WORD32 num_samples,
-                             const WORD32 pair, const WORD32 total_sfb,
-                             const WORD16 *ptr_sfb_offset)
+IA_ERRORCODE impeghd_mc_get_prev_dmx(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_prev_spec1,
+                                     FLOAT32 *ptr_prev_spec2, FLOAT32 *ptr_prev_dmx,
+                                     const WORD32 bands_per_window, const WORD32 *ptr_mask,
+                                     const WORD32 *ptr_coeff_sfb_idx, const WORD32 num_samples,
+                                     const WORD32 pair, const WORD32 total_sfb,
+                                     const WORD16 *ptr_sfb_offset)
 {
   WORD32 sfb = -1, start_line, stop_line;
+  IA_ERRORCODE error = IA_MPEGH_DEC_NO_ERROR;
 
   if (ptr_mc_data->signal_type == 0)
   {
@@ -743,6 +744,10 @@ VOID impeghd_mc_get_prev_dmx(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_pre
                                    : (CODE_BOOK_BETA_LAV >> 1);
 
       start_line = (sfb < 0) ? 0 : ptr_sfb_offset[sfb];
+      if (sfb + 1 >= total_sfb)
+      {
+        return IA_MPEGH_DEC_EXE_FATAL_SFB_EXCEEDED_MAX;
+      }
       stop_line = (sfb + 2 < total_sfb) ? ptr_sfb_offset[sfb + 2] : ptr_sfb_offset[sfb + 1];
       prev_spec1_start = (ptr_prev_spec1) ? &ptr_prev_spec1[start_line] : NULL;
       prev_spec2_start = (ptr_prev_spec2) ? &ptr_prev_spec2[start_line] : NULL;
@@ -757,7 +762,7 @@ VOID impeghd_mc_get_prev_dmx(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_pre
       }
     }
   }
-  return;
+  return error;
 }
 
 /**
@@ -765,12 +770,12 @@ VOID impeghd_mc_get_prev_dmx(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_pre
  *
  *  \brief Function to apply multichannel rotation
  *
- *  \param [in/out] ptr_dmx     Pointer to downmix
- *  \param [in/out] ptr_res     Pointer to Usac data channel two coefficient array
+ *  \param [in,out] ptr_dmx     Pointer to downmix
+ *  \param [in,out] ptr_res     Pointer to Usac data channel two coefficient array
  *  \param [in]     alpha_idx   Cosine of alpha table index
  *  \param [in]     num_samples Number of samples
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_apply_mc_rotation(FLOAT32 *ptr_dmx, FLOAT32 *ptr_res, WORD32 alpha_idx,
@@ -800,13 +805,13 @@ static VOID impeghd_apply_mc_rotation(FLOAT32 *ptr_dmx, FLOAT32 *ptr_res, WORD32
  *
  *  \brief Function to apply multichannel prediction
  *
- *  \param [in/out] ptr_dmx     Pointer to downmix
- *  \param [in/out] ptr_res     Pointer to Usac data channel two coefficient array
+ *  \param [in,out] ptr_dmx     Pointer to downmix
+ *  \param [in,out] ptr_res     Pointer to Usac data channel two coefficient array
  *  \param [in]     alpha_q     Alpha value
  *  \param [in]     num_samples Number of samples
  *  \param [in]     pre_dir     Prediction direction
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_apply_mc_prediction(FLOAT32 *ptr_dmx, FLOAT32 *ptr_res, WORD32 alpha_q,
@@ -844,7 +849,7 @@ static VOID impeghd_apply_mc_prediction(FLOAT32 *ptr_dmx, FLOAT32 *ptr_res, WORD
  *  \param [in]  bins_per_sbk   Bin per scale factor band
  *  \param [in]  zero_spec_save Zero specification flag
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_mc_save_prev(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_spec, const WORD32 ch,
@@ -878,8 +883,8 @@ VOID impeghd_mc_save_prev(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_spec, 
  *  \brief Process multichannel
  *
  *  \param [out]    ptr_mc_data       Pointer to multichannel data
- *  \param [in/out] ptr_dmx           Pointer to downmix
- *  \param [in/out] ptr_res           Pointer to Usac data channel two coefficient array
+ *  \param [in,out] ptr_dmx           Pointer to downmix
+ *  \param [in,out] ptr_res           Pointer to Usac data channel two coefficient array
  *  \param [in]     ptr_coeff_sfb_idx Pointer to scale factor band coefficient index
  *  \param [in]     ptr_mask          Pointer to mask array
  *  \param [in]     bands_per_window  Bands per window
@@ -888,7 +893,7 @@ VOID impeghd_mc_save_prev(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_spec, 
  *  \param [in]     ptr_sfb_offset    Pointer to scale factor band offset
  *  \param [in]     num_samples       Number of samples
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_mc_process(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_dmx, FLOAT32 *ptr_res,

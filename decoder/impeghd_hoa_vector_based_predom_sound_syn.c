@@ -65,7 +65,7 @@
  *
  *  \brief Vector based predominant sound synthesis
  *
- *  \param [in/out]  dec_handle          Spatial decoder handle.
+ *  \param [in,out]  dec_handle          Spatial decoder handle.
  *  \param [in]    set_of_ps_sig_indices  Signal indices set.
  *  \param [out]  ptr_predom_sound_out  Vector based predominant sound synthesis array.
  *

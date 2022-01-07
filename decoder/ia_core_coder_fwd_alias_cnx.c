@@ -73,14 +73,15 @@
  *  \param [in]        usac_data        USAC datastructure
  *  \param [in]        fac_prm          USAC FAC data pointer
  *  \param [in]        td_config        TD config structure
- *  \param [in]        fac_length        fac length
- *  \param [in]        lp_filt_coeff      LPC flter coeff
- *  \param [in]        gain          gain value based on fac data
- *  \param [in/out]      fac_time_sig      fac time signal
- *  \param [in/out]      fac_time_sig_fb      fac time signal for full band lpd
- *  \param [in]        fscale          fscale value
- *  \param [in]        tmp_scratch        Scratch buffer for internal operations
- *  \param [in]        zir            Zero Impulse response
+ *  \param [in]        fac_length       fac length
+ *  \param [in]        lp_filt_coeff    LPC flter coeff
+ *  \param [in,out]    fac_time_sig     fac time signal
+ *  \param [in,out]    fac_time_sig_fb  fac time signal for full band lpd
+ *  \param [in]        fscale           fscale value
+ *  \param [in]        scratch          Scratch buffer for internal operations
+ *  \param [in]        zir              Zero Impulse response
+ *  \param [in]        stereo_lpd       Stereo lpd index
+ *  \param [in]        len_subfrm       Subframe length
  *  \return IA_ERRORCODE
  *
  */

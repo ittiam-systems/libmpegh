@@ -63,7 +63,7 @@
  *
  *  \brief oam object decoder
  *
- *  \param [in/out]  ptr_oam_dec_state  Object metadata decoder handle
+ *  \param [in,out]  ptr_oam_dec_state  Object metadata decoder handle
  *  \param [in]    ptr_bit_buf      Bit buffer handle
  *
  *  \return IA_ERRORCODE  Error code
@@ -89,7 +89,7 @@ IA_ERRORCODE impeghd_obj_md_dec(ia_oam_dec_state_struct *ptr_oam_dec_state,
  *
  *  \brief Object oam configuration
  *
- *  \param [in/out]  p_obj_md_cfg  Object metadata config structure
+ *  \param [in,out]  p_obj_md_cfg  Object metadata config structure
  *  \param [in]    ptr_bit_buf    Bit buffer handle
  *  \param [in]    cc_frame_len  Frame length
  *  \param [in]    num_objects    Number of audio object
@@ -151,7 +151,7 @@ IA_ERRORCODE impeghd_obj_md_cfg(ia_oam_dec_config_struct *p_obj_md_cfg,
  *
  *  \brief Enhanced Object metadata configuration data reading function.
  *
- *  \param [i/o] p_enh_obj_md_cfg Pointer to enhanced object metadata config structure.
+ *  \param [in,out] p_enh_obj_md_cfg Pointer to enhanced object metadata config structure.
  *  \param [in]  ptr_bit_buf      Pointer to bitstream buffer structure.
  *  \param [in]  num_objects      Number of objects.
  *
@@ -163,6 +163,8 @@ IA_ERRORCODE impeghd_enh_obj_md_config(ia_enh_oam_config_struct *p_enh_obj_md_cf
 {
   WORD32 i;
   WORD32 num_obj_with_divergence = 0;
+  WORD32 num_obj_with_divergence_gt_0 = 0;
+  WORD32 num_obj_without_divergence = 0;
 
   p_enh_obj_md_cfg->has_diffuseness = (WORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 1);
   if (p_enh_obj_md_cfg->has_diffuseness)
@@ -201,6 +203,14 @@ IA_ERRORCODE impeghd_enh_obj_md_config(ia_enh_oam_config_struct *p_enh_obj_md_cf
       num_obj_with_divergence++;
       p_enh_obj_md_cfg->divergence_az_range[i] =
           (WORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 6);
+      if (p_enh_obj_md_cfg->divergence_az_range[i] > 0)
+      {
+        num_obj_with_divergence_gt_0++;
+      }
+    }
+    else
+    {
+      num_obj_without_divergence++;
     }
     if (p_enh_obj_md_cfg->has_common_group_excluded_sectors == 0)
     {
@@ -211,7 +221,14 @@ IA_ERRORCODE impeghd_enh_obj_md_config(ia_enh_oam_config_struct *p_enh_obj_md_cf
   p_enh_obj_md_cfg->num_obj_with_divergence = num_obj_with_divergence;
   if (((num_obj_with_divergence << 1) + num_objects) > MAX_NUM_OAM_OBJS)
   {
-    return -1;
+    return IA_MPEGH_OAM_INIT_FATAL_UNSUPPORTED_NUM_OBJS;
+  }
+  /*(number	of	objects	without	divergence)	+	3·(number	of	objects
+  with
+  divergence	>	0)	≤	n Maximum allowed value for n is 16 for profile lvl 3*/
+  if ((num_obj_without_divergence + (3 * num_obj_with_divergence_gt_0)) > 16)
+  {
+    return IA_MPEGH_OAM_INIT_FATAL_UNSUPPORTED_NUM_OBJS;
   }
   return 0;
 }
@@ -221,7 +238,7 @@ IA_ERRORCODE impeghd_enh_obj_md_config(ia_enh_oam_config_struct *p_enh_obj_md_cf
  *
  *  \brief Enhanced Object metadata frame data reading function.
  *
- *  \param [i/o] p_enh_oj_md_frame Pointer to enhanced object metadata frame structure
+ *  \param [in,out] p_enh_oj_md_frame Pointer to enhanced object metadata frame structure
  *  \param [in]  ptr_bit_buf       Pointer to bitstream buffer structure
  *  \param [in]  num_objects       Number of objects
  *  \param [in]  independency_flag MPEG-H 3D Audio Low Complexity Profile decoder independency

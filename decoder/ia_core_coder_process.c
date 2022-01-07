@@ -116,7 +116,7 @@
  *
  *  \brief Format conversion downmix processing
  *
- *  \param [in/out] active_dmx  Pointer to format convert downmix structure
+ *  \param [in,out] active_dmx  Pointer to format convert downmix structure
  *  \param [in]     in_buf      Pointer to input buffer array
  *  \param [out]    out_buf     Pointer to output buffer array
  *
@@ -262,12 +262,11 @@ impeghd_format_conv_active_dmx_stft_process(ia_format_conv_dmx_state *active_dmx
  *
  *  \brief Read USAC extension element
  *
- *  \param [in]    usac_ext_element_default_length    USAC extension payload length
- *  \param [in]    usac_ext_element_payload_frag    USAC extension payload fragment
- *  \param [in]    it_bit_buff              bit stream
- * buffer
- *  \param [in/out]  pstr_usac_dec_config        USAC Decoder configuration
- *  \param [in]    elem_idx              Element index in the
+ *  \param [in]    usac_ext_ele_default_length  USAC extension payload length
+ *  \param [in]    usac_ext_ele_payload_frag    USAC extension payload fragment
+ *  \param [in]    it_bit_buff                  bit stream buffer
+ *  \param [in,out]pstr_usac_dec_config         USAC Decoder configuration
+ *  \param [in]    elem_idx                     Element index in the
  * total
  * number of elements
  *
@@ -363,9 +362,9 @@ ia_core_coder_read_ext_element(UWORD32 usac_ext_ele_default_length,
 *
 *  \brief Format coverter processing involving active_dmx processing in freq domain
 *
-*  \param [in/out]  p_obj_mpegh_dec Decoder api structure
-*  \param [in/out]  num_chn_out           Output num of channel
-*  \param [in]      scratch_buf          Scratch buffer for internal processing
+*  \param [in,out]  p_obj_mpegh_dec Pointer to decoder api structure
+*  \param [in,out]  pstr_pcm_data   Pointer to pcm data config structure
+*  \param [in]      scratch_buf     Scratch buffer for internal processing
 *
 *  \return IA_ERRORCODE error if any
 *
@@ -493,8 +492,8 @@ IA_ERRORCODE impeghd_format_conv_earcon_process(ia_mpegh_dec_api_struct *p_obj_m
 *
 *  \brief Domain processing involving active_dmx processing in freq domain
 *
-*  \param [in/out]  p_obj_mpegh_dec Decoder api structure
-*  \param [in/out]  num_chn_out      Output num of channel
+*  \param [in,out]  p_obj_mpegh_dec Decoder api structure
+*  \param [in,out]  num_chn_out      Output num of channel
 *  \param [in]    ds_t2f        Flag for Domain switcher time to frequency
 * domain conversion
 *  \param [in]    scratch_buf      Scratch buffer for internal processing
@@ -625,8 +624,8 @@ impeghd_domain_switcher_process(ia_mpegh_dec_api_struct *p_obj_mpegh_dec, WORD32
 *
 *  \brief Format coverter processing involving active_dmx processing in freq domain
 *
-*  \param [in/out]  p_obj_mpegh_dec Decoder api structure
-*  \param [in/out]  num_chn_out      Output num of channel
+*  \param [in,out]  p_obj_mpegh_dec Decoder api structure
+*  \param [in,out]  num_chn_out      Output num of channel
 *  \param [in]    scratch_buf      Scratch buffer for internal processing
 *
 *  \return IA_ERRORCODE error if any
@@ -762,8 +761,8 @@ impeghd_format_converter_process(ia_mpegh_dec_api_struct *p_obj_mpegh_dec, WORD3
 *
 *  \brief Performs USAC data parsing and processing
 *
-*  \param [in/out]  pstr_dec_data dec data struct
-*  \param [in/out]  codec_handle  dec state struct
+*  \param [in,out]  pstr_dec_data dec data struct
+*  \param [in,out]  codec_handle  dec state struct
 *
 *  \return IA_ERRORCODE
 *
@@ -977,7 +976,7 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
           for (groupwin = 0; groupwin < pstr_usac_dec_config->ia_sfb_info[ch2]->group_len[group];
                groupwin++, win++)
           {
-            impeghd_mc_get_prev_dmx(
+            err = impeghd_mc_get_prev_dmx(
                 mct, (zero_prev_out_spec1 || no_frame_memory) ? NULL : prevSpec1,
                 (zero_prev_out_spec2 || no_frame_memory) ? NULL : prevSpec2,
                 prev_dmx + win * pstr_usac_dec_config->ia_sfb_info[ch2]->bins_per_sbk,
@@ -986,6 +985,10 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
                 pstr_usac_dec_config->ia_sfb_info[ch2]->bins_per_sbk, i,
                 pstr_usac_dec_config->ia_sfb_info[ch2]->sfb_per_sbk,
                 pstr_usac_dec_config->ia_sfb_info[ch2]->ptr_sfb_tbl);
+            if (err != IA_MPEGH_DEC_NO_ERROR)
+            {
+              return err;
+            }
 
             mct_band_offset += mct_bands_per_win;
             if (prevSpec1)

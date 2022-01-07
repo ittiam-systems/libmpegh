@@ -203,7 +203,7 @@ static WORD32 impd_match_downmix(WORD32 downmix_id, WORD32 dec_downmix_id)
  *  \param [out] out_bytes         Pointer to variable that carries out bytes info.
  *  \param [in]  num_channel_out   Number of output channels.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_samples_sat(WORD8 *outbuffer, WORD32 num_samples_out, WORD32 pcmsize,
@@ -321,7 +321,7 @@ static VOID ia_core_coder_samples_sat(WORD8 *outbuffer, WORD32 num_samples_out, 
  *  \brief HOA Decoder process main function.
  *
  *  \param [in]     pstr_usac_dec_cfg Pointer to USAC decoder config structure.
- *  \param [in/out] pstr_dec_data     Pointer to USAC decoder data structure.
+ *  \param [in,out] pstr_dec_data     Pointer to USAC decoder data structure.
  *  \param [in]     ele_idx           Extension element index.
  *  \param [out]    ptr_out_buf       Pointer to output buffer.
  *  \param [out]    num_out_channels  Pointer to number of output channels info.
@@ -401,7 +401,7 @@ static IA_ERRORCODE impeghd_hoa_dec_main_process(ia_usac_decoder_config_struct *
  *
  *  \brief Format Converter module of earcon data init function
  *
- *  \param [i/o] p_obj_mpegh_dec       Pointer to the decoder API structure.
+ *  \param [in,out] p_obj_mpegh_dec       Pointer to the decoder API structure.
  *  \param [in]  pstr_audio_specific_config Pointer to audio specific config structure.
  *
  *  \return IA_ERRORCODE                    Error code in case of any processing errors.
@@ -507,10 +507,10 @@ impeghd_format_conv_earcon_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
  *
  *  \brief Format Converter module init function
  *
- *  \param [i/o] p_obj_mpegh_dec       Pointer to the decoder API structure.
+ *  \param [in,out] p_obj_mpegh_dec         Pointer to the decoder API structure.
  *  \param [in]  pstr_audio_specific_config Pointer to audio specific config structure.
  *  \param [out] num_channel_out            Pointer to output channel variable.
- *  \param [in]  ds_enable                    Domain Switcher flag.
+ *  \param [in]  ds_flag                    Domain Switcher flag.
  *
  *  \return IA_ERRORCODE                    Error code in case of any processing errors.
  *
@@ -808,11 +808,11 @@ IA_ERRORCODE impeghd_format_conv_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
  *
  *  \brief Parses Pre roll data.
  *
- *  \param [in/out] pstr_dec_data        Pointer to decoder data structure.
+ *  \param [in,out] pstr_dec_data        Pointer to decoder data structure.
  *  \param [in]     conf_buf             Pointer to buffer containing config data.
- *  \param [in/out] preroll_units        Pointer to number of preroll units buffer.
- *  \param [in/out] preroll_frame_offset Pointer to preroll frame offset.
- *  \param [in/out] config_len           Pointer to config_len.
+ *  \param [in,out] preroll_units        Pointer to number of preroll units buffer.
+ *  \param [in,out] preroll_frame_offset Pointer to preroll frame offset.
+ *  \param [in,out] config_len           Pointer to config_len.
  *
  *  \return IA_ERRORCODE Error code if any processing errors are there.
  *
@@ -912,7 +912,7 @@ static IA_ERRORCODE ia_core_coder_audio_preroll_parsing(ia_dec_data_struct *pstr
  *  \brief Metadata PreProcessing decoder main function
  *
  *  \param [in]     pstr_asc         Pointer to audio specific config structure
- *  \param [in/out] pstr_dec_data    Pointer to decoder data structure
+ *  \param [in,out] pstr_dec_data    Pointer to decoder data structure
  *  \param [in]     num_out_channels Pointer to number of output channels info
  *  \param [in]     scratch_mem      Pointer to scratch memory.
  *  \param [in]     preset_id        Preset id value from command line.
@@ -1073,8 +1073,8 @@ IA_ERRORCODE impeghd_mdp_dec_process(ia_audio_specific_config_struct *pstr_asc,
  *
  *  \brief Intracoded production metadata frame data parsing
  *
- *  \param [in]      ptr_bit_buf_str  Pointer to bit buffer structure
- *  \param [in/out]  pstr_asc         Pointer to audio specific config structure
+ *  \param [in]      ptr_bit_buf_str          Pointer to bit buffer structure
+ *  \param [in,out]  pstr_audio_specific_cfg  Pointer to audio specific config structure
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -1126,7 +1126,7 @@ impeghd_intracoded_prod_meta_data_frame(ia_bit_buf_struct *ptr_bit_buf_str,
  *  \brief Single dynamic production metadata frame data parsing
  *
  *  \param [in]      ptr_bit_buf_str      Pointer to bit buffer structure
- *  \param [in/out]  ptr_prod_meta_data   Pointer to production metadata structure
+ *  \param [in,out]  ptr_prod_meta_data   Pointer to production metadata structure
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -1166,7 +1166,7 @@ IA_ERRORCODE impeghd_single_dyn_prod_md_frame(ia_bit_buf_struct *ptr_bit_buf_str
  *  \brief Dynamic production metadata frame data parsing
  *
  *  \param [in]      ptr_bit_buf_str           Pointer to bit buffer structure
- *  \param [in/out]  pstr_audio_specific_cfg   Pointer to audio specific config structure
+ *  \param [in,out]  pstr_audio_specific_cfg   Pointer to audio specific config structure
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -1205,7 +1205,7 @@ impeghd_dyn_prod_meta_data_frame(ia_bit_buf_struct *ptr_bit_buf_str,
  *  \brief Production metadata frame data parsing
  *
  *  \param [in]      ptr_bit_buf_str           Pointer to bit buffer structure
- *  \param [in/out]  pstr_audio_specific_cfg   Pointer to audio specific config structure
+ *  \param [in,out]  pstr_audio_specific_cfg   Pointer to audio specific config structure
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -1251,7 +1251,7 @@ impeghd_prod_meta_data_frame(ia_bit_buf_struct *ptr_bit_buf_str,
  *  \brief Metadata frame process
  *
  *  \param [in]      pstr_usac_dec_cfg         Pointer to USAC decoder config structure
- *  \param [in/out]  pstr_audio_specific_cfg   Pointer to audio specific config structure
+ *  \param [in,out]  pstr_audio_specific_cfg   Pointer to audio specific config structure
  *  \param [in]      ele_idx                   Element index
  *
  *  \return IA_ERRORCODE Processing error if any.
@@ -1289,7 +1289,7 @@ impeghd_product_meta_data_process(ia_usac_decoder_config_struct *pstr_usac_dec_c
  *
  *  \brief Object metadata renderer main process function.
  *
- *  \param [in/out] pstr_dec_data     Pointer to decoder data structure.
+ *  \param [in,out] pstr_dec_data     Pointer to decoder data structure.
  *  \param [out]    ptr_out_buf       Pointer to output buffer.
  *
  *  \return IA_ERRORCODE Processing error if any.
@@ -1353,9 +1353,9 @@ static IA_ERRORCODE impeghd_earcon_obj_md_dec_ren_process(ia_dec_data_struct *ps
  *
  *  \brief Object metadata renderer main process function.
  *
- *  \param [i/o] pstr_dec_data     Pointer to decoder data structure.
+ *  \param [in,out] pstr_dec_data     Pointer to decoder data structure.
  *  \param [out] ptr_out_buf       Pointer to output buffer.
- *  \param [i/o] num_out_channels  Pointer to number of output channels parameter.
+ *  \param [in,out] num_out_channels  Pointer to number of output channels parameter.
  *  \param [in]  ch_offset         Offest for audio object output.
  *
  *  \return IA_ERRORCODE Processing error if any.
@@ -1420,13 +1420,13 @@ impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data, FLOAT32 *ptr_o
  *  impegh_dec_peak_limiter
  *
  *  \brief  peak limiter process function
- *  \param [i/o] ptr_config   Pointer to decoder config structure
- *  \param [i/o] pstr_dec_data   Pointer to decoder data structure
+ *  \param [in,out] ptr_config   Pointer to decoder config structure
+ *  \param [in,out] pstr_dec_data   Pointer to decoder data structure
  *  \param [out] ptr_out_buf     Pointer to output buffer
  *  \param [out]  ptr_audio_buff Pointer to audio buffer
  *  \param [in]  frame_size    frame length.
  *
- *  \return VOID
+ *
  *
  */
 VOID impegh_dec_peak_limiter(ia_mpegh_dec_config_struct *ptr_config,
@@ -1488,11 +1488,10 @@ VOID impegh_dec_peak_limiter(ia_mpegh_dec_config_struct *ptr_config,
  *
  *  \brief Loudness normalizer and peak limiter process function
  *
- *  \param [i/o] pstr_dec_data   Pointer to decoder data structure
- *  \param [out] ptr_out_buf     Pointer to output buffer
- *  \param [in]  loudness_normalization_gain_db Gain value to be applied in dB
- *  \param [i/o] ptr_num_out_chnl Pointer to number of output channels info
- *  \param [in]  sampling_rate    Sampling rate of the stream.
+ *  \param [in,out] pstr_dec_data      Pointer to decoder data structure
+ *  \param [in]     pstr_mpegh_dec     Pointer to mpegh state structure
+ *  \param [in]     gain_db_loudness_normalization Gain value to be applied in dB
+ *  \param [in,out] ptr_num_out_chnl   Pointer to number of output channels info
  *
  *  \return IA_ERRORCODE Processing error code if any.
  *
@@ -1560,12 +1559,11 @@ IA_ERRORCODE impegh_dec_ln_pl_process(ia_dec_data_struct *pstr_dec_data,
  *  \brief UniDRC decoder main process function
  *
  *  \param [in]     pstr_usac_dec_cfg Pointer to USAC decoder config structure.
- *  \param [in/out] pstr_dec_data     Pointer to USAC decoder data structure.
+ *  \param [in,out] pstr_dec_data     Pointer to USAC decoder data structure.
  *  \param [in]     ele_idx           Extension element index.
- *  \param [out]    ptr_out_buf       Pointer to output buffer.
  *  \param [in]     dom_swi_flag      Domain switcher active flag.
  *  \param [in]     stft_fft_len      Short time fourier transfor length
- *  \param [in/out] dec_inst          DRC Decoder instance index
+ *  \param [in,out] dec_inst          DRC Decoder instance index
  *
  *  \return IA_ERRORCODE Processing error code if any else 0.
  *
@@ -1601,7 +1599,7 @@ impeghd_uni_drc_dec_process(ia_usac_decoder_config_struct *pstr_usac_dec_cfg,
     err_code = impd_drc_read_uni_drc_gain(&pstr_drc_dec_payload->str_drc_gain, p_drc_dec_cfg,
                                           it_bit_buff, &pstr_drc_dec_payload->str_bitstream_dec);
 
-    if (err_code > 1)
+    if (err_code != IA_MPEGH_DEC_NO_ERROR)
       return (err_code);
   }
 
@@ -1610,6 +1608,11 @@ impeghd_uni_drc_dec_process(ia_usac_decoder_config_struct *pstr_usac_dec_cfg,
     for (i = 0; i < num_channels; i++)
     {
       audio_buff[i] = &pstr_dec_data->str_usac_data.time_sample_vector[i][0];
+    }
+
+    if (pstr_drc_dec_payload->pstr_drc_config == NULL)
+    {
+      return IA_MPEGD_DRC_INIT_FATAL_UNEXPECTED_ERROR;
     }
 
     err_code = impd_drc_td_process(
@@ -1651,7 +1654,7 @@ impeghd_uni_drc_dec_process(ia_usac_decoder_config_struct *pstr_usac_dec_cfg,
  *
  *  \brief MPEG-H 3D Audio Low Complexity Profile decoder processing frame zero
  *
- *  \param [in/out] temp_handle     Pointer to decoder API handle.
+ *  \param [in,out] temp_handle     Pointer to decoder API handle.
  *  \param [out]    num_channel_out Pointer to number of output channels info.
  *
  *  \return IA_ERRORCODE Processing error if any else 0.
@@ -1813,7 +1816,7 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
 
         err_code = impeghd_hoa_dec_init(
             dec_handle_t_ptr, spk_idx, &pstr_asc->ref_spk_layout, sampling_frequency,
-            mpegh_dec_handle->mpeghd_scratch_mem_v, pstr_asc->mpegh_profile_lvl);
+            mpegh_dec_handle->mpeghd_scratch_mem_v, str_usac_dec_config->mpegh_profile_lvl);
         if (err_code != IA_MPEGH_DEC_NO_ERROR)
         {
           return IA_MPEGH_HOA_INIT_FATAL_RENDER_MATRIX_INIT_FAILED;
@@ -1924,7 +1927,7 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
  *
  *  \brief MPEG-H 3D Audio Low Complexity Profile extentsion elements processing
  *
- *  \param [in/out] temp_handle     Pointer to decoder API handle.
+ *  \param [in,out] temp_handle     Pointer to decoder API handle.
  *  \param [out]    num_channel_out Pointer to number of output channels info.
  *
  *  \return IA_ERRORCODE Processing error if any else 0.
@@ -1933,7 +1936,7 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
 IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_channel_out)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
-  WORD32 channel, ele, bin, num_elements, ch_offset, num_samples_out;
+  WORD32 channel, ele, s, num_elements, ch_offset, num_samples_out;
 
   ia_mpegh_dec_api_struct *handle = (ia_mpegh_dec_api_struct *)temp_handle;
   ia_mpegh_dec_state_struct *mpegh_dec_handle = handle->p_state_mpeghd;
@@ -1943,6 +1946,8 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
   ia_signals_3d *ia_signals_3da = &pstr_asc->str_usac_config.signals_3d;
   ia_usac_config_struct *pstr_usac_config =
       &pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config;
+  FLOAT32 *ptr_out_buf_hoa = NULL;
+  FLOAT32 *ptr_out_buf = NULL;
 
   ch_offset = pstr_usac_config->signals_3d.num_ch;
   num_samples_out = pstr_dec_data->str_usac_data.output_samples;
@@ -2059,12 +2064,12 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
     WORD8 *ptr_ext_ren_pcm = (WORD8 *)handle->mpeghd_config.ptr_ext_ren_pcm_buf;
     WORD32 num_cc_channels = ia_signals_3da->num_ch + ia_signals_3da->num_audio_obj +
                              ia_signals_3da->num_hoa_transport_ch;
-    for (bin = 0; bin < pstr_dec_data->str_usac_data.ccfl; bin++)
+    for (s = 0; s < pstr_dec_data->str_usac_data.ccfl; s++)
     {
       for (channel = 0; channel < num_cc_channels; channel++)
       {
         pcm_sample =
-            (WORD32)(pstr_dec_data->str_usac_data.time_sample_vector[channel][bin] * 256.0f);
+            (WORD32)(pstr_dec_data->str_usac_data.time_sample_vector[channel][s] * 256.0f);
         *ptr_ext_ren_pcm++ = (WORD32)pcm_sample & 0xff;
         *ptr_ext_ren_pcm++ = ((WORD32)pcm_sample >> 8) & 0xff;
         *ptr_ext_ren_pcm++ = ((WORD32)pcm_sample >> 16) & 0xff;
@@ -2139,10 +2144,12 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
       {
       case ID_MPEGH_EXT_ELE_OAM:
       {
-        FLOAT32 *ptr_out_buf = (FLOAT32 *)mpegh_dec_handle->mpeghd_scratch_mem_v;
+        if (ptr_out_buf == NULL)
+        {
+          ptr_out_buf = (FLOAT32 *)mpegh_dec_handle->mpeghd_scratch_mem_v;
+        }
         err_code = impeghd_obj_md_dec_ren_process(pstr_dec_data, ptr_out_buf, num_channel_out,
                                                   ch_offset);
-        ptr_out_buf = (FLOAT32 *)mpegh_dec_handle->mpeghd_scratch_mem_v;
         if (err_code != IA_MPEGH_DEC_NO_ERROR)
         {
           return err_code;
@@ -2159,16 +2166,35 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
               ia_signals_3da, &pstr_dec_data->str_enh_obj_md_frame);
           mpegh_dec_handle->p_config->oam_md_payload_length = (str_bit_buf.cnt_bits + 7) >> 3;
         }
-        if (pstr_usac_config->signals_3d.num_ch != 0 ||
-            pstr_usac_config->signals_3d.num_hoa_transport_ch != 0)
+        if (pstr_usac_config->signals_3d.num_ch != 0)
         {
           for (channel = 0; channel < *num_channel_out; channel++)
           {
-            for (bin = 0; bin < num_samples_out; bin++)
+            for (s = 0; s < num_samples_out; s++)
             {
-              pstr_dec_data->str_usac_data.time_sample_vector[channel][bin] =
-                  ia_add_flt(pstr_dec_data->str_usac_data.time_sample_vector[channel][bin],
-                             ptr_out_buf[channel * num_samples_out + bin]);
+              pstr_dec_data->str_usac_data.time_sample_vector[channel][s] =
+                  ia_add_flt(pstr_dec_data->str_usac_data.time_sample_vector[channel][s],
+                             ptr_out_buf[channel * num_samples_out + s]);
+            }
+          }
+          ch_offset += pstr_usac_config->signals_3d.num_audio_obj;
+        }
+        else if (pstr_usac_config->signals_3d.num_hoa_transport_ch != 0)
+        {
+          if (ptr_out_buf_hoa == NULL)
+          {
+            ptr_out_buf_hoa = ptr_out_buf + *num_channel_out * num_samples_out;
+          }
+          else
+          {
+            for (channel = 0; channel < *num_channel_out; channel++)
+            {
+              for (s = 0; s < num_samples_out; s++)
+              {
+                pstr_dec_data->str_usac_data.time_sample_vector[channel][s] =
+                    ia_add_flt(ptr_out_buf_hoa[channel * num_samples_out + s],
+                               ptr_out_buf[channel * num_samples_out + s]);
+              }
             }
           }
           ch_offset += pstr_usac_config->signals_3d.num_audio_obj;
@@ -2187,25 +2213,73 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
       }
       case ID_MPEGH_EXT_ELE_HOA:
       {
+        if (ptr_out_buf_hoa == NULL)
+        {
+          ptr_out_buf_hoa = (FLOAT32 *)mpegh_dec_handle->mpeghd_scratch_mem_v;
+        }
+        if (pstr_dec_data->str_hoa_dec_handle.ia_hoa_config == NULL)
+        {
+          return IA_MPEGH_HOA_INIT_FATAL_RENDER_MATRIX_INIT_FAILED;
+        }
+        if (pstr_dec_data->str_hoa_dec_handle.ptr_scratch == NULL)
+        {
+          WORD32 spk_idx;
+          ia_usac_decoder_config_struct *str_usac_dec_config =
+              &pstr_asc->str_usac_config.str_usac_dec_config;
+          UWORD32 sampling_frequency = pstr_asc->str_usac_config.usac_sampling_frequency;
+
+          if (handle->mpeghd_config.ui_cicp_layout_idx > 0)
+          {
+            spk_idx = handle->mpeghd_config.ui_cicp_layout_idx;
+          }
+          else
+          {
+            spk_idx = pstr_asc->ref_spk_layout.cicp_spk_layout_idx;
+          }
+          err_code = impeghd_hoa_dec_init(&pstr_dec_data->str_hoa_dec_handle, spk_idx,
+                                          &pstr_asc->ref_spk_layout, sampling_frequency,
+                                          mpegh_dec_handle->mpeghd_scratch_mem_v,
+                                          str_usac_dec_config->mpegh_profile_lvl);
+          if (err_code != IA_MPEGH_DEC_NO_ERROR)
+          {
+            return IA_MPEGH_HOA_INIT_FATAL_RENDER_MATRIX_INIT_FAILED;
+          }
+        }
         pstr_dec_data->str_hoa_frame_data.ptr_config_data = &pstr_usac_dec_cfg->str_hoa_config;
-        FLOAT32 *ptr_out_buf;
         err_code = impeghd_hoa_dec_main_process(
-            pstr_usac_dec_cfg, pstr_dec_data, ele,
-            (FLOAT32 *)(mpegh_dec_handle->mpeghd_scratch_mem_v), num_channel_out, ch_offset,
+            pstr_usac_dec_cfg, pstr_dec_data, ele, ptr_out_buf_hoa, num_channel_out, ch_offset,
             pstr_asc->str_usac_config.signals_3d.domain_switcher_enable);
 
-        ptr_out_buf = (FLOAT32 *)mpegh_dec_handle->mpeghd_scratch_mem_v;
-        if (pstr_usac_config->signals_3d.num_ch != 0 ||
-            pstr_usac_config->signals_3d.num_audio_obj != 0)
+        if (pstr_usac_config->signals_3d.num_ch != 0)
         {
           for (channel = 0; channel < *num_channel_out; channel++)
           {
-            for (bin = 0; bin < num_samples_out; bin++)
+            for (s = 0; s < num_samples_out; s++)
             {
-              pstr_dec_data->str_usac_data.time_sample_vector[channel][bin] =
-                  ia_add_flt(pstr_dec_data->str_usac_data.time_sample_vector[channel][bin],
-                             ptr_out_buf[channel * num_samples_out + bin]);
+              pstr_dec_data->str_usac_data.time_sample_vector[channel][s] =
+                  ia_add_flt(pstr_dec_data->str_usac_data.time_sample_vector[channel][s],
+                             ptr_out_buf[channel * num_samples_out + s]);
             }
+          }
+          ch_offset += pstr_usac_config->signals_3d.num_hoa_transport_ch;
+        }
+        else if (pstr_usac_config->signals_3d.num_audio_obj != 0)
+        {
+          if (ptr_out_buf != NULL)
+          {
+            for (channel = 0; channel < *num_channel_out; channel++)
+            {
+              for (s = 0; s < num_samples_out; s++)
+              {
+                pstr_dec_data->str_usac_data.time_sample_vector[channel][s] =
+                    ia_add_flt(ptr_out_buf_hoa[channel * num_samples_out + s],
+                               ptr_out_buf[channel * num_samples_out + s]);
+              }
+            }
+          }
+          else
+          {
+            ptr_out_buf = ptr_out_buf_hoa + *num_channel_out * num_samples_out;
           }
           ch_offset += pstr_usac_config->signals_3d.num_hoa_transport_ch;
         }
@@ -2213,7 +2287,7 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
         {
           for (channel = 0; channel < *num_channel_out; channel++)
           {
-            ia_core_coder_mem_cpy(&ptr_out_buf[channel * num_samples_out],
+            ia_core_coder_mem_cpy(&ptr_out_buf_hoa[channel * num_samples_out],
                                   pstr_dec_data->str_usac_data.time_sample_vector[channel],
                                   num_samples_out);
           }
@@ -2255,7 +2329,7 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
  *
  *  \brief MPEG-H 3D Audio Low Complexity Profile main decoder function.
  *
- *  \param [in/out] temp_handle     Pointer to decoder API handle.
+ *  \param [in,out] temp_handle     Pointer to decoder API handle.
  *  \param [in]     inbuffer        Pointer to input buffer.
  *  \param [out]    outbuffer       Pointer to output buffer.
  *  \param [out]    out_bytes       Pointer to number of output bytes variables.
@@ -2277,7 +2351,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
   WORD32 preroll_counter = 0;
   WORD32 suitable_tracks = 1;
   WORD32 num_samples_out;
-  WORD32 grp, channel, bin, sig, cnt, elemIdx;
+  WORD32 grp, channel, s, sig, cnt, elemIdx;
   WORD32 mhas_offset = 0;
   WORD32 target_loudness;
   WORD32 loudness_norm_flag;
@@ -2559,7 +2633,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
 
             err_code = impeghd_hoa_dec_init(
                 dec_handle_t_ptr, spk_idx, &pstr_asc->ref_spk_layout, sampling_frequency,
-                mpegh_dec_handle->mpeghd_scratch_mem_v, pstr_asc->mpegh_profile_lvl);
+                mpegh_dec_handle->mpeghd_scratch_mem_v, str_usac_dec_config->mpegh_profile_lvl);
             if (IA_MPEGH_DEC_NO_ERROR != err_code)
             {
               return err_code;
@@ -2718,9 +2792,9 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
           {
             FLOAT32 *ptr_samples =
                 pstr_dec_data->binaural_handle.ptr_binaural_signal_out_renderer[grp];
-            for (bin = 0; bin < num_samples_processed; bin++)
+            for (s = 0; s < num_samples_processed; s++)
             {
-              ptr_samples[bin] = ia_mul_flt(ptr_samples[bin], 32768.0f);
+              ptr_samples[s] = ia_mul_flt(ptr_samples[s], 32768.0f);
             }
             pstr_dec_data->ptr_binaural_output[grp] = ptr_samples;
           }
@@ -2814,7 +2888,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
  *  \brief UniDRC decoder initalization.
  *
  *  \param [in]     pstr_asc                   Pointer to audio specific config structure.
- *  \param [in/out] pstr_dec_data              Pointer to decoder data structure.
+ *  \param [in,out] pstr_dec_data              Pointer to decoder data structure.
  *  \param [in]     preset_id                  Preset id value obtained from command line.
  *  \param [in]     group_id_requested         Group IDs
  *  \param [in]     group_preset_id_requested  Group preset IDs
@@ -2954,7 +3028,7 @@ IA_ERRORCODE impeghd_uni_drc_dec_asi_init(ia_audio_specific_config_struct *pstr_
  *  \brief UniDRC decoder initalization.
  *
  *  \param [in]     pstr_audio_specific_config Pointer to audio specific config structure.
- *  \param [in/out] pstr_dec_data              Pointer to decoder data structure.
+ *  \param [in,out] pstr_dec_data              Pointer to decoder data structure.
  *  \param [in]     tgt_loudness               Target loudness value.
  *  \param [in]     loud_norm_flag             Flag indicating presence of command line loudness
  *                                          normalization info.
@@ -3187,7 +3261,7 @@ IA_ERRORCODE impeghd_uni_drc_dec_init(ia_audio_specific_config_struct *pstr_audi
         pstr_dec_data->str_drc_payload.str_bitstream_dec.ia_drc_params_struct;
     err_code = impd_drc_parse_config(pstr_dec_data->str_drc_payload.pstr_drc_config,
                                      &pstr_usac_cfg->str_loudness_info, &it_bit_buff,
-                                     &pstr_usac_cfg->uni_drc_bs_params);
+                                     &pstr_usac_cfg->uni_drc_bs_params, pstr_mae_asi);
     if (err_code != IA_MPEGH_DEC_NO_ERROR)
     {
       return err_code;
@@ -3203,7 +3277,7 @@ IA_ERRORCODE impeghd_uni_drc_dec_init(ia_audio_specific_config_struct *pstr_audi
         pstr_dec_data->str_drc_payload.str_bitstream_dec.ia_drc_params_struct;
     err_code = impd_drc_parse_config(pstr_dec_data->str_drc_payload.pstr_drc_config,
                                      &pstr_usac_cfg->str_loudness_info, &it_bit_buff,
-                                     &pstr_usac_cfg->uni_drc_bs_params);
+                                     &pstr_usac_cfg->uni_drc_bs_params, pstr_mae_asi);
 
     if (err_code != IA_MPEGH_DEC_NO_ERROR)
     {
@@ -3219,8 +3293,8 @@ IA_ERRORCODE impeghd_uni_drc_dec_init(ia_audio_specific_config_struct *pstr_audi
         pstr_usac_dec_cfg->usac_cfg_ext_info_len[pstr_usac_dec_cfg->loudness_ext_config_idx]);
     it_bit_buff.xmpeghd_jmp_buf = pstr_dec_data->dec_bit_buf.xmpeghd_jmp_buf;
 
-    err_code =
-        impd_drc_mpegh3da_parse_loudness_info_set(&pstr_drc_payload->str_loud_info, &it_bit_buff);
+    err_code = impd_drc_mpegh3da_parse_loudness_info_set(&pstr_drc_payload->str_loud_info,
+                                                         &it_bit_buff, pstr_mae_asi);
     if (err_code != IA_MPEGH_DEC_NO_ERROR)
     {
       return err_code;

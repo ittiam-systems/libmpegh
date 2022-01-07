@@ -121,7 +121,7 @@ impeghd_hoa_ren_space_positions_init_with_surround(ia_render_hoa_space_positions
  *
  *  \brief Initialize space position with parameters
  *
- *  \param [in/out]  spc_handle  HOA renderer space position handle
+ *  \param [in,out]  spc_handle  HOA renderer space position handle
  *  \param [in]    spk_idx    Speaker index
  *  \param [in]    force_lfe  LFE flag
  *
@@ -249,7 +249,7 @@ impeghd_hoa_ren_space_positions_init_with_param(ia_render_hoa_space_positions_st
  *  \param [out]  spc_handle    Handle to be initialized
  *  \param [in]    handle_original  Original handle
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_ren_space_positions_init_pos(ia_render_hoa_space_positions_str *spc_handle,
@@ -270,7 +270,7 @@ VOID impeghd_hoa_ren_space_positions_init_pos(ia_render_hoa_space_positions_str 
  *  \param [in]    r    2D handling flag
  *  \param [in]    scratch  Pointer to scratch buffer for intermediate processing
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_ren_space_positions_add_poles(pVOID handle, FLOAT32 r, pVOID scratch)
@@ -481,7 +481,7 @@ IA_ERRORCODE impeghd_hoa_ren_space_positions_convert_copy_to_spherical(
  *  \param [out]  min_inc  Minimum inclination
  *  \param [in]    scratch Pointer to scratch buffer for intermediate processing
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_ren_space_positions_get_max_min_inclination(pVOID handle, pFLOAT32 max_inc,

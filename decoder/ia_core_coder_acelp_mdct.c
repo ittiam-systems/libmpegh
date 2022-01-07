@@ -73,7 +73,7 @@
  *  \param [in]  nlength         Length of input.
  *  \param [in]  ptr_pre_cos_sin Pointer to cos sin values used by pretwiddle function.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_pre_twid(FLOAT32 *in, FLOAT32 *r_ptr, FLOAT32 *i_ptr, WORD32 nlength,
@@ -118,7 +118,7 @@ static VOID ia_core_coder_pre_twid(FLOAT32 *in, FLOAT32 *r_ptr, FLOAT32 *i_ptr, 
  *  \param [in]  nlength          Length of the FFT
  *  \param [in]  ptr_post_cos_sin Pointer to cosine sine values used by the function.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_post_twid(FLOAT32 *data_re, FLOAT32 *data_im, FLOAT32 *out,
@@ -222,7 +222,7 @@ IA_ERRORCODE ia_core_coder_acelp_mdct(FLOAT32 *ptr_in, FLOAT32 *ptr_out, WORD32 
  *
  *  \brief ACELP MDCT main function.
  *
- *  \param [in/out] usac_data     Pointer to USAC data structure.
+ *  \param [in,out] usac_data     Pointer to USAC data structure.
  *  \param [in]     ptr_in        Pointer to input buffer.
  *  \param [out]    ptr_out       Pointer to output buffer.
  *  \param [in]     l             MDCT length related parameter.

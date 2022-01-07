@@ -41,12 +41,12 @@
 /**
  *  impeghd_mp4_get_mael
  *
- *  \brief Brief description   Function to parse mael box
+ *  \brief Function to parse mael box
  *
- *  \param ptr_read_buff              pointer to bit buffer
- *  \param ptr_mae_audio_scene_info   pointer to asi struct
+ *  \param [in]  ptr_read_buff              pointer to bit buffer
+ *  \param [out] ptr_mae_audio_scene_info   pointer to asi struct
  *
- *  \return
+ *
  *
  */
 VOID impeghd_mp4_get_mael(ia_bit_buf_struct *ptr_read_buff,
@@ -157,12 +157,12 @@ VOID impeghd_mp4_get_mael(ia_bit_buf_struct *ptr_read_buff,
 /**
  *  impeghd_mp4_get_maep
  *
- *  \brief Brief description   Function to parse maep box
+ *  \brief Function to parse maep box
  *
- *  \param ptr_read_buff              pointer to bit buffer
- *  \param ptr_mae_audio_scene_info   pointer to asi struct
+ *  \param [in]  ptr_read_buff              pointer to bit buffer
+ *  \param [out] ptr_mae_audio_scene_info   pointer to asi struct
  *
- *  \return
+ *
  *
  */
 VOID impeghd_mp4_get_maep(ia_bit_buf_struct *ptr_read_buff,
@@ -229,12 +229,12 @@ VOID impeghd_mp4_get_maep(ia_bit_buf_struct *ptr_read_buff,
 /**
  *  impeghd_mp4_get_maes
  *
- *  \brief Brief description  Function to parse maes box
+ *  \brief Function to parse maes box
  *
- *  \param ptr_read_buff              pointer to bit buffer
- *  \param ptr_mae_audio_scene_info   pointer to asi struct
+ *  \param [in]  ptr_read_buff              pointer to bit buffer
+ *  \param [out] ptr_mae_audio_scene_info   pointer to asi struct
  *
- *  \return
+ *
  *
  */
 VOID impeghd_mp4_get_maes(ia_bit_buf_struct *ptr_read_buff,
@@ -273,12 +273,12 @@ VOID impeghd_mp4_get_maes(ia_bit_buf_struct *ptr_read_buff,
 /**
  *  impeghd_mp4_get_maeg
  *
- *  \brief Brief description  Function to parse maeg box
+ *  \brief Function to parse maeg box
  *
- *  \param ptr_read_buff              pointer to bit buffer
- *  \param ptr_mae_audio_scene_info   pointer to asi struct
+ *  \param [in]  ptr_read_buff              pointer to bit buffer
+ *  \param [out] ptr_mae_audio_scene_info   pointer to asi struct
  *
- *  \return
+ *
  *
  */
 VOID impeghd_mp4_get_maeg(ia_bit_buf_struct *ptr_read_buff,

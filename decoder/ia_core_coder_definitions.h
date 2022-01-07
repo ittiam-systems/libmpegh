@@ -35,8 +35,8 @@
 #ifndef IA_CORE_CODER_DEFINITIONS_H
 #define IA_CORE_CODER_DEFINITIONS_H
 
-#define LIBNAME "IA_MPEG_H_LC_DEC"
-#define LIBVERSION "1.0"
+#define LIBNAME "IA_MPEG_H_3D_AUD_DEC"
+#define LIBVERSION "1.1"
 
 #define LIB_APIVERSION_MAJOR 1
 #define LIB_APIVERSION_MINOR 10
@@ -60,4 +60,4 @@
 #define OUT_BUF_SIZE                                                                             \
   (MAX_USAC_CH * MAX_PREROLL_FRAMES * MAX_OUT_SAMPLES_PER_FRAME * MAX_OUTPUT_PCM_SIZE *          \
    MAX_RESAMPLER_RATIO)
-#endif /* __DEFINITIONS_H__ */
+#endif /* IA_CORE_CODER_DEFINITIONS_H */

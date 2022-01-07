@@ -60,7 +60,7 @@
  *  \param [in] fcross_norm_l Normalized crossover frequency low
  *  \param [in] fcross_norm_h Normalized crossover frequency high
  *
- *  \return VOID
+ *
  *
  */
 static VOID impd_drc_generate_slope(FLOAT32 *response, WORD32 sub_bands_count,

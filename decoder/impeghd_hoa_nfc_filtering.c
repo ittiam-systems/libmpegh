@@ -53,12 +53,12 @@
  *
  *  \brief Filter second order cell of near field compensation
  *
- *  \param [in/out] handle	Second order cell handle
+ *  \param [in,out] handle	Second order cell handle
  *  \param [in]     x		Input array
  *  \param [out]    y		Output array
  *  \param [in]     length		Length of array
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_hoa_ren_iir_ord_2_filter(pVOID handle, pFLOAT32 x, pFLOAT32 y, WORD32 length)
@@ -85,12 +85,12 @@ static VOID impeghd_hoa_ren_iir_ord_2_filter(pVOID handle, pFLOAT32 x, pFLOAT32 
  *
  *  \brief Filter first order cell of near field compensation
  *
- *  \param [in/out]	handle	First order cell handle
+ *  \param [in,out]	handle	First order cell handle
  *  \param [in]		x		Input array
  *  \param [out]	y		Output array
  *  \param [in]		length		Length of array
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_hoa_ren_iir_ord_1_filter(pVOID handle, pFLOAT32 x, pFLOAT32 y, WORD32 length)
@@ -113,11 +113,11 @@ static VOID impeghd_hoa_ren_iir_ord_1_filter(pVOID handle, pFLOAT32 x, pFLOAT32 
  *
  *  \brief Set near field compensation parameters
  *
- *  \param [in/out]	handle	Near field compensation handle
+ *  \param [in,out]	handle	Near field compensation handle
  *  \param [in]		tnfc	Near field compensation time array
  *  \param [in]		tnfs	Near field scanner time array
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_ren_nfc_set_filter_params(pVOID handle, FLOAT32 tnfc, FLOAT32 tnfs)
@@ -190,12 +190,12 @@ VOID impeghd_hoa_ren_nfc_set_filter_params(pVOID handle, FLOAT32 tnfc, FLOAT32 t
  *
  *  \brief Filter near field compensation
  *
- *  \param [in/out]	handle	Near field compensation filter handle
+ *  \param [in,out]	handle	Near field compensation filter handle
  *  \param [in]		x		Input array
- *  \param [in/out]	y		Input and output array, inplace processing
+ *  \param [in,out]	y		Input and output array, inplace processing
  *  \param [in]		length		Length of array
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_ren_nfc_filter_apply(pVOID handle, pFLOAT32 x, pFLOAT32 y, UWORD32 length)

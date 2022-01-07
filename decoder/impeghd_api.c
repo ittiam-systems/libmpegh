@@ -124,7 +124,7 @@
  *
  *  \brief Map the sample rate converter up,down ratios based on configuration
  *
- *  \param [in/out] ptr_config Pointer to decoder configuration structure
+ *  \param [in,out] ptr_config Pointer to decoder configuration structure
  *
  *  \return IA_ERRORCODE       Processing error if any
  *
@@ -214,7 +214,7 @@ IA_ERRORCODE impeghd_resampler_get_sampling_ratio(ia_mpegh_dec_config_struct *pt
  *
  *  \param [out] p_obj_mpegh_dec Pointer to decoder handle structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_set_default_config(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
@@ -320,8 +320,8 @@ static IA_ERRORCODE impeghd_set_config_params(ia_mpegh_dec_api_struct *p_obj_mpe
  *
  *  \brief Allocate memory and assign the pointers with allocated mem
  *
- *  \param [in/out] p_obj_mpegh_dec Pointer to decoder handle structure
- *  \param [in/out] ptr_out_cfg      Pointer to input-output config structure
+ *  \param [in,out] p_obj_mpegh_dec Pointer to decoder handle structure
+ *  \param [in,out] ptr_out_cfg      Pointer to input-output config structure
  *
  *  \return IA_ERRORCODE             Processing error if any
  *
@@ -394,9 +394,9 @@ static IA_ERRORCODE impeghd_alloc_and_assign_mem(ia_mpegh_dec_api_struct *p_obj_
  *
  *  \brief Fills the mem tables with size, alignment and type info
  *
- *  \param [in/out] p_obj_mpegh_dec Pointer to decoder handle structure
+ *  \param [in,out] p_obj_mpegh_dec Pointer to decoder handle structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_fill_mpeghd_mem_tables(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
@@ -446,7 +446,7 @@ static VOID ia_core_coder_fill_mpeghd_mem_tables(ia_mpegh_dec_api_struct *p_obj_
  *  \param [in]  p_obj_mpegh_dec   Pointer to decoder handle structure
  *  \param [out] pstr_output_config Pointer to input config structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_update_output_config(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
@@ -464,7 +464,7 @@ static VOID impeghd_update_output_config(ia_mpegh_dec_api_struct *p_obj_mpegh_de
  *
  *  \brief Get library identification strings
  *
- *  \param [in/out] pv_output Pointer to output config structure
+ *  \param [in,out] pv_output Pointer to output config structure
  *
  *  \return IA_ERRORCODE      Processing error if any
  *
@@ -486,8 +486,8 @@ IA_ERRORCODE ia_mpegh_dec_get_lib_id_strings(pVOID pv_output)
  *
  *  \brief Create decoder object
  *
- *  \param [in/out] pv_input  Pointer to input config structure
- *  \param [in/out] pv_output Pointer to output config structure
+ *  \param [in,out] pv_input  Pointer to input config structure
+ *  \param [in,out] pv_output Pointer to output config structure
  *
  *  \return IA_ERRORCODE      Processing error if any
  *
@@ -581,9 +581,9 @@ IA_ERRORCODE ia_mpegh_dec_create(pVOID pv_input, pVOID pv_output)
  *
  *  \brief Initialize the decoder object
  *
- *  \param [in/out] p_ia_mpegh_dec_obj  Pointer to the decoder object
- *  \param [in/out] pv_input  Pointer to input config structure
- *  \param [in/out] pv_output Pointer to output config structure
+ *  \param [in,out] p_ia_mpegh_dec_obj  Pointer to the decoder object
+ *  \param [in,out] pv_input  Pointer to input config structure
+ *  \param [in,out] pv_output Pointer to output config structure
  *
  *  \return IA_ERRORCODE      Processing error if any
  *
@@ -626,7 +626,8 @@ IA_ERRORCODE ia_mpegh_dec_init(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOID p
       ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_ei_buf,
                                         pstr_input_config->ei_info_size);
       bit_buf_str.xmpeghd_jmp_buf = &ei_jmp_buf;
-      err_code = impeghd_ele_interaction(&bit_buf_str, ptr_ele_interaction);
+      err_code = impeghd_ele_interaction(&bit_buf_str, ptr_ele_interaction,
+                                         &pstr_audio_specific_config->str_mae_asi);
       if (err_code != IA_MPEGH_DEC_NO_ERROR)
       {
         return err_code;
@@ -652,7 +653,9 @@ IA_ERRORCODE ia_mpegh_dec_init(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOID p
       ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_ls_buf,
                                         pstr_input_config->lsi_info_size);
       bit_buf_str.xmpeghd_jmp_buf = &lsi_jmp_buf;
-      err_code = impeghd_3da_local_setup_information(&bit_buf_str, ptr_ele_interface);
+      err_code = impeghd_3da_local_setup_information(
+          &bit_buf_str, ptr_ele_interface,
+          pstr_audio_specific_config->str_usac_config.signals_3d);
       if (err_code)
       {
         pstr_output_config->i_bytes_consumed = 1;
@@ -976,9 +979,9 @@ IA_ERRORCODE ia_mpegh_dec_init(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOID p
  *
  *  \brief Execute decoding preocess
  *
- *  \param [in/out] p_ia_mpegh_dec_obj  Pointer to the decoder object
- *  \param [in/out] pv_input  Pointer to input config structure
- *  \param [in/out] pv_output Pointer to output config structure
+ *  \param [in,out] p_ia_mpegh_dec_obj  Pointer to the decoder object
+ *  \param [in,out] pv_input  Pointer to input config structure
+ *  \param [in,out] pv_output Pointer to output config structure
  *
  *  \return IA_ERRORCODE      Processing error if any
  *
@@ -1117,7 +1120,7 @@ IA_ERRORCODE ia_mpegh_dec_execute(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOI
  *
  *  \brief Deletes the decoder object
  *
- *  \param [in/out] pv_output Pointer to output config structure
+ *  \param [in,out] pv_output Pointer to output config structure
  *
  *  \return IA_ERRORCODE      Processing error if any
  *
@@ -1223,7 +1226,7 @@ ia_core_coder_decoder_flush_api(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
  *
  *  \brief Initialize the decoder
  *
- *  \param [in/out] p_obj_mpegh_dec Pointer to decoder handle structure
+ *  \param [in,out] p_obj_mpegh_dec Pointer to decoder handle structure
  *
  *  \return IA_ERRORCODE            Processing error if any
  *
@@ -1388,7 +1391,7 @@ ia_core_coder_dec_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
  *
  *  \brief Main processing function
  *
- *  \param [in/out] p_obj_mpegh_dec Pointer to decoder handle structure
+ *  \param [in,out] p_obj_mpegh_dec Pointer to decoder handle structure
  *
  *  \return IA_ERRORCODE            Processing error if any
  *

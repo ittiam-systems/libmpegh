@@ -135,7 +135,7 @@ static UWORD16 impeghd_hoa_huffman_decode(ia_bit_buf_struct *ptr_bit_buf, WORD32
  *  \brief Fetch HOA frame data
  *
  *  \param [in]     ptr_bit_buf     Pointer to bit buffer structure
- *  \param [in/out] ptr_frame_data  Pointer to HOA frame structure
+ *  \param [in,out] ptr_frame_data  Pointer to HOA frame structure
  *
  *  \return IA_ERRORCODE  error code
  *
@@ -262,6 +262,8 @@ IA_ERRORCODE impeghd_hoa_frame(ia_bit_buf_struct *ptr_bit_buf,
         }
 
         ptr_frame_data->n_bits_q[i] = ia_core_coder_read_bits_buf(ptr_bit_buf, 4);
+        /*if hoaIndependencyFlag == 1 then the two MSBs of NbitsQ shall not be 00 binary*/
+
         if (((ptr_frame_data->n_bits_q[i] | 0x0000) >> 2) == 0)
         {
           return IA_MPEGH_HOA_INIT_FATAL_INVALID_HOA_NBITSQ;
@@ -448,7 +450,7 @@ IA_ERRORCODE impeghd_hoa_frame(ia_bit_buf_struct *ptr_bit_buf,
  *  \brief Fetch HOA frame vector data
  *
  *  \param [in]     ptr_bit_buf     Pointer to bit buffer structure
- *  \param [in/out] ptr_frame_data  Pointer to HOA frame structure
+ *  \param [in,out] ptr_frame_data  Pointer to HOA frame structure
  *  \param [in]     sig_ch_idx               Vector signal channel index
  *  \param [in]     idx             Vector signal number
  *

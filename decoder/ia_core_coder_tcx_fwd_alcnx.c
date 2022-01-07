@@ -85,7 +85,7 @@ static FLOAT32 ia_core_coder_randomsign(UWORD32 *seed);
  *  \param [in]			a		LPC coeff
  *  \param [out]		ap		Wtd LPC coeff
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_lpc_coeff_wt_apply(FLOAT32 *a, FLOAT32 *ap)
@@ -108,14 +108,14 @@ VOID ia_core_coder_lpc_coeff_wt_apply(FLOAT32 *a, FLOAT32 *ap)
  *
  *  \brief Low freq deemphasis of spectral coeff(Adaptive)
  *
- *  \param [in/out]		x		Spectral coeff
+ *  \param [in,out]		x		Spectral coeff
  *  \param [in]			lg		Subframe length
  *  \param [in]			fb_lpd	FB LPD flag
  *  \param [in]			gains	Output gain of all blocks
  *  \param [in]			gain1	mdct gainL
  *  \param [in]			gain2	mdct gainR
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_low_fq_deemphasis(FLOAT32 *x, WORD32 lg, WORD32 fb_lpd, FLOAT32 *gains,
@@ -198,7 +198,7 @@ static VOID ia_core_coder_low_fq_deemphasis(FLOAT32 *x, WORD32 lg, WORD32 fb_lpd
  *  \brief	Modifies FDP quantization spec
  *
  *  \param [in]			st				lpd_decoder handle
- *  \param [in/out]		out_spec_curr	Spectral coeff
+ *  \param [in,out]		out_spec_curr	Spectral coeff
  *  \param [in]			tcx_quant		TCX quantized spectrum
  *  \param [in]			quant_gain_curr	Quantization gain
  *  \param [in]			i_gain			TCX gain
@@ -206,7 +206,7 @@ static VOID ia_core_coder_low_fq_deemphasis(FLOAT32 *x, WORD32 lg, WORD32 fb_lpd
  *  \param [in]			max_lines		max number of spectral lines
  *  \param [in]			pred_bw			Prediction Bandwidth
  *
- *  \return VOID
+ *
  *
  */
 
@@ -351,7 +351,7 @@ static WORD32 ia_core_coder_get_noise_bw(ia_sfb_info_struct *sfb_info, WORD32 mo
  *  \param [in]			lpc			LPC filter coeff
  *  \param [in]			order		TNS filter order
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tns_lpd_synth_filter(FLOAT32 *spec, WORD32 size, WORD32 direction,
@@ -400,10 +400,10 @@ static VOID ia_core_coder_tns_lpd_synth_filter(FLOAT32 *spec, WORD32 size, WORD3
  *  \brief Prepare LP coeff
  *
  *  \param [in]			filter		TNS filter structure
- *  \param [in/out]		lpc			LPC filter coeff
+ *  \param [in,out]		lpc			LPC filter coeff
  *  \param [in]			coef_res	Coeff residual
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tns_lpd_prepare_lp_coeffs(ia_tns_filter_struct *filter, FLOAT32 *lpc,
@@ -453,10 +453,10 @@ static VOID ia_core_coder_tns_lpd_prepare_lp_coeffs(ia_tns_filter_struct *filter
  *  \param [in]			sub_frame_idx	frame index in a super frame
  *  \param [in]			sub_frame_cnt	Number of subframes
  *  \param [in]			mode			variable dependent on frame length
- *  \param [in/out]		spec_coef		Spectral coeff vector
+ *  \param [in,out]		spec_coef		Spectral coeff vector
  *  \param [in]			len				length
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tns_dec_lpd(ia_sfb_info_struct *sfb_info,
@@ -505,7 +505,7 @@ static VOID ia_core_coder_tns_dec_lpd(ia_sfb_info_struct *sfb_info,
  *  \param [in]			igf_inf_mask		IGF Mask array
  *  \param [in]			coef				Coefficients
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tcx_igf_inf_spec(ia_usac_data_struct *usac_data,
@@ -545,8 +545,8 @@ static VOID ia_core_coder_tcx_igf_inf_spec(ia_usac_data_struct *usac_data,
  *  \param [in]			usac_data			USAC data structure
  *  \param [in]			pstr_td_frame_data	USAC td frame data structure
  *  \param [in]			frame_index			Index of subframe
- *  \param [in/out]		lp_flt_coff_a		LPC filter coeff
- *  \param [in/out]		synth_fb			Fullband Synthesis buffer
+ *  \param [in,out]		lp_flt_coff_a		LPC filter coeff
+ *  \param [in,out]		synth_fb			Fullband Synthesis buffer
  *  \param [in]			lg					Subframe length
  *  \param [in]			st					Lpd_decoder structure
  *  \param [in]			elem_idx				Element index

@@ -75,7 +75,7 @@
  *
  *  \brief Initialize bit buffer structure entries.
  *
- *  \param [i/o] it_bit_buff      Pointer to bit buffer structure.
+ *  \param [in,out] it_bit_buff      Pointer to bit buffer structure.
  *  \param [in]  ptr_bit_buf_base Pointer to bit buffer base.
  *  \param [in]  bit_buf_size     Pointer to bit buffer size.
  *
@@ -106,11 +106,11 @@ ia_bit_buf_struct *ia_core_coder_create_bit_buf(ia_bit_buf_struct *it_bit_buff,
  *
  *  \brief Create bit buffer reading structure.
  *
- *  \param [i/o] it_bit_buff      Pointer to bit buffer handle.
+ *  \param [in,out] it_bit_buff      Pointer to bit buffer handle.
  *  \param [in]  ptr_bit_buf_base Pointer to bit buffer base.
  *  \param [in]  bit_buf_size     Bit buffer size.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_create_init_bit_buf(ia_bit_buf_struct *it_bit_buff, UWORD8 *ptr_bit_buf_base,

@@ -71,7 +71,7 @@
  *
  *  \brief Read range value
  *
- *  \param [in/out] ptr_bit_buf Pointer to bit buffer structure
+ *  \param [in,out] ptr_bit_buf Pointer to bit buffer structure
  *  \param [in]     alphabet_sz Size of alphabet
  *
  *  \return UWORD32 Read range value
@@ -104,7 +104,7 @@ static UWORD32 impeghd_read_range(ia_bit_buf_struct *ptr_bit_buf, UWORD32 alphab
  *
  *  \brief Decode gain value
  *
- *  \param [in/out] ptr_bit_buf Pointer to bit buffer structure
+ *  \param [in,out] ptr_bit_buf Pointer to bit buffer structure
  *  \param [in]     coder       Pointer to gain coder structure
  *
  *  \return FLOAT32 Decoded gain value
@@ -153,7 +153,7 @@ static FLOAT32 impeghd_decode_gain(ia_bit_buf_struct *ptr_bit_buf, ia_dmx_mtx_ga
  *
  *  \param [in]   cicp_in   Input CICP index
  *  \param [in]   cicp_out  Outout CICP index
- *  \param [out]  tmpit     Compact template table pointer
+ *  \param [out]  tmplt     Compact template table pointer
  *
  *  \return Error if any
  *
@@ -282,11 +282,11 @@ static IA_ERRORCODE impeghd_convert_to_compact_config(WORD32 num_conf,
  *
  *  \brief Decode flat compact matrix
  *
- *  \param [in/out]   ptr_bit_buf Pointer to bit buffer structure
+ *  \param [in,out]   ptr_bit_buf Pointer to bit buffer structure
  *  \param [out]      mtx         Pointer to matrix data
  *  \param [in]       cnt         Total count of configs
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_decode_flat_compact_mtx(ia_bit_buf_struct *ptr_bit_buf, WORD32 *mtx,
@@ -327,9 +327,9 @@ static VOID impeghd_decode_flat_compact_mtx(ia_bit_buf_struct *ptr_bit_buf, WORD
  *
  *  \brief Decode Equalizer configuration
  *
- *  \param [in/out]   ptr_bit_buf Pointer to bit buffer structure
+ *  \param [in,out]   ptr_bit_buf Pointer to bit buffer structure
  *  \param [out]      ptr_eq_conf Pointer to equalizer config structure
- *  \param [in]       numin_ch    Number of input channels
+ *  \param [in]       num_in_ch   Number of input channels
  *  \param [in]       ptr_scratch Pointer to scratch buffer
  *
  *  \return Error if any
@@ -484,7 +484,7 @@ static FLOAT32 impeghd_peak_filter(ia_eq_pk_filt *filt, FLOAT32 gain, FLOAT32 fr
  *
  *  \brief Generate gain table
  *
- *  \param [in/out]   gain_coder  Pointer to gain coder structure
+ *  \param [in,out]   gain_coder  Pointer to gain coder structure
  *
  *  \return Error if any
  *
@@ -572,9 +572,9 @@ static IA_ERRORCODE impeghd_generate_gain_table(ia_dmx_mtx_gain_coder_t *gain_co
  *
  *  \brief Parse, decode Downmix matrix config and Equalizer config. Update dowmix matrix.
  *
- *  \param [in/out]   fc_params   Pointer to format converter params structure
- *  \param [in/out]   params      Pointer to dowmix matrix params structure
- *  \param [in/out]   ptr_bit_buf Pointer to bit buffer structure
+ *  \param [in,out]   fc_params   Pointer to format converter params structure
+ *  \param [in,out]   params      Pointer to dowmix matrix params structure
+ *  \param [in,out]   ptr_bit_buf Pointer to bit buffer structure
  *  \param [in]       ptr_scratch Pointer to scratch buffer
  *
  *  \return Error if any

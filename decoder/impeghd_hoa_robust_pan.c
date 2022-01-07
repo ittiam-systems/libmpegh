@@ -73,7 +73,7 @@
  *
  *  \brief Initialze robust panning
  *
- *  \param [in/out]  handle  HOA robust panning handle
+ *  \param [in,out]  handle  HOA robust panning handle
  *  \param [in]    scratch Pointer to scratch buffer for intermediate processing
  *
  *  \return IA_ERRORCODE Error code
@@ -157,7 +157,7 @@ static IA_ERRORCODE ia_render_hoa_robust_pan_init(pVOID handle, pVOID scratch)
  *
  *  \brief Initialize robust panning with space position
  *
- *  \param [in/out]  rbs_handle    HOA ronust panning handle
+ *  \param [in,out]  rbs_handle    HOA ronust panning handle
  *  \param [in]    spc_pos_handle  HOA Space position handle
  *  \param [in]    freq      Frequency
  *  \param [in]    mic_radius    Mic radius
@@ -238,7 +238,7 @@ IA_ERRORCODE ia_render_hoa_robust_pan_init_with_spc_positions(
  *
  *  \brief Calculates robust panning gains
  *
- *  \param [in/out]  handle      HOA Robust panning handle
+ *  \param [in,out]  handle      HOA Robust panning handle
  *  \param [in]    spc_pos_handle  HOA Space position handle
  *  \param [in]    beta      Beta value
  *  \param [in]    is_norm      Normalize flag

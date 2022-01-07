@@ -60,7 +60,7 @@
 *
 *  \brief Initializes mp4 parser
 *
-*  \param fp
+*  \param [in] fp Pointer to file context
 *
 *  \return pVOID
 *
@@ -92,8 +92,8 @@ pVOID impeghd_mp4_parser_init(pVOID fp)
 *
 *  \brief Gets audio header
 *
-*  \param mp4_cntxt
-*  \param aud_header
+*  \param [in] mp4_cntxt      Pointer to mp4 context
+*  \param [in,out] aud_header Pointer to audio header context
 *
 *  \return WORD32
 *
@@ -116,7 +116,7 @@ WORD32 impeghd_mp4_get_audio_header(pVOID mp4_cntxt, pVOID aud_header)
 *
 *  \brief Validates stsz
 *
-*  \param mp4_cntxt
+*  \param [in] mp4_cntxt      Pointer to mp4 context
 *
 *  \return WORD32
 *
@@ -161,8 +161,8 @@ WORD32 impeghd_mp4_get_datamp4(VOID *mp4_cntxt, WORD32 *offset, pUWORD8 buffer, 
 *
 *  \brief Gets MP4 audio
 *
-*  \param mp4_cntxt
-*  \param frm_cntxt
+*  \param [in] mp4_cntxt      Pointer to mp4 context
+*  \param [in,out] frm_cntxt  Pointer to frame context
 *
 *  \return WORD32
 *
@@ -193,7 +193,7 @@ WORD32 impeghd_mp4_get_audio(pVOID mp4_cntxt, pVOID frm_cntxt)
 *
 *  \brief Clears the MP4 parser context
 *
-*  \param mp4_cntxt
+*  \param [in] mp4_cntxt      Pointer to mp4 context
 *
 *  \return WORD32
 *

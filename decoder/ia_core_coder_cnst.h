@@ -204,5 +204,6 @@
 #define BPF_DELAY (1) /* Bass postfilter delay (subframe) */
 #define L_EXTRA (96)
 #define LPD_DELAY (NUM_SUBFR_SUPERFRAME_BY2)
+#define MAX_NUM_DM_ID 8
 
 #endif /* IA_CORE_CODER_CNST_H */

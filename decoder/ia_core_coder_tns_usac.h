@@ -36,7 +36,7 @@
 #define IA_CORE_CODER_TNS_USAC_H
 
 #define TNS_MAX_BANDS 49
-#define TNS_MAX_ORDER 31
+#define TNS_MAX_ORDER 15
 #define TNS_MAX_WIN 8
 #define TNS_MAX_FILT 3
 #define TNS_SHORT_NUM_FILT_BITS 1

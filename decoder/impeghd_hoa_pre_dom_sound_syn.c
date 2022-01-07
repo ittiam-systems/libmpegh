@@ -63,7 +63,7 @@
  *
  *  \brief Predominant sound synthesis
  *
- *  \param [in/out]  dec_handle      Spatial decoder handle
+ *  \param [in,out]  dec_handle      Spatial decoder handle
  *  \param [out]  out_pre_dom_sounds  Pre dominant sound array
  *
  *  \return IA_ERRORCODE  Error
@@ -78,7 +78,7 @@ IA_ERRORCODE impeghd_hoa_pre_dom_sound_syn_process(ia_spatial_dec_str *dec_handl
   const ia_hoa_vec_sig_str *vectors = frame_param->vectors;
   const ia_hoa_dir_id_str *active_and_grid_dir_indices = frame_param->active_and_grid_dir_indices;
 
-  UWORD32 sig_indices_set[MAX_HOA_CHANNELS];
+  UWORD32 sig_indices_set[MAX_HOA_CHANNELS] = {0};
   UWORD32 num_sounds = 0;
 
   for (num_sounds = 0; num_sounds < frame_param->num_dir_predom_sounds; num_sounds++)

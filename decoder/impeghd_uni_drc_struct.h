@@ -63,9 +63,11 @@ IA_ERRORCODE impd_drc_read_uni_drc_gain(ia_drc_gain_struct *pstr_uni_drc_gain,
                                         ia_drc_bits_dec_struct *pstr_drc_uni_bs_dec);
 
 IA_ERRORCODE impd_drc_parse_config(ia_drc_config *, ia_drc_loudness_info_set_struct *,
-                                   ia_bit_buf_struct *, ia_drc_params_bs_dec_struct *);
+                                   ia_bit_buf_struct *, ia_drc_params_bs_dec_struct *,
+                                   ia_mae_audio_scene_info *);
 
 IA_ERRORCODE impd_drc_mpegh3da_parse_loudness_info_set(ia_drc_loudness_info_set_struct *,
-                                                       ia_bit_buf_struct *);
+                                                       ia_bit_buf_struct *,
+                                                       ia_mae_audio_scene_info *);
 
 #endif /* IMPEGHD_UNI_DRC_STRUCT_H */

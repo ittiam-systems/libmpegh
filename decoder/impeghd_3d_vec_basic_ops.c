@@ -57,7 +57,7 @@
  *  \param [in]  ptr_polar_coord    Pointer to Polar co-ordinates structure
  *  \param [out] ptr_cart_coord     Pointer to Cartesian co-ordinates structure
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_pol_2_cart(ia_polar_coord_str *ptr_polar_coord, ia_cart_coord_str *ptr_cart_coord)
@@ -80,7 +80,7 @@ VOID impeghd_pol_2_cart(ia_polar_coord_str *ptr_polar_coord, ia_cart_coord_str *
  *  \param [in]  ptr_polar_coord    Pointer to Polar co-ordinates structure
  *  \param [out] ptr_cart_coord     Pointer to Cartesian co-ordinates structure
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_pol_2_cart_degree(ia_polar_coord_str *ptr_polar_coord,
@@ -101,10 +101,10 @@ VOID impeghd_pol_2_cart_degree(ia_polar_coord_str *ptr_polar_coord,
  *
  *  \brief Convert Cartesian to Polar co-ordinates
  *
- *  \param [in]  ptr_polar_coord    Pointer to Polar co-ordinates structure
- *  \param [out] ptr_cart_coord     Pointer to Cartesian co-ordinates structure
+ *  \param [in]  pstr_cart_coord    Pointer to Polar co-ordinates structure
+ *  \param [out] pstr_polar_str     Pointer to Cartesian co-ordinates structure
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_cart_2_pol(ia_cart_coord_str *pstr_cart_coord, ia_polar_coord_str *pstr_polar_str)
@@ -140,7 +140,7 @@ VOID impeghd_cart_2_pol(ia_cart_coord_str *pstr_cart_coord, ia_polar_coord_str *
  *  \param [in]  gain_b         Gain for vector a
  *  \param [out] ptr_vec_res    Pointer to scaled addition output vector
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_scaled_vec_addition_cart(ia_cart_coord_str *ptr_vec_a, FLOAT32 gain_a,

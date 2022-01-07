@@ -32,6 +32,7 @@
 ---------------------------------------------------------------
 */
 
+#include <string.h>
 #include <impeghd_type_def.h>
 #include "ia_core_coder_bitbuffer.h"
 #include "ia_core_coder_cnst.h"
@@ -81,7 +82,7 @@ static IA_ERRORCODE impeghd_mae_parse_description_data(ia_description_data *pstr
     pstr_description_data->num_descr_languages[blk] =
         (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 4) + 1;
 
-    if (pstr_description_data->num_descr_languages[blk] > MAX_NUM_DESCR_LANGUAGES)
+    if (pstr_description_data->num_descr_languages[blk] >= MAX_NUM_DESCR_LANGUAGES)
     {
       pstr_description_data->num_descr_languages[blk] = 0;
       return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_ASI_NUM_DESCRIPTION_LANGUAGES;
@@ -93,6 +94,7 @@ static IA_ERRORCODE impeghd_mae_parse_description_data(ia_description_data *pstr
           ia_core_coder_read_bits_buf(pstr_bit_buf, 24);
       pstr_description_data->descr_data_length[blk][cnt] =
           (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 8) + 1;
+
       for (WORD32 idx = 0; idx < pstr_description_data->descr_data_length[blk][cnt]; idx++)
       {
         pstr_description_data->descr_data[blk][cnt][idx] =
@@ -111,7 +113,7 @@ static IA_ERRORCODE impeghd_mae_parse_description_data(ia_description_data *pstr
  *  \param [out] pstr_content_data   Pointer to content data structure
  *  \param [in]  pstr_bit_buf       Bit buffer handle
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_mae_parse_content_data(ia_content_data *pstr_content_data,
@@ -138,7 +140,7 @@ static VOID impeghd_mae_parse_content_data(ia_content_data *pstr_content_data,
  *  \param [out] pstr_composite_pair   Pointer to composite pair data structure
  *  \param [in]  pstr_bit_buf       Bit buffer handle
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_mae_parse_composite_pair(ia_composite_pair_data *pstr_composite_pair,
@@ -160,7 +162,7 @@ static VOID impeghd_mae_parse_composite_pair(ia_composite_pair_data *pstr_compos
  *  \param [out] pstr_screen_sz_data   Pointer to production screen size data structure
  *  \param [in]  pstr_bit_buf       Bit buffer handle
  *
- *  \return VOID
+ *
  *
  */
 static VOID
@@ -179,12 +181,12 @@ impeghd_mae_parse_prod_screen_sz_data(ia_production_screen_size_data *pstr_scree
 /**
  *  impeghd_mae_parse_prod_screen_sz_data_ext
  *
- *  \brief Brief description        Parse mae production screen size data extension
+ *  \brief Parse mae production screen size data extension
  *
  *  \param [out] pstr_screen_sz_ext_data   Pointer to screen size extension data structure
  *  \param [in]  pstr_bit_buf              Bit buffer handle
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_mae_parse_prod_screen_sz_data_ext(
@@ -238,7 +240,7 @@ static VOID impeghd_mae_parse_prod_screen_sz_data_ext(
  *  \param [in]   pstr_bit_buf    Bit buffer handle
  * handle
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_mae_parse_loudness_comp_data(ia_mae_audio_scene_info *pstr_mae_asi,
@@ -296,12 +298,12 @@ static VOID impeghd_mae_parse_loudness_comp_data(ia_mae_audio_scene_info *pstr_m
 /**
  *  impeghd_mae_parse_drc_user_interface_info
  *
- *  \brief description                  Parse drc user interface of metadata audio element
+ *  \brief Parse drc user interface of metadata audio element
  *
  *  \param [out]  pstr_drc_user_ix_info  DRC user interface handle
  *  \param [in]   pstr_bit_buf        Bit buffer handle
  *
- *  \return VOID
+ *
  *
  */
 static VOID
@@ -331,7 +333,7 @@ impeghd_mae_parse_drc_user_interface_info(ia_drc_user_interface_info *pstr_drc_u
  *  \param [in]   pstr_bit_buf        Bit buffer handle
  *  \param [in]   num_grps        Number of group definition
  *
- *  \return VOID
+ *
  *
  */
 static IA_ERRORCODE impeghd_mae_asi_group_def(ia_mae_group_def *pstr_group_definition,
@@ -383,6 +385,14 @@ static IA_ERRORCODE impeghd_mae_asi_group_def(ia_mae_group_def *pstr_group_defin
       pstr_group_definition[grp].min_gain = (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 6);
       pstr_group_definition[grp].max_gain = (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 5);
     }
+    /* shall be identical for groups contained in the same switch group */
+    for (WORD32 grp1 = grp - 1; grp1 >= 0; grp1--)
+    {
+      if (!memcmp(&pstr_group_definition[grp], &pstr_group_definition[grp1], 10 * sizeof(WORD8)))
+      {
+        return IA_MPEGH_DEC_INIT_FATAL_INVALID_ASI_PARAM;
+      }
+    }
     pstr_group_definition[grp].group_num_members =
         (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 7) + 1;
 
@@ -413,7 +423,7 @@ static IA_ERRORCODE impeghd_mae_asi_group_def(ia_mae_group_def *pstr_group_defin
  *  \param [in]    num_switch_grps        Number of switch group
  * definition
  *
- *  \return VOID
+ *
  *
  */
 static IA_ERRORCODE
@@ -466,7 +476,7 @@ impeghd_mae_asi_switch_group_def(ia_mae_switch_group_def *pstr_switch_group_defi
  *  \param [in]    pstr_bit_buf            Bit buffer handle
  *  \param [in]    num_grp_presets        Number of group preset
  *
- *  \return VOID
+ *
  *
  */
 static IA_ERRORCODE
@@ -492,6 +502,11 @@ impeghd_mae_asi_group_presets_def(ia_mae_group_presets_def *pstr_group_presets_d
         (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 5);
     pstr_group_presets_definition[grp].num_conditions =
         (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 4) + 1;
+
+    if (pstr_group_presets_definition[grp].num_conditions > MAX_GROUP_PRESET_NUM_CONDITIONS)
+    {
+      return IA_MPEGH_DEC_INIT_FATAL_INVALID_PR_GRP_NUM_COND;
+    }
 
     for (WORD32 cnt = 0; cnt < pstr_group_presets_definition[grp].num_conditions; cnt++)
     {
@@ -551,13 +566,13 @@ impeghd_mae_asi_group_presets_def(ia_mae_group_presets_def *pstr_group_presets_d
 /**
  *  impeghd_mae_asi_group_presets_def_ext
  *
- *  \brief Brief description          Parse mae asi group presets definition extension
+ *  \brief Parse mae asi group presets definition extension
  *
  *  \param [out] pstr_grp_presets_ext_definition Pointer to group presets definition structure
  *  \param [in]  pstr_bit_buf                  Bit buffer handle
  *  \param [in]  num_grp_presets               Number of group presets
  *  \param [in]  num_conditions                 Number of conditions
- *  \return VOID
+ *
  *
  */
 static IA_ERRORCODE impeghd_mae_asi_group_presets_def_ext(
@@ -582,6 +597,12 @@ static IA_ERRORCODE impeghd_mae_asi_group_presets_def_ext(
     {
       pstr_grp_presets_ext_definition->num_downmix_id_group_preset_extensions[grp] =
           ia_core_coder_read_bits_buf(pstr_bit_buf, 5) + 1;
+
+      if (pstr_grp_presets_ext_definition->num_downmix_id_group_preset_extensions[grp] >
+          MAX_NUM_DM_ID)
+      {
+        return IA_MPEGH_DEC_INIT_FATAL_INVALID_NUM_DM_ID_GRP_PR_EXT;
+      }
       for (cnt = 0;
            cnt < pstr_grp_presets_ext_definition->num_downmix_id_group_preset_extensions[grp];
            cnt++)
@@ -1349,8 +1370,8 @@ IA_ERRORCODE impeghd_mhas_parse(ia_mhas_pac_info *pstr_pac_info,
     case MHAS_PAC_TYP_LOUDNESS:
     {
       ia_drc_payload_struct str_drc_payload;
-      err_code =
-          impd_drc_mpegh3da_parse_loudness_info_set(&str_drc_payload.str_loud_info, pstr_bit_buf);
+      err_code = impd_drc_mpegh3da_parse_loudness_info_set(&str_drc_payload.str_loud_info,
+                                                           pstr_bit_buf, pstr_mae_asi);
     }
     break;
     default:

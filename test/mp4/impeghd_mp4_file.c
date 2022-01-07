@@ -52,9 +52,9 @@
 *
 *  \brief function for opening file/buffer
 *
-*  \param file_name
-*  \param with_file
-*  \param size
+*  \param [in] file_name Filename
+*  \param [in] with_file With file flag
+*  \param [in] size      Size
 *
 *  \return it_avi_file_ctxt *
 *
@@ -95,10 +95,10 @@ it_avi_file_ctxt *impeghd_mp4_fopen(pUWORD8 file_name, UWORD8 with_file, WORD32 
 *
 *  \brief function for opening file/buffer
 *
-*  \param buffer
-*  \param size
-*  \param count
-*  \param itf
+*  \param [out] buffer Pointer to buffer
+*  \param [in] size   Size
+*  \param [in] count  count
+*  \param [in] itf    Pointer to file context
 *
 *  \return WORD32
 *
@@ -128,9 +128,9 @@ WORD32 impeghd_mp4_fread(pVOID buffer, WORD32 size, WORD32 count, it_avi_file_ct
 *
 *  \brief function for seeking in file/buffer
 *
-*  \param itf
-*  \param offset
-*  \param origin
+*  \param [in] itf    Pointer to file context
+*  \param [in] offset offset
+*  \param [in] origin seek origin
 *
 *  \return WORD32
 *
@@ -167,7 +167,7 @@ WORD32 impeghd_mp4_fseek(it_avi_file_ctxt *itf, WORD32 offset, WORD32 origin)
 *
 *  \brief function for closing file/buffer
 *
-*  \param itf
+*  \param [in] itf Pointer to file context
 *
 *  \return WORD32
 *
@@ -195,7 +195,7 @@ WORD32 impeghd_mp4_fclose(it_avi_file_ctxt *itf)
 *
 *  \brief function for geting current position in file/buffer
 *
-*  \param itf
+*  \param [in] itf Pointer to file context
 *
 *  \return WORD32
 *
@@ -213,7 +213,7 @@ WORD32 impeghd_mp4_ftell(it_avi_file_ctxt *itf)
 *
 *  \brief function to check if end of file is reached
 *
-*  \param itf
+*  \param [in] itf Pointer to file context
 *
 *  \return WORD32
 *
@@ -231,10 +231,10 @@ WORD32 impeghd_mp4_feof(it_avi_file_ctxt *itf)
 *
 *  \brief function to read into buffer
 *
-*  \param buffer
-*  \param size
-*  \param count
-*  \param itf
+*  \param [out] buffer Pointer to buffer
+*  \param [in] size   Size
+*  \param [in] count  count
+*  \param [in] itf   Pointer to file context
 *
 *  \return WORD32
 *
@@ -243,6 +243,18 @@ WORD32 impeghd_mp4_fread_buf(WORD32 **buffer, WORD32 size, WORD32 count, it_avi_
 {
   return impeghd_mp4_fread(*buffer, size, count, itf);
 }
+
+/**
+*  impeghd_mp4_find_mdat
+*
+*  \brief function to find mdat
+*
+*  \param [in] itf    Pointer to file context
+*  \param [out] offset offset
+*
+*  \return WORD32
+*
+*/
 
 WORD32 impeghd_mp4_find_mdat(it_avi_file_ctxt *itf, WORD32 *offset)
 {
@@ -282,6 +294,22 @@ WORD32 impeghd_mp4_find_mdat(it_avi_file_ctxt *itf, WORD32 *offset)
   ret = 0;
   return ret;
 }
+
+/**
+*  impeghd_mp4_read_mdat
+*
+*  \brief function to read mdat
+*
+*  \param [in] itf    Pointer to file context
+*  \param [in] buffer Pointer to buffer
+*  \param [in] buf_size Buffer size
+*  \param [out] size   Size
+*  \param [out] length   Length
+*  \param [out] offset  offset
+*
+*  \return WORD32
+*
+*/
 
 WORD32 impeghd_mp4_read_mdat(it_avi_file_ctxt *itf, pUWORD8 buffer, WORD32 buf_size, WORD32 *size,
                              UWORD32 *length, WORD32 *offset)

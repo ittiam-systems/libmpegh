@@ -68,7 +68,7 @@
  *
  *  \brief Read range value
  *
- *  \param [in/out] ptr_bit_buf Pointer to bit buffer structure
+ *  \param [in,out] ptr_bit_buf Pointer to bit buffer structure
  *  \param [in]     alphabet_sz Size of alphabet
  *
  *  \return UWORD32 Read range value
@@ -182,14 +182,14 @@ static WORD32 impeghd_find_symmetric_speakers(WORD32 out_cnt, ia_speaker_info_st
  *
  *  \brief Decode HOA matrix data
  *
- *  \param [in/out] ptr_bit_buf     Pointer to bit buffer structure
- *  \param [in/out] ptr_matrix_data Pointer to HOA matrix structure
+ *  \param [in,out] ptr_bit_buf     Pointer to bit buffer structure
+ *  \param [in,out] ptr_matrix_data Pointer to HOA matrix structure
  *  \param [in]     num_hoa_coeff   Number of HOA coefficients
  *  \param [in]     out_cnt         Output count
  *  \param [in]     out_config      Pointer to speaker information structure
  *  \param [out]    hoa_matrix      Pointer to HOA matrix
  *
- *  \return VOID
+ *
  *
  */
 static VOID impegh_decode_hoa_matrix_data(ia_bit_buf_struct *ptr_bit_buf,
@@ -337,14 +337,14 @@ static VOID impegh_decode_hoa_matrix_data(ia_bit_buf_struct *ptr_bit_buf,
  *
  *  \brief Fetch HOA rendering matrix
  *
- *  \param [in/out] ptr_bit_buf     Pointer to bit buffer structure
+ *  \param [in,out] ptr_bit_buf     Pointer to bit buffer structure
  *  \param [out]    ptr_matrix_data Pointer to HOA matrix structure
  *  \param [in]     num_hoa_coeff   Number of HOA coefficients
  *  \param [in]     out_cnt         Output count
  *  \param [out]    out_config      Pointer to speaker information structure
  *  \param [out]    hoa_matrix      Pointer to HOA matrix
  *
- *  \return VOID
+ *
  *
  */
 static IA_ERRORCODE impeghd_hoa_rendering_matrix(ia_bit_buf_struct *ptr_bit_buf,
@@ -515,7 +515,7 @@ static IA_ERRORCODE impeghd_hoa_rendering_matrix(ia_bit_buf_struct *ptr_bit_buf,
  *
  *  \brief Fetch HOA matrix wrapper
  *
- *  \param [in/out] ptr_bit_buf     Pointer to bit buffer structure
+ *  \param [in,out] ptr_bit_buf     Pointer to bit buffer structure
  *  \param [in]     num_hoa_coeff   Number of HOA coefficients
  *  \param [out]    hoa_matrix      Pointer to HOA matrix
  *  \param [out]    ptr_matrix_data Pointer to HOA matrix structure
@@ -552,12 +552,13 @@ static IA_ERRORCODE impeghd_hoa_matrix_wrapper(ia_bit_buf_struct *ptr_bit_buf,
  *
  *  \brief Fetch HOA matrix
  *
- *  \param [in/out] ptr_bit_buf         Pointer to bit buffer structure
+ *  \param [in,out] ptr_bit_buf         Pointer to bit buffer structure
  *  \param [in]     num_hoa_coeff       Number of HOA coefficients
  *  \param [in]     cicp_id             CICP ID
  *  \param [out]    is_matrix_present   Matrix present flag
+ *  \param [out]    ptr_matrix_idx      Matrix index
  *  \param [out]    hoa_matrix          Pointer to HOA matrix
- *  \param [in]     scratch             Pointer to scratch buffer
+ *  \param [in]     ptr_matrix_data     Pointer to matrix struct
  *
  *  \return IA_ERRORCODE                Error
  *

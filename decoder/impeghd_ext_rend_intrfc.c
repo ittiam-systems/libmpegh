@@ -50,8 +50,8 @@
 #include "ia_core_coder_cnst.h"
 #include "ia_core_coder_config.h"
 #include "impeghd_binaural.h"
-#include "impeghd_ele_interaction_intrfc.h"
 #include "impeghd_mhas_parse.h"
+#include "impeghd_ele_interaction_intrfc.h"
 #include "impeghd_3d_vec_struct_def.h"
 #include "impeghd_cicp_defines.h"
 #include "impeghd_cicp_struct_def.h"
@@ -232,7 +232,7 @@ static IA_ERRORCODE impeghd_write_speaker_config_3d(ia_write_bit_buf_struct *pst
 * structure
 *  \param [in]  pstr_3d_signals      Pointer to 3d signals
 *
-*  \return VOID
+*
 *
 */
 static VOID
@@ -289,7 +289,7 @@ impeghd_write_goa_prod_meta_data_for_ext_ren(ia_write_bit_buf_struct *pstr_bit_b
 * structure
 *  \param [in]  pstr_prod_meta_data   Pointer to prod metadata struct
 *
-*  \return VOID
+*
 *
 */
 static VOID
@@ -313,7 +313,7 @@ impeghd_write_gha_prod_meta_data_for_ext_ren(ia_write_bit_buf_struct *pstr_bit_b
 *  \param [in]  ptr_ext_dmx_cfg			 Pointer to downmix config struct
 *  \param [in]  ui_cicp_layout_idx   cicp layout index
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_write_downmix_cfg(ia_write_bit_buf_struct *pstr_bit_buf,
@@ -639,7 +639,7 @@ IA_ERRORCODE impeghd_write_oam_meta_data_for_ext_ren(
 * structure
 *  \param [in]  ptr_mae_prod_scrnsize_data       Pointer to screen size data struct
 *
-*  \return VOID
+*
 *
 */
 static VOID
@@ -664,7 +664,7 @@ impeghd_write_mae_prod_screen_size(ia_write_bit_buf_struct *pstr_bit_buf,
 * structure
 *  \param [in]  ptr_mae_prod_screen_szdata_ext       Pointer to screen size data ext struct
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_write_mae_prod_screen_size_dataext(
@@ -818,9 +818,9 @@ IA_ERRORCODE impeghd_write_hoa_matrix_wrapper(ia_write_bit_buf_struct *pstr_bit_
 *
 *  \param [out]  pstr_bit_buf          Pointer to input configuration
 * structure
-*  \param [i/o] pstr_usac_config        Pointer to usac config struct
+*  \param [in,out] pstr_usac_config        Pointer to usac config struct
 *  \param [in]  pstr_3d_signals      Pointer to 3d signals struct
-*  \param [i/o] pstr_mae_asi         Pointer to audio scene info struct
+*  \param [in,out] pstr_mae_asi         Pointer to audio scene info struct
 *
 *  \return IA_ERRORCODE              Error code
 *

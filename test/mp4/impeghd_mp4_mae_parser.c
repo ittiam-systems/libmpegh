@@ -36,10 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <impeghd_type_def.h>
-#include "ia_core_coder_bitbuffer.h"
-#include "ia_core_coder_cnst.h"
 #include "impeghd_memory_standards.h"
-#include "impeghd_mhas_parse.h"
 #include "impeghd_mp4_file.h"
 #include "impeghd_mp4_utils.h"
 #include "impeghd_mp4_odf.h"
@@ -56,9 +53,9 @@
 *
 *  \brief function to read into buffer
 *
-*  \param itf
-*  \param offset
-*  \param stsz_size
+*  \param [in]  itf       Pointer to file context
+*  \param [out] offset    offset
+*  \param [out] stsz_size stsz size
 *
 *  \return WORD32
 *
@@ -110,7 +107,10 @@ IA_ERRORCODE impeghd_mp4_find_stsz(it_avi_file_ctxt *itf, WORD32 *offset, WORD32
 /**
 *  impeghd_mp4_parse_mae_boxes
 *
-*  \brief Brief description
+*  \brief function to parse mae boxes
+*
+*  \param [out] g_pf_inp_str   Input file pointer
+*  \param [out] ptr_dec_api    Pointer to api struct
 *
 *  \return IA_ERRORCODE
 *

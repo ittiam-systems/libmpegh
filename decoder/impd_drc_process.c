@@ -62,7 +62,7 @@
  *  \param [in] impd_apply_gains  apply gain flag
  *  \param [in] sel_drc_idx  drc index
  *
- *  \return VOID
+ *
  *
  */
 static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_dec,
@@ -513,8 +513,8 @@ IA_ERRORCODE impd_drc_filter_banks_process(FLOAT32 *audio_io_buf[],
  *
  *  \brief DRC time domain process function
  *
- *  \param [in/out]  audio_in_out_buf   audio buffer
- *  \param [in/out]  pstr_drc_gain_dec   Pointer to drc gain decode structure
+ *  \param [in,out]  audio_in_out_buf   audio buffer
+ *  \param [in,out]  pstr_drc_gain_dec   Pointer to drc gain decode structure
  *  \param [in]  pstr_drc_config   Pointer to drc config structure
  *  \param [in]  pstr_drc_gain   Pointer to drc gain structure
  *  \param [in]  ln_gain_db   loudness normalization gain in db
@@ -594,9 +594,9 @@ IA_ERRORCODE impd_drc_td_process(FLOAT32 *audio_in_out_buf[],
  *
  *  \brief DRC frequency domain process function
  *
- *  \param [in/out]  audio_real_buff   audio buffer real
- *  \param [in/out]  audio_imag_buff   audio buffer imag
- *  \param [in/out]  pstr_drc_gain_dec   Pointer to drc gain decode structure
+ *  \param [in,out]  audio_real_buff   audio buffer real
+ *  \param [in,out]  audio_imag_buff   audio buffer imag
+ *  \param [in,out]  pstr_drc_gain_dec   Pointer to drc gain decode structure
  *  \param [in]  pstr_drc_config   Pointer to drc config structure
  *  \param [in]  pstr_drc_gain   Pointer to drc gain structure
  *  \param [in]  ln_gain_db   loudness normalization gain in db

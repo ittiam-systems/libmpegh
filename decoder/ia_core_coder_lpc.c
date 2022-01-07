@@ -71,9 +71,9 @@
  *
  *  \brief Reset acelp data
  *
- *  \param [in/out]    usac_data      USAC data structure
- *  \param [in/out]    st          LPD decoder handle
- *  \param [in/out]    td_config      TD configuration handle
+ *  \param [in,out]    usac_data      USAC data structure
+ *  \param [in,out]    st          LPD decoder handle
+ *  \param [in,out]    td_config      TD configuration handle
  *  \param [in]    ptr_overlap_buf    Overlap buffer
  *  \param [in]    was_last_short    Flag to check if last frame was short
  *  \param [in]    chn          Channel being processed
@@ -244,7 +244,7 @@ IA_ERRORCODE ia_core_coder_init_acelp_data(ia_usac_data_struct *usac_data,
  *  \param [in]    lsf    Input LSF coeff
  *  \param [out]  lsp    Output LSP coeff
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_lsf_2_lsp_conversion(FLOAT32 *lsf, FLOAT32 *lsp) //, WORD32 m)
@@ -266,7 +266,7 @@ static VOID ia_core_coder_lsf_2_lsp_conversion(FLOAT32 *lsf, FLOAT32 *lsp) //, W
  *  \param [in]      fac_fb      fblpd factor
  *  \param [in]      pitch      pitch perios ofr akk subframe
  *  \param [in]      pitch_gain    pitch gain for all subframes
- *  \param [in/out]    synth_out    Filtered synthesized output signal
+ *  \param [in,out]    synth_out    Filtered synthesized output signal
  *  \param [in]      len_fr      frame length
  *  \param [in]      len2      subframe length
  *  \param [in]      bpf_prev    Previous bpf state
@@ -423,9 +423,9 @@ IA_ERRORCODE ia_core_coder_bass_post_filter(FLOAT32 *synth_sig, FLOAT32 *synth_f
  *
  *  \brief Performs preemphesis and residual tools part of lpd decoder
  *
- *  \param [in/out]    usac_data      USAC data structure
- *  \param [in/out]    st          LPD decoder handle
- *  \param [in/out]    pstr_td_frame_data  TD frame data structure
+ *  \param [in,out]    usac_data      USAC data structure
+ *  \param [in,out]    st          LPD decoder handle
+ *  \param [in,out]    pstr_td_frame_data  TD frame data structure
  *  \param [in]        td_config          TD Config structure handle
  *  \param [in]      short_fac_flag    short fac flag read from bitstream
  *  \param [in]        tmp_scratch        Pointer to temporary scratch
@@ -574,11 +574,11 @@ static IA_ERRORCODE ia_core_coder_lpd_dec_preemph_res(ia_usac_data_struct *usac_
  *
  *  \brief Performs TBE and Resampling as part of lpd decoder
  *
- *  \param [in/out]    usac_data          USAC data structure
- *  \param [in/out]    st                 LPD decoder handle
- *  \param [in/out]    pstr_td_frame_data TD frame data structure
+ *  \param [in,out]    usac_data          USAC data structure
+ *  \param [in,out]    st                 LPD decoder handle
+ *  \param [in,out]    pstr_td_frame_data TD frame data structure
  *  \param [in]        td_config          TD Config structure handle
- *  \param [in/out]    pscr               LPD dec scratch structure handle
+ *  \param [in,out]    pscr               LPD dec scratch structure handle
  *  \param [in]        bpf_control_info   bpf control info flag read from bitstream
  *  \param [in]        lp_filt_coef       Pointer to LP filter coefficients
  *  \param [in]        tmp_scratch        Pointer to temporary scratch
@@ -729,11 +729,11 @@ static IA_ERRORCODE ia_core_coder_lpd_dec_tbe_resample(
  *
  *  \brief Performs TCX MDCT and Resampling as part of lpd decoder
  *
- *  \param [in/out]    usac_data          USAC data structure
- *  \param [in/out]    st                 LPD decoder handle
- *  \param [in/out]    pstr_td_frame_data TD frame data structure
+ *  \param [in,out]    usac_data          USAC data structure
+ *  \param [in,out]    st                 LPD decoder handle
+ *  \param [in,out]    pstr_td_frame_data TD frame data structure
  *  \param [in]        td_config          TD Config structure handle
- *  \param [in/out]    pscr               LPD dec scratch structure handle
+ *  \param [in,out]    pscr               LPD dec scratch structure handle
  *  \param [in]        lp_filt_coef       Pointer to LP filter coefficients
  *  \param [in]        tmp_scratch        Pointer to temporary scratch
  *  \param [in]        synth_fb           Pointer to synth_fb
@@ -847,11 +847,11 @@ static IA_ERRORCODE ia_core_coder_lpd_dec_tcx_resample(
  *
  *  \brief Performs LPD stereo processing as part of lpd decoder
  *
- *  \param [in/out]    usac_data          USAC data structure
- *  \param [in/out]    st                 LPD decoder handle
+ *  \param [in,out]    usac_data          USAC data structure
+ *  \param [in,out]    st                 LPD decoder handle
  *  \param [in]        td_config          TD Config structure handle
  *  \param [in]        fsynth             Pointer to fsynth
- *  \param [in/out]    pscr               LPD dec scratch structure handle
+ *  \param [in,out]    pscr               LPD dec scratch structure handle
  *  \param [in]        synth_fb           Pointer to synth_fb
  *  \param [in]        chan               Channel Number
  *  \param [in]        mode               Frame mode
@@ -961,10 +961,10 @@ static IA_ERRORCODE ia_core_coder_lpd_dec_lpd_stereo_proc(
  *
  *  \brief Performs lpd decoder
  *
- *  \param [in/out]    usac_data      USAC data structure
- *  \param [in/out]    st          LPD decoder handle
- *  \param [in/out]    pstr_td_frame_data  TD frame data structure
- *  \param [in/out]    fsynth        synthesized signal
+ *  \param [in,out]    usac_data      USAC data structure
+ *  \param [in,out]    st          LPD decoder handle
+ *  \param [in,out]    pstr_td_frame_data  TD frame data structure
+ *  \param [in,out]    fsynth        synthesized signal
  *  \param [in]      first_lpd_flag    flag to detect if first LPD frame
  *  \param [in]      short_fac_flag    short fac flag read from bitstream
  *  \param [in]      bpf_control_info  bpf control info flag read from bitstream
@@ -1007,7 +1007,14 @@ IA_ERRORCODE ia_core_coder_lpd_dec(ia_usac_data_struct *usac_data, ia_usac_lpd_d
   len_subfrm = td_config->len_subfrm;
   num_subfr = td_config->num_subfrm;
   num_subfr_in_superfr = td_config->num_frame * num_subfr;
-  num_subfr_by2 = (num_subfr_in_superfr / 2) - 1;
+  if (num_subfr_in_superfr)
+  {
+    num_subfr_by2 = (num_subfr_in_superfr / 2) - 1;
+  }
+  else
+  {
+    num_subfr_by2 = 0;
+  }
   synth_delay = num_subfr_by2 * LEN_SUBFR;
 
   tmp_scratch =
@@ -1151,7 +1158,7 @@ IA_ERRORCODE ia_core_coder_lpd_dec(ia_usac_data_struct *usac_data, ia_usac_lpd_d
 
   if (!bpf_control_info)
   {
-    if (st->bpf_active_prev && pmode[0] != 0)
+    if (st->bpf_active_prev && pmode[0] != 0 && (num_subfr_in_superfr > 1))
     {
       ia_core_coder_memset(&pitch_gain[num_subfr_by2 + 2], num_subfr_in_superfr - 2);
     }
@@ -1174,14 +1181,14 @@ IA_ERRORCODE ia_core_coder_lpd_dec(ia_usac_data_struct *usac_data, ia_usac_lpd_d
  *
  *  \brief Performs final synthesis part updation of fullband
  *
- *  \param [in/out]  signal_out    synthesized output signal
+ *  \param [in,out]  signal_out    synthesized output signal
  *  \param [in]    st        LPD decoder handle
  *  \param [in]    td_config    TD config handle
  *  \param [in]			pscr			Synth end scratch handle
  *  \param [in]			scratch_mem		Scratch buffer used for internal
  * processing
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_synth_end_fullband(FLOAT32 *signal_out, ia_usac_lpd_decoder_handle st,
@@ -1239,12 +1246,12 @@ VOID impeghd_synth_end_fullband(FLOAT32 *signal_out, ia_usac_lpd_decoder_handle 
  *
  *  \brief Performs final synthesis part updation
  *
- *  \param [in/out]  signal_out    synthesized output signal
+ *  \param [in,out]  signal_out    synthesized output signal
  *  \param [in]    st        LPD decoder handle
  *  \param [in]    td_config    TD config handle
  *  \param [in]    scratch_mem    Scratch buffer used for internal processing
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_synth_end(FLOAT32 *signal_out, ia_usac_lpd_decoder_handle st,
@@ -1298,7 +1305,7 @@ static VOID impeghd_synth_end(FLOAT32 *signal_out, ia_usac_lpd_decoder_handle st
  *  \param [in]    i_ch    Channel for processing
  *  \param [in]    elem_idx  element index among number of elements
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_lpd_dec_update(ia_usac_lpd_decoder_handle tddec,
@@ -1391,7 +1398,7 @@ static IA_ERRORCODE ia_core_coder_lpd_bpf_calc_pitch_gain(FLOAT32 *pitch_gain, W
  *
  *  \param [in]    usac_data    USAC data structure
  *  \param [in]    is_short_flag  Flag for short window or not
- *  \param [inout]  out_buffer    output buffer
+ *  \param [in,out]  out_buffer    output buffer
  *  \param [in]    st        LPD handle structure
  *
  *  \return IA_ERRORCODE

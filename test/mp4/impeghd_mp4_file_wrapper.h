@@ -59,4 +59,7 @@ pVOID impeghd_mp4_fopen(pUWORD8 file_name, UWORD8 with_file, WORD32 size);
 WORD32 impeghd_mp4_fclose(pVOID itf);
 WORD32 impeghd_mp4_parse_mae_boxes(ia_file_wrapper *g_pf_inp_str, pVOID ptr_dec_api);
 
+#define MAX_USAC_CH (24)
+#define IN_BUF_SIZE (768 * MAX_USAC_CH + 128)
+
 #endif /* IMPEGHD_MP4_FILE_WRAPPER_H */

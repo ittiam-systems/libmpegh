@@ -42,10 +42,8 @@ typedef struct
   UINT32 channel_configuration;
   ia_usac_config_struct str_usac_config;
   WORD32 cicp_spk_layout_idx;
-  UWORD32 mpegh_profile_lvl;
   ia_speaker_config_3d ref_spk_layout;
   ia_mae_audio_scene_info str_mae_asi;
-
 } ia_audio_specific_config_struct;
 
 typedef struct

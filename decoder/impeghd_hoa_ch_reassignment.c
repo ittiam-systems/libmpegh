@@ -63,7 +63,7 @@
  *
  *  \brief HOA channel reassignment processing
  *
- *  \param [in/out] dec_handle  Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle  Pointer to spatial decoder handle
  *
  *  \return IA_ERRORCODE              Error
  *

@@ -52,10 +52,10 @@
  *
  *  \brief Wrapper memset function.
  *
- *  \param [i/o] ptr_x Pointer to input buffer.
+ *  \param [in,out] ptr_x Pointer to input buffer.
  *  \param [in] n Length of the input buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_memset(FLOAT32 *ptr_x, WORD32 n)
@@ -72,7 +72,7 @@ VOID ia_core_coder_memset(FLOAT32 *ptr_x, WORD32 n)
  *  \param [out] ptr_y Pointer to destination buffer.
  *  \param [in]  n Length of the buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_mem_cpy(const FLOAT32 *ptr_x, FLOAT32 *ptr_y, WORD32 n)
@@ -91,7 +91,7 @@ VOID ia_core_coder_mem_cpy(const FLOAT32 *ptr_x, FLOAT32 *ptr_y, WORD32 n)
  *  \param [out] ptr_z Destination / Output vector
  *  \param [in]  n Length of vector
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_vec_cnst_mul(FLOAT32 a, FLOAT32 *ptr_x, FLOAT32 *ptr_z, WORD32 n)
@@ -118,7 +118,7 @@ VOID ia_core_coder_vec_cnst_mul(FLOAT32 a, FLOAT32 *ptr_x, FLOAT32 *ptr_z, WORD3
  *  \param [in]  transform_kernel_type Transform kernel type indicator
  *  \param [in]  vlen    Vector length parameter.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_windowing_long1(FLOAT32 *ptr_src1, FLOAT32 *ptr_src2,
@@ -166,7 +166,7 @@ VOID ia_core_coder_windowing_long1(FLOAT32 *ptr_src1, FLOAT32 *ptr_src2,
  *  \param [out] ptr_out_buffer Pointer to output buffer.
  *  \param [in]  pstr_drc_offset Pointer to offset data buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_windowing_long2(FLOAT32 *ptr_src1, const FLOAT32 *ptr_win_fwd,
@@ -224,7 +224,7 @@ VOID ia_core_coder_windowing_long2(FLOAT32 *ptr_src1, const FLOAT32 *ptr_win_fwd
  *  \param [in]  ptr_win_rev      Pointer to reverse windowing coefficients buffer.
  *  \param [in]  pstr_drc_offset Pointer to offset data buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_windowing_long3(FLOAT32 *ptr_src1, const FLOAT32 *ptr_win_fwd,
@@ -291,7 +291,7 @@ VOID ia_core_coder_windowing_long3(FLOAT32 *ptr_src1, const FLOAT32 *ptr_win_fwd
  *  \param [out] ptr_fp   Pointer to output buffer.
  *  \param [in]  pstr_drc_offset Pointer to offset data buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_windowing_short1(FLOAT32 *ptr_src1, FLOAT32 *ptr_src2, FLOAT32 *ptr_fp,
@@ -329,7 +329,7 @@ VOID ia_core_coder_windowing_short1(FLOAT32 *ptr_src1, FLOAT32 *ptr_src2, FLOAT3
  *  \param [out] ptr_fp      Pointer to output buffer.
  *  \param [in]  pstr_drc_offset Pointer to offset data buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_windowing_short2(FLOAT32 *ptr_src1, FLOAT32 *ptr_win_fwd, FLOAT32 *ptr_fp,
@@ -377,7 +377,7 @@ VOID ia_core_coder_windowing_short2(FLOAT32 *ptr_src1, FLOAT32 *ptr_win_fwd, FLO
  *  \param [out] ptr_fp      Pointer to output buffer.
  *  \param [in]  n_short Length of the input.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_windowing_short3(FLOAT32 *ptr_src1, FLOAT32 *ptr_win_rev, FLOAT32 *ptr_fp,
@@ -423,7 +423,7 @@ VOID ia_core_coder_windowing_short3(FLOAT32 *ptr_src1, FLOAT32 *ptr_win_rev, FLO
  *  \param [in]  n_short   Length of the data.
  *  \param [in]  flag      Data processing related flag.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_windowing_short4(FLOAT32 *ptr_src1, FLOAT32 *ptr_win_fwd, FLOAT32 *ptr_fp,

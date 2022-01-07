@@ -56,7 +56,7 @@
  *
  *  \brief Utility function to obtain leading zeroes information
  *
- *  \param [in] a Input operand
+ *  \param [in] inp Input operand
  *
  *  \return WORD32 Leading zeros value
  *
@@ -87,7 +87,7 @@ static WORD32 ia_core_coder_cnt_leading_zeroes(WORD32 inp)
  *  \param [in]  input_table Pointer to ROM tables needed for decoding
  *  \param [in]  idx_table   Pointer to index ROM table
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_huffman_decode(WORD32 next_word, WORD16 *h_index, WORD16 *len,

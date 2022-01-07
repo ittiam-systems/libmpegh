@@ -148,7 +148,7 @@ static WORD32 ia_core_coder_get_mode_lpc(WORD32 lpc_set, ia_bit_buf_struct *ptr_
  *  \param [in]  ptr_bit_buf   Pointer to bit buffer structure.
  *  \param [in]  full_band_lpd Flag that indicates full band LPD.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_qn_data(WORD32 nk_mode, WORD32 *ptr_qn, ia_bit_buf_struct *ptr_bit_buf,
@@ -235,13 +235,13 @@ VOID ia_core_coder_qn_data(WORD32 nk_mode, WORD32 *ptr_qn, ia_bit_buf_struct *pt
  *
  *  \brief Compute code book indices.
  *
- *  \param [in/out] pstr_td_frame_data Pointer to time domain frame data.
+ *  \param [in,out] pstr_td_frame_data Pointer to time domain frame data.
  *  \param [in]     nk_mode            Code book nk mode.
  *  \param [in]     ptr_pos            Pointer to position parameter.
  *  \param [in]     ptr_bit_buf        Pointer to bit buffer sturcture.
  *  \param [in]     full_band_lpd      Flag that indicates full band LPD.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_code_book_indices(ia_td_frame_data_struct *pstr_td_frame_data,
@@ -292,11 +292,11 @@ static VOID ia_core_coder_code_book_indices(ia_td_frame_data_struct *pstr_td_fra
  * sequence of superframes.
  *  \param [in]     ptr_mod            Pointer to mode of the previously decoded ACELP frame or
  * TCX frame.
- *  \param [in/out] pstr_td_frame_data Pointer to time domain frame data
+ *  \param [in,out] pstr_td_frame_data Pointer to time domain frame data
  *  \param [in]     ptr_bit_buf        Pointer to bit buffer structure
  *  \param [in]     td_config          Pointer to time domain config structure
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_lpc_data(WORD32 first_lpd_flag, WORD32 *ptr_mod,
@@ -379,7 +379,7 @@ VOID ia_core_coder_lpc_data(WORD32 first_lpd_flag, WORD32 *ptr_mod,
  *  \param [out] ptr_fac_prm Pointer to FAC parameter array.
  *  \param [in]  ptr_bit_buf Pointer to bit buffer structure.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_fac_decoding(WORD32 fac_length, WORD32 k, WORD32 *ptr_fac_prm,
@@ -427,13 +427,13 @@ VOID ia_core_coder_fac_decoding(WORD32 fac_length, WORD32 k, WORD32 *ptr_fac_prm
  *  \brief Extracts all data to decode one frame of ACELP excitation.
  *
  *  \param [in]     k                  Index Parameter.
- *  \param [in/out] ptr_usac_data      Pointer to USAC data structure.
- *  \param [in/out] pstr_td_frame_data Pointer to TD frame data.
+ *  \param [in,out] ptr_usac_data      Pointer to USAC data structure.
+ *  \param [in,out] pstr_td_frame_data Pointer to TD frame data.
  *  \param [in]     ptr_bit_buf        Pointer to bit buffer structure.
  *  \param [in]     chan               Channel index.
  *  \param [in]     full_band_lpd      Flag that indicates full band LPD.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_acelp_decoding(WORD32 k, ia_usac_data_struct *ptr_usac_data,
@@ -500,12 +500,12 @@ VOID ia_core_coder_acelp_decoding(WORD32 k, ia_usac_data_struct *ptr_usac_data,
  *
  *  \brief Extracts all data to decode one frame of MDCT based transform codec excitation (TCX)
  *
- *  \param [in/out] ptr_usac_data      Pointer to USAC data structure.
+ *  \param [in,out] ptr_usac_data      Pointer to USAC data structure.
  *  \param [in]     ptr_quant          Pointer to quantization data.
  *  \param [in]     k                  Index value.
  *  \param [in]     first_tcx_flag     Flag to indicate current TCX frame is the first in the
  * superframe.
- *  \param [in/out] pstr_td_frame_data Pointer to TD frame data.
+ *  \param [in,out] pstr_td_frame_data Pointer to TD frame data.
  *  \param [in]     ptr_bit_buf        Pointer to bit buffer structure.
  *  \param [in]     chan               Channel index.
  *  \param [in]     elem_idx           Element index.
@@ -642,10 +642,10 @@ IA_ERRORCODE ia_core_coder_tcx_coding(ia_usac_data_struct *ptr_usac_data, pWORD3
  *  \brief Extracts all necessary information to decode one frame of linear prediction domain
  * coded signal.
  *
- *  \param [in/out] ptr_usac_data      Pointer to USAC data structure.
- *  \param [in/out] pstr_td_frame_data Pointer to TD frame data structure.
+ *  \param [in,out] ptr_usac_data      Pointer to USAC data structure.
+ *  \param [in,out] pstr_td_frame_data Pointer to TD frame data structure.
  *  \param [in]     ptr_bit_buf        Pointer to bit buffer structure.
- *  \param [in/out] ptr_synth          Pointer to synthesis buffer.
+ *  \param [in,out] ptr_synth          Pointer to synthesis buffer.
  *  \param [in]     elem_idx           Element index.
  *
  *  \return IA_ERRORCODE                     Processing error if any.
@@ -875,9 +875,9 @@ IA_ERRORCODE ia_core_coder_lpd_channel_stream(ia_usac_data_struct *ptr_usac_data
 *
 *  \brief Time warping MDCT buffer updation.
 *
-*  \param [in/out] ptr_usac_data Pointer to USAC data structure.
+*  \param [in,out] ptr_usac_data Pointer to USAC data structure.
 *  \param [in]     i             Index value.
-*  \param [in/out] ptr_st        Pointer to LPD decoder handle structure.
+*  \param [in,out] ptr_st        Pointer to LPD decoder handle structure.
 *
 *  \return IA_ERRORCODE                Processing error if any.
 *
@@ -903,11 +903,11 @@ IA_ERRORCODE ia_core_coder_tw_buff_update(ia_usac_data_struct *ptr_usac_data, WO
  *
  *  \brief TD frame decoding step
  *
- *  \param [in/out] ptr_usac_data Pointer to USAC data structure.
+ *  \param [in,out] ptr_usac_data Pointer to USAC data structure.
  *  \param [in]     k             Index value.
  *  \param [in]     mod0          Mode value.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_td_frm_dec(ia_usac_data_struct *ptr_usac_data, WORD32 k, WORD32 mod0)

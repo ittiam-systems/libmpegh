@@ -91,6 +91,7 @@ pWORD8 impeghd_ppb_drc_init_non_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "DRC coefficients exceeded maximum value",
     (pWORD8) "Selection process Initialization failed",
     (pWORD8) "Unsupported ducking sequence",
+    (pWORD8) "DRC instructions exceeded maximum value",
 };
 
 pWORD8 impeghd_ppb_hoa_init_non_fatal[IA_MAX_ERROR_SUB_CODE] = {
@@ -160,15 +161,30 @@ pWORD8 impeghd_ppb_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "ASI preset group definition config failed",
     (pWORD8) "ASI preset group definition extension config failed",
     (pWORD8) "Invalid group id",
+    (pWORD8) "Complex prediction not supported",
+    (pWORD8) "Invalid preset group number of conditions",
+    (pWORD8) "Invalid configuration for LC profile",
+    (pWORD8) "Invalid number of downmix id group preset extension",
+    (pWORD8) "Invalid number of wired outputs",
+    (pWORD8) "Invalid number of shifted channel",
+    (pWORD8) "Invalid max sfb",
+    (pWORD8) "Invalid ASI parameter",
 };
 
 pWORD8 impeghd_ppb_drc_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
-    (pWORD8) "Exceeded channel group count",    (pWORD8) "Invalid gain set index",
-    (pWORD8) "Unsupported method definition",   (pWORD8) "Unexpected error",
-    (pWORD8) "Sample rate is not supported",    (pWORD8) "Framesize is not supported",
-    (pWORD8) "Channel count is not supported",  (pWORD8) "Invalid delta tmin value",
-    (pWORD8) "Unsupported delay mode",          (pWORD8) "Unsupported delay samples",
-    (pWORD8) "Unsupported subband domain mode", (pWORD8) "Unsupported number of subbands",
+    (pWORD8) "Exceeded channel group count",
+    (pWORD8) "Invalid gain set index",
+    (pWORD8) "Unsupported method definition",
+    (pWORD8) "Unexpected error",
+    (pWORD8) "Sample rate is not supported",
+    (pWORD8) "Framesize is not supported",
+    (pWORD8) "Channel count is not supported",
+    (pWORD8) "Invalid delta tmin value",
+    (pWORD8) "Unsupported delay mode",
+    (pWORD8) "Unsupported delay samples",
+    (pWORD8) "Unsupported subband domain mode",
+    (pWORD8) "Unsupported number of subbands",
+    (pWORD8) "Invalid drc parameter for LC profile",
 };
 pWORD8 impeghd_ppb_hoa_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "Invalid vector index",
@@ -189,6 +205,7 @@ pWORD8 impeghd_ppb_hoa_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "Invalid vvec index",
     (pWORD8) "Invalid sparse order",
     (pWORD8) "NFC not allowed",
+    (pWORD8) "Invalid configuration for LC profile",
 };
 pWORD8 impeghd_ppb_binaural_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "Binaural renderer initialization failed",
@@ -211,6 +228,14 @@ pWORD8 impeghd_ppb_fc_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
 
 pWORD8 impeghd_ppb_oam_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "Unsupported number of OAM objects",
+};
+
+pWORD8 impeghd_ppb_ei_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
+    (pWORD8) "Unsupported interaction mode",
+    (pWORD8) "Unsupported number of groups",
+    (pWORD8) "Invalid id",
+    (pWORD8) "Invalid change position",
+    (pWORD8) "Invalid change gain",
 };
 
 /*****************************************************************************/
@@ -262,6 +287,7 @@ pWORD8 impeghd_ppb_exe_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "TD Config handle NULL",
     (pWORD8) "Uni DRC coefficients pointer NULL",
     (pWORD8) "Invalid scale factor",
+    (pWORD8) "sfb exceeded maximum value",
 };
 
 // DRC
@@ -387,6 +413,7 @@ VOID impeghd_error_handler_init()
   impeghd_error_info.ppppb_error_msg_pointers[1][2][3] = impeghd_ppb_binaural_init_fatal;
   impeghd_error_info.ppppb_error_msg_pointers[1][2][4] = impeghd_ppb_fc_init_fatal;
   impeghd_error_info.ppppb_error_msg_pointers[1][2][5] = impeghd_ppb_oam_init_fatal;
+  impeghd_error_info.ppppb_error_msg_pointers[1][2][6] = impeghd_ppb_ei_init_fatal;
   impeghd_error_info.ppppb_error_msg_pointers[0][3][0] = impeghd_ppb_exe_non_fatal;
   impeghd_error_info.ppppb_error_msg_pointers[1][3][0] = impeghd_ppb_exe_fatal;
   impeghd_error_info.ppppb_error_msg_pointers[1][3][1] = impeghd_ppb_drc_exe_fatal;

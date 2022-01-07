@@ -50,8 +50,8 @@
 #include "ia_core_coder_cnst.h"
 #include "ia_core_coder_config.h"
 #include "impeghd_binaural.h"
-#include "impeghd_ele_interaction_intrfc.h"
 #include "impeghd_mhas_parse.h"
+#include "impeghd_ele_interaction_intrfc.h"
 #include "impeghd_3d_vec_struct_def.h"
 #include "impeghd_cicp_defines.h"
 #include "impeghd_cicp_struct_def.h"
@@ -80,7 +80,7 @@
  *  \param [in]  ref_value	reference value.
  *  \param [in]  num_bits	no of bits to be read.
  *
- *  \return VOID.
+ *  .
  *
  */
 
@@ -103,7 +103,7 @@ VOID impeghd_read_bits_buf_util(ia_bit_buf_struct *pstr_bit_buf, WORD32 ref_valu
  *  \param [in]    num_bits2			Second set of Bits
  *  \param [in]    num_bits3			Third set of Bits
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_read_escape_value_util(ia_bit_buf_struct *pstr_bit_buf, WORD32 ref_value,
@@ -278,7 +278,7 @@ IA_ERRORCODE impeghd_read_speaker_config_3d(ia_bit_buf_struct *pstr_bit_buf,
 * structure
 *  \param [in]  pstr_3d_signals      Pointer to 3d signals
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_read_gca_prod_metadata_frm_ext_ren(ia_prod_meta_data_struct *pstr_prod_meta_data,
@@ -332,7 +332,7 @@ impeghd_read_goa_prod_meta_data_for_ext_ren(ia_bit_buf_struct *pstr_bit_buf,
 * structure
 *  \param [in]  pstr_prod_meta_data   Pointer to prod metadata struct
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_read_gha_prod_meta_data_for_ext_ren(ia_bit_buf_struct *pstr_bit_buf,
@@ -354,7 +354,7 @@ VOID impeghd_read_gha_prod_meta_data_for_ext_ren(ia_bit_buf_struct *pstr_bit_buf
 *  \param [in]  pstr_dmx_cfg			 Pointer to downmix config struct
 *  \param [in]  ui_cicp_layout_idx   cicp layout index
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_read_downmix_cfg(ia_bit_buf_struct *pstr_bit_buf,
@@ -698,7 +698,7 @@ IA_ERRORCODE impeghd_read_oam_meta_data_for_ext_ren(
 * structure
 *  \param [in]  ptr_mae_prod_scrnsize_data       Pointer to screen size data struct
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_read_mae_prod_screen_size(ia_bit_buf_struct *pstr_bit_buf,
@@ -722,7 +722,7 @@ VOID impeghd_read_mae_prod_screen_size(ia_bit_buf_struct *pstr_bit_buf,
 * structure
 *  \param [in]  pstr_mae_prod_screen_szdata_ext       Pointer to screen size data ext struct
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_read_mae_prod_screen_size_dataext(
@@ -879,9 +879,9 @@ IA_ERRORCODE impeghd_read_hoa_matrix_wrapper(ia_bit_buf_struct *pstr_bit_buf,
 *
 *  \param [in]  pstr_bit_buf          Pointer to input configuration
 * structure
-*  \param [i/o] pstr_usac_cfg        Pointer to usac config struct
+*  \param [in,out] pstr_usac_cfg        Pointer to usac config struct
 *  \param [in]  pstr_3d_signals      Pointer to 3d signals struct
-*  \param [i/o] pstr_mae_asi         Pointer to audio scene info struct
+*  \param [in,out] pstr_mae_asi         Pointer to audio scene info struct
 *
 *  \return IA_ERRORCODE              Error code
 *

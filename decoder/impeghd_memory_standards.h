@@ -67,13 +67,12 @@ typedef struct
   WORD32 ui_cicp_layout_idx;
   WORD8 i_preset_id;
   WORD32 num_inp_bytes;
-  WORD32 lsi_info_flag;   // Local set up information.
-  WORD32 ei_info_flag;    // Element interaction.
-  WORD32 sd_info_flag;    // Scene displacement.
-  WORD32 sd_psdi_enabled; // positional scene displacement flag
-  WORD32 lsi_info_size;   // Local set up information.
-  WORD32 ei_info_size;    // Element interaction.
-  WORD32 sd_info_size;    // Scene displacement.
+  WORD32 lsi_info_flag; // Local set up information.
+  WORD32 ei_info_flag;  // Element interaction.
+  WORD32 sd_info_flag;  // Scene displacement.
+  WORD32 lsi_info_size; // Local set up information.
+  WORD32 ei_info_size;  // Element interaction.
+  WORD32 sd_info_size;  // Scene displacement.
   WORD32 extrn_rend_flag;
   UWORD8 *ptr_ei_buf;
   UWORD8 *ptr_ls_buf;

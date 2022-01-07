@@ -339,7 +339,7 @@ static WORD32 impeghd_check_spk_exclusion_defined_sect(ia_cicp_ls_geo_str *pstr_
  *  \brief Metadata PreProcessing decoder init function
  *
  *  \param [in]  pstr_asc         Pointer to audio scene config structure
- *  \param [i/o] pstr_dec_data    Pointer to decoder data structure
+ *  \param [in,out] pstr_dec_data    Pointer to decoder data structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -541,7 +541,7 @@ IA_ERRORCODE impeghd_mdp_dec_ei_init(ia_audio_specific_config_struct *pstr_asc,
  *
  *  \param [in]  pstr_asc            Pointer to audio scene config structure.
  *  \param [in]  pstr_signals_3d     Pointer to 3d signals depiction structure.
- *  \param [in]  group_idx           Group index value.
+ *  \param [in]  grp_index           Group index value.
  *
  *  \return WORD32 Signal group type value.
  *
@@ -622,9 +622,9 @@ static WORD32 impeghd_md_proc_grp_idx(ia_audio_specific_config_struct *pstr_asc,
  *
  *  \param [in] num_switch_groups    Number of switch roups.
  *  \param [out] pstr_switch_group_def Pointer to switch group definition structure
- *  \param group_id                    Group id
- *  \param switch_group_id             Pointer to switch group id
- *  \return is_member
+ *  \param [in] group_id                    Group id
+ *  \param [in] switch_group_id             Pointer to switch group id
+ *  \return WORD32
  *
  */
 static WORD32 impeghd_md_proc_is_switch_group_mem(WORD32 num_switch_groups,
@@ -785,7 +785,7 @@ static WORD32 impeghd_md_proc_switch_group_allow_on_off(ia_audio_specific_config
  *  \param [in]  pstr_signals_3d     Pointer to 3d signals depiction structure.
  *  \param [in]  pstr_local_setup    Pointer to local setup information structure.
  *  \param [in]  pstr_enh_oam_config Pointer to enhanced OAM config structure.
- *  \param [in]  pstr_enh_obj_frame  Pointer to enhanced object frame structure.
+ *  \param [in]  pstr_oam_dec_state  Pointer to OAM state structure.
  *  \param [in]  ptr_scratch_mem     Pointer to scratch memory.
  *
  *  \return IA_ERRORCODE Processing error if any.
@@ -1171,7 +1171,7 @@ static IA_ERRORCODE impeghd_md_proc_closest_spk_proc(
  *
  *  \param [in]  pstr_interact_cfg   Pointer to interaction config data structure.
  *  \param [in]  pstr_asc            Pointer to audio scene config structure.
- *  \param [i/o] pstr_dec_data       Pointer to decoder data structure.
+ *  \param [in,out] pstr_dec_data       Pointer to decoder data structure.
  *  \param [in]  pstr_signals_3d     Pointer to 3d signals depiction structure.
  *  \param [in]  ptr_scratch_mem     Pointer to scratch memory.
  *  \param [in]  downmix_id          Downmix id.
@@ -2092,11 +2092,11 @@ FLOAT32 impeghd_md_proc_asc_az_ele_idx_to_deg(WORD32 idx, WORD32 direction, WORD
  *
  *  \param [out] ptr_output        Pointer to output buffer.
  *  \param [in]  ptr_input         Pointer to input buffer.
- *  \param [i/o] pstr_interact_cfg Pointer to interaction data config structure.
+ *  \param [in,out] pstr_interact_cfg Pointer to interaction data config structure.
  *  \param [in]  spk_idx           Index of the speaker feed being processed.
  *  \param [in]  frame_length      Framelength value.
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_md_proc_diffuse_decorr_output(FLOAT32 *ptr_output, FLOAT32 *ptr_input,
@@ -2132,14 +2132,14 @@ static VOID impeghd_md_proc_diffuse_decorr_output(FLOAT32 *ptr_output, FLOAT32 *
  *
  *  \brief Create diffuse part
  *
- *  \param  ia_interaction_data_struct    Pointer to interaction data config structure
- *  \param  pstr_asc                      Pointer to audio scene config structure
- *  \param pstr_signals_3d                Pointer to signals 3d config structure
- *  \param pstr_local_setup_config        Pointer to local set up config structure
- *  \param pstr_enh_oam_cfg               Pointer to enhanced oam config structure
- *  \param pstr_enh_oam_frame             Pointer to enhanced oam frame structure
- *  \param pstr_dec_data                  Pointer to decoder data structure
- *  \param ptr_scratch_mem                Pointer to scratch memory
+ *  \param [in,out]  pstr_interact_cfg             Pointer to interaction data config structure
+ *  \param [in]  pstr_asc                      Pointer to audio scene config structure
+ *  \param [in] pstr_signals_3d                Pointer to signals 3d config structure
+ *  \param [in] pstr_local_setup_config        Pointer to local set up config structure
+ *  \param [in] pstr_enh_oam_cfg               Pointer to enhanced oam config structure
+ *  \param [in] pstr_enh_oam_frame             Pointer to enhanced oam frame structure
+ *  \param [in] pstr_dec_data                  Pointer to decoder data structure
+ *  \param [in] ptr_scratch_mem                Pointer to scratch memory
  *  \return IA_ERRORCODE Processing error if any.
  *
  */
@@ -2447,11 +2447,11 @@ static IA_ERRORCODE impeghd_md_create_diffuse_part(
  *
  *  \param [in] pstr_dec_data       Pointer to decoder data structure.
  *  \param [in] pstr_interact_cfg   Pointer to interaction data config structure.
- *  \param [] pstr_asc              Pointer to audio scene config structure.
- *  \param [] pstr_signals_3d       Pointer to signals 3d config structure.
- *  \param [] pstr_enh_oam_cfg      Pointer to enhanced oam config structure.
- *  \param [] pstr_enh_obj_md_frame Pointer to enhanced object metadata frame structure.
- *  \param [] div_objs_added        Divergence objects added value.
+ *  \param [in] pstr_asc              Pointer to audio scene config structure.
+ *  \param [in] pstr_signals_3d       Pointer to signals 3d config structure.
+ *  \param [in] pstr_enh_oam_cfg      Pointer to enhanced oam config structure.
+ *  \param [in] pstr_enh_obj_md_frame Pointer to enhanced object metadata frame structure.
+ *  \param [in] div_objs_added        Divergence objects added value.
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -2541,11 +2541,11 @@ static IA_ERRORCODE impeghd_md_proc_apply_dir_gain(ia_dec_data_struct *pstr_dec_
  *
  *  \brief Applies preset condition.
  *
- *  \param  pstr_asc    Pointer toaudio scene config structure
- *  \param  presetID    Preset id
- *  \param group_id     Group id
- *  \param downmix_id   Down mix id
- *  \param ext_index    Extension index
+ *  \param [in]  pstr_asc    Pointer toaudio scene config structure
+ *  \param [in]  presetID    Preset id
+ *  \param [in] group_id     Group id
+ *  \param [in] downmix_id   Down mix id
+ *  \param [out] ext_index    Extension index
  *  \return cond
  *
  */
@@ -2712,8 +2712,8 @@ static IA_ERRORCODE impehgd_apply_switch_group_off(ia_audio_specific_config_stru
  *
  *  \brief Appy switch group logic.
  *
- *  \param [in]  pstr_interact_cfg        Pointer to interaction config structure
- *  \param [i/o] ia_audio_specific_config_struct Pointer to audio specific config structure
+ *  \param [in]     pstr_interact_cfg  Pointer to interaction config structure
+ *  \param [in,out] pstr_asc           Pointer to audio specific config structure
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -3174,9 +3174,9 @@ static IA_ERRORCODE impeghd_apply_on_off_intrct(ia_interaction_data_struct *pstr
  *  impeghd_screen_rel_remap_ele
  *
  *  \brief Remapping of sreen related elevation values
- *  \param azimuth                        Pointer to elevation value
- *  \param [in]  pstr_local_setup         Pointer to local setup structure
- *  \param [i/o] pstr_screen_size_data    Pointer to production screen size data structure
+ *  \param [in,out] elevation                Pointer to elevation value
+ *  \param [in]     pstr_local_setup         Pointer to local setup structure
+ *  \param [in,out] pstr_prod_screen_data    Pointer to production screen size data structure
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -3276,9 +3276,9 @@ impeghd_screen_rel_remap_ele(FLOAT32 *elevation, ia_local_setup_struct *pstr_loc
  *  impeghd_screen_rel_remap_az
  *
  *  \brief Remapping of sreen related azimuth values
- *  \param azimuth                        Pointer to azimuth value
+ *  \param [in,out] azimuth                        Pointer to azimuth value
  *  \param [in]  pstr_local_setup         Pointer to local setup structure
- *  \param [i/o] pstr_screen_size_data    Pointer to production screen size data structure
+ *  \param [in,out] pstr_screen_size_data    Pointer to production screen size data structure
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -3456,10 +3456,10 @@ impeghd_screen_rel_remap_az(FLOAT32 *azimuth, ia_local_setup_struct *pstr_local_
  *
  *  \brief Calculate sreen related zooming values
  *
- *  \param [i/o] azimuth                   Pointer to azimuth value
- *  \param [i/o] elevation                 Pointer to elevation value
+ *  \param [in,out] azimuth                   Pointer to azimuth value
+ *  \param [in,out] elevation                 Pointer to elevation value
  *  \param [in]  pstr_ele_interaction_data Pointer to element interaction data structure
- *  \param [i/o] pstr_local_setup         Pointer to localsetup  structure
+ *  \param [in,out] pstr_local_setup         Pointer to localsetup  structure
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -3556,9 +3556,9 @@ static IA_ERRORCODE impeghd_screen_rel_zooming(FLOAT32 *azimuth, FLOAT32 *elevat
  *
  *  \param [in]  pstr_interaction_config Pointer to interaction configuration structure
  *  \param [in]  pstr_asc                Pointer to audio scene config structure
- *  \param [i/o] pstr_dec_data           Pointer to decoder data structure.
+ *  \param [in,out] pstr_dec_data           Pointer to decoder data structure.
  *  \param [in]  pstr_signals_3d          Pointer to sd signal configuration structure
- *  \param [i/o] ptr_scratch_mem         Pointer to scratch memory
+ *  \param [in,out] ptr_scratch_mem         Pointer to scratch memory
  *  \param [in]  sel_preset              Selection preset
  *
  *  \return IA_ERRORCODE Processing error if any.
@@ -3766,7 +3766,7 @@ static IA_ERRORCODE impeghd_md_proc_apply_scrn_rel_remapping_zooming(
  *
  *  \param [in]  pstr_intrct_data Pointer to interaction configuration structure.
  *  \param [in]  pstr_asc         Pointer to audio scene config structure.
- *  \param [i/o] pstr_dec_data    Pointer to decoder data structure.
+ *  \param [in,out] pstr_dec_data    Pointer to decoder data structure.
  *  \param [in]  pstr_signals_3d  Pointer to scratch memory
  *
  *  \return IA_ERRORCODE Processing error if any.
@@ -3891,9 +3891,10 @@ static WORD32 impeghd_md_proc_max_mae_id(ia_audio_specific_config_struct *pstr_a
  *
  *  \brief Applies divergence processing.
  *
- *  \param [i/o] pstr_interact_cfg          Pointer to interaction configuration structure.
+ *  \param [in,out] pstr_interact_cfg          Pointer to interaction configuration structure.
  *  \param [in]  pstr_asc                   Pointer to audio scene configuration structure.
- *  \param [i/o] overall_num_div_objs_added Pointer to overall number of divergence objects added.
+ *  \param [in,out] overall_num_div_objs_added Pointer to overall number of divergence objects
+ * added.
  *  \param [in]  pstr_enh_obj_md_cfg        Pointer to enhanced object metadata config structure.
  *  \param [in]  pstr_enh_obj_md_frame      Pointer to enhanced object metadata frame structure.
  *  \param [in]  pstr_signals_3d Pointer to 3d signals depiction structure.
@@ -4177,7 +4178,7 @@ static WORD32 impeghd_md_proc_local_scrn_cfg(ia_audio_specific_config_struct *ps
  *  \brief Calculate loudness compensation gain
  *
  *  \param [in]  pstr_asc                 Pointer to audio scene config structure
- *  \param [i/o] pstr_interact_cfg        Pointer to interaction configuration structure
+ *  \param [in,out] pstr_interact_cfg        Pointer to interaction configuration structure
  *
  *  \return FLOAT32 loudness compesation gain in db.
  *
@@ -4370,10 +4371,10 @@ static FLOAT32 impeghd_md_proc_loudness_comp_gain(ia_audio_specific_config_struc
  *  \brief Carries out processing on audio data based on metadata elements.
  *
  *  \param [in]  pstr_asc                 Pointer to audio scene config structure
- *  \param [i/o] pstr_dec_data            Pointer to decoder data structure
+ *  \param [in,out] pstr_dec_data            Pointer to decoder data structure
  *  \param [in]  ptr_scratch_mem          Pointer to scratch memory
  *  \param [in]  num_out_channels         Number of output channels
- *  \param [i/o] selected_preset_id       Pointer to selected preset id
+ *  \param [in,out] selected_preset_id       Pointer to selected preset id
  *  \param [in]  choose_switch_grp_member SG member
  *
  *  \return IA_ERRORCODE Processing error if any.
@@ -4743,7 +4744,7 @@ static IA_ERRORCODE impeghd_mp_process_frame(ia_audio_specific_config_struct *ps
  *  \brief Metadata PreProcessing decoder main function
  *
  *  \param [in]  pstr_asc         Pointer to audio scene config structure
- *  \param [i/o] pstr_dec_data    Pointer to decoder data structure
+ *  \param [in,out] pstr_dec_data    Pointer to decoder data structure
  *  \param [in]  num_out_channels Number of output channels info
  *  \param [in]  ptr_scratch_mem  Pointer to scratch memory
  *  \param [in]  preset_id        Pointer to Preset ID value

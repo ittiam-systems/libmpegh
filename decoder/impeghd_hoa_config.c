@@ -65,9 +65,9 @@
  *
  *  \brief Calculation of HOA vector length and coefficients
  *
- *  \param [in/out] ptr_config_data     Pointer to HOA config structure
+ *  \param [in,out] ptr_config_data     Pointer to HOA config structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_hoa_v_vec_len_and_coeff_calc(ia_hoa_config_struct *ptr_config_data)
@@ -91,7 +91,7 @@ static VOID impeghd_hoa_v_vec_len_and_coeff_calc(ia_hoa_config_struct *ptr_confi
  *
  *  \brief Fill HOA config details
  *
- *  \param [in/out] ptr_bit_buf     Pointer to bit buffer structure
+ *  \param [in,out] ptr_bit_buf     Pointer to bit buffer structure
  *  \param [out]    ptr_config_data Pointer to HOA config structure
  *
  *  \return IA_ERRORCODE                  Error code if any
@@ -234,6 +234,11 @@ IA_ERRORCODE impeghd_fill_config(ia_bit_buf_struct *ptr_bit_buf,
   if (1 == ptr_config_data->min_amb_order)
   {
     ptr_config_data->use_phase_shift_decorr = ia_core_coder_read_bits_buf(ptr_bit_buf, 1);
+    /*UsePhaseShiftDecorr shall not be 1*/
+    if (ptr_config_data->use_phase_shift_decorr)
+    {
+      return IA_MPEGH_HOA_INIT_FATAL_INVALID_CONFIG_LC_PROFILE;
+    }
   }
 
   val = ia_core_coder_read_bits_buf(ptr_bit_buf, 2);

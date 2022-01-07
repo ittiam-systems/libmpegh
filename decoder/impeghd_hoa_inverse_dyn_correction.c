@@ -67,7 +67,7 @@
  *  \brief HOA inverse dynamic correction processing
  *
  *  \param [in]      ptr_inp    Pointer to input buffer
- *  \param [in/out]  dec_handle Pointer to spatial decoder handle
+ *  \param [in,out]  pstr_spatial_dec Pointer to spatial decoder handle
  *
  *  \return IA_ERRORCODE   Error
  *

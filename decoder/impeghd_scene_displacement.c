@@ -64,6 +64,7 @@
 #include "impeghd_binaural_renderer.h"
 #include "impeghd_cicp_2_geometry.h"
 #include "impeghd_config_params.h"
+#include "impeghd_mhas_parse.h"
 #include "impeghd_ele_interaction_intrfc.h"
 #include "impeghd_format_conv_defines.h"
 #include "impeghd_cicp_defines.h"
@@ -83,7 +84,6 @@
 #include "impeghd_hoa_spatial_decoder_struct.h"
 #include "impeghd_hoa_spatial_decoder.h"
 #include "impeghd_hoa_decoder.h"
-#include "impeghd_mhas_parse.h"
 #include "impeghd_multichannel.h"
 #include "ia_core_coder_headerdecode.h"
 #include "impeghd_3d_vec_struct_def.h"
@@ -183,10 +183,10 @@ static WORD32 impeghd_get_sig_group_idx(ia_audio_specific_config_struct *pstr_as
 /**
  *  impeghd_rotate_cart_coord
  *
- *  \brief Brief description    Rotate the cartesian coordinates
+ *  \brief Rotate the cartesian coordinates
  *
- *  \param pstr_cart_coord      Pointer to the cartesian coordinate structure
- *  \param pstr_scene_dspl_data Pointer to the scene displacement data structure
+ *  \param [out] pstr_cart_coord      Pointer to the cartesian coordinate structure
+ *  \param [in] pstr_scene_dspl_data Pointer to the scene displacement data structure
  *
  */
 static VOID impeghd_rotate_cart_coord(ia_cart_coord_str *pstr_cart_coord,
@@ -298,11 +298,11 @@ static VOID impeghd_rotate_cart_coord(ia_cart_coord_str *pstr_cart_coord,
  *
  *  \brief Processing of scene displacement data
  *
- *	\param [i/o] pstr_dec_data Pointer
+ *	\param [in,out] pstr_dec_data Pointer
  *to
  *decoder data structure
  *  \param [in]  pstr_asc                     Pointer to audio specific config structure
- *  \param [i/o] pstr_interact_cfg            Pointer to interaction data structure
+ *  \param [in,out] pstr_interact_cfg            Pointer to interaction data structure
  *  \param [in]  ptr_scratch_mem              Pointer to scratch memory
  *  \param [in]  oamDataAvailable             Indicates if oam data is available
  *  \param [in]  pstr_scene_displacement_data Pointer to scene displacement data structure

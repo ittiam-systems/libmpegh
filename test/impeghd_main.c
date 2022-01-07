@@ -121,7 +121,6 @@ long long itGetMs(void)
 #define ARM_PROFILE_HW_CALC_CYCLES(i_out_bytes, i_pcm_wd_sz, i_samp_freq, i_num_chan)            \
   if (i_out_bytes != 0)                                                                          \
   {                                                                                              \
-    WORD32 i_out_samples = i_out_bytes >> 2;                                                     \
     if (frame_count_b)                                                                           \
     {                                                                                            \
       double i_out_samples_per_ch = (i_out_bytes) / ((i_pcm_wd_sz / 8) * i_num_chan);            \
@@ -185,7 +184,7 @@ WORD32 raw_testing = 0;
 *  \param [in] fp Pointer to FILE object
 *  \param [in] i  Data to be written
 *
-*  \return VOID
+*
 *
 */
 static VOID impeghd_write16_bits_lh(FILE *fp, WORD32 i)
@@ -202,7 +201,7 @@ static VOID impeghd_write16_bits_lh(FILE *fp, WORD32 i)
 *  \param [in] fp Pointer to FILE object
 *  \param [in] i  Data to be written
 *
-*  \return VOID
+*
 *
 */
 static VOID impeghd_write32_bits_lh(FILE *fp, WORD32 i)
@@ -258,7 +257,7 @@ IA_ERRORCODE write_wav_header(FILE *fp, WORD32 pcmbytes, WORD32 freq, WORD32 cha
 *  \param [in] lib_name    Library name
 *  \param [in] lib_version Library version
 *
-*  \return VOID
+*
 *
 */
 VOID ia_display_id_message(WORD8 lib_name[], WORD8 lib_version[])
@@ -296,7 +295,7 @@ VOID ia_display_id_message(WORD8 lib_name[], WORD8 lib_version[])
 *
 *  \param [in]     argc        Argument count
 *  \param [in]     argv        Pointer to the argument strings
-*  \param [in/out] ptr_dec_api Pointer to the decoder API structure
+*  \param [in,out] ptr_dec_api Pointer to the decoder API structure
 *
 *  \return IA_ERRORCODE        Processing error if any
 *
@@ -378,7 +377,7 @@ IA_ERRORCODE impeghd_parse_config_param(WORD32 argc, pWORD8 argv[], pVOID ptr_de
       g_pf_lsi_bs = NULL;
       pstr_dec_api->input_config.lsi_info_flag = 1;
     }
-    if (!strncmp((const char *)argv[i], "-isdi2:", 7))
+    if (!strncmp((const char *)argv[i], "-isdi:", 6))
     {
       WORD32 sdi_sz = 0;
       fseek(g_pf_sd_bs, 0L, SEEK_END);
@@ -453,7 +452,7 @@ pVOID malloc_global(UWORD32 size, UWORD32 alignment) { return malloc(size + alig
 *
 *  \param [in] ptr Pointer to the memory
 *
-*  \return VOID
+*
 *
 */
 VOID free_global(pVOID ptr)
@@ -889,19 +888,19 @@ exit_path:
   {
     free(str_dec_api.input_config.ptr_brir_buf);
   }
-  if (str_dec_api.input_config.maeg_flag && str_dec_api.input_config.ptr_maeg_buf)
+  if (str_dec_api.input_config.ptr_maeg_buf)
   {
     free(str_dec_api.input_config.ptr_maeg_buf);
   }
-  if (str_dec_api.input_config.maei_flag && str_dec_api.input_config.ptr_maei_buf)
+  if (str_dec_api.input_config.ptr_maei_buf)
   {
     free(str_dec_api.input_config.ptr_maei_buf);
   }
-  if (str_dec_api.input_config.maes_flag && str_dec_api.input_config.ptr_maes_buf)
+  if (str_dec_api.input_config.ptr_maes_buf)
   {
     free(str_dec_api.input_config.ptr_maes_buf);
   }
-  if (str_dec_api.input_config.maep_flag && str_dec_api.input_config.ptr_maep_buf)
+  if (str_dec_api.input_config.ptr_maep_buf)
   {
     free(str_dec_api.input_config.ptr_maep_buf);
   }
@@ -914,7 +913,7 @@ exit_path:
 *
 *  \brief Prints the usage of the executable
 *
-*  \return VOID
+*
 *
 */
 VOID print_usage()
@@ -969,7 +968,7 @@ VOID print_usage()
 */
 IA_ERRORCODE main(WORD32 argc, char *argv[])
 {
-  FILE *param_file_id;
+  FILE *param_file_id = NULL;
 
   WORD8 curr_cmd[IA_MAX_CMD_LINE_LENGTH];
   WORD32 fargc, curpos;
@@ -1188,21 +1187,6 @@ IA_ERRORCODE main(WORD32 argc, char *argv[])
           if (!strncmp((const char *)fargv[i], "-isdi:", 6))
           {
             pWORD8 pb_arg_val = fargv[i] + 6;
-            WORD8 pb_sdi_input_file_name[IA_MAX_CMD_LINE_LENGTH] = "";
-            strcat((char *)pb_sdi_input_file_name, (const char *)pb_input_file_path);
-            strcat((char *)pb_sdi_input_file_name, (const char *)pb_arg_val);
-            g_pf_sd_bs = fopen((char *)pb_sdi_input_file_name, "rb");
-            if (g_pf_sd_bs == NULL)
-            {
-              impeghd_error_handler(&impeghd_ia_testbench_error_info,
-                                    (pWORD8) "Scene Displacement Information bit stream file",
-                                    IA_TESTBENCH_MFMAN_FATAL_FILE_OPEN_FAILED);
-              exit(1);
-            }
-          }
-          if (!strncmp((const char *)fargv[i], "-isdi2:", 7))
-          {
-            pWORD8 pb_arg_val = fargv[i] + 7;
             WORD8 pb_sdi_input_file_name[IA_MAX_CMD_LINE_LENGTH] = "";
             strcat((char *)pb_sdi_input_file_name, (const char *)pb_input_file_path);
             strcat((char *)pb_sdi_input_file_name, (const char *)pb_arg_val);
@@ -1436,6 +1420,10 @@ IA_ERRORCODE main(WORD32 argc, char *argv[])
       impeghd_mp4_fw_close(g_pf_inp);
       g_pf_inp = NULL;
     }
+  }
+  if (param_file_id != NULL)
+  {
+    fclose(param_file_id);
   }
   return IA_MPEGH_DEC_NO_ERROR;
 } /* end impeghd_main */

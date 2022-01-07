@@ -137,7 +137,7 @@ IA_ERRORCODE impeghd_hoa_ren_mtrx_init_with_mtrx_param(ia_render_hoa_render_mtrx
  *
  *  \brief Initialize renderer matrix from speaker position
  *
- *  \param [in/out]  handle    HOA renderer matrix handle
+ *  \param [in,out]  handle    HOA renderer matrix handle
  *  \param [in]    speaker_pos  HOA Space position handle
  *  \param [in]    add_lfe_ch  LFE flag
  *  \param [in]    scratch    Pointer to scratch buffer for intermediate processing
@@ -414,11 +414,11 @@ impeghd_hoa_ren_mtrx_init_with_spc_pos_param(ia_render_hoa_render_mtrx_str *ren_
 *
 *  \brief Resort speaker position for speaker matrix
 *
-*  \param [in/out]  handle  HOA renderer matrix handle
+*  \param [in,out]  handle  HOA renderer matrix handle
 *  \param [in]    order  Order array
 *  \param [in]    scratch  Pointer to scratch buffer for intermediate processing
 *
- *  \return VOID
+ *
  *
 */
 VOID impeghd_hoa_ren_mtrx_resort_spk_pos(pVOID handle, const pUWORD32 order, pVOID scratch)

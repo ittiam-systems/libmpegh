@@ -49,6 +49,7 @@
 #include "impeghd_hoa_matrix.h"
 #include "impeghd_intrinsics_flt.h"
 #include "ia_core_coder_config.h"
+#include "impeghd_mhas_parse.h"
 
 /* Decoder interfaces */
 #include "impeghd_binaural.h"
@@ -73,10 +74,10 @@
  *
  *  \brief Normalizes a 1D vector of length num_val.
  *
- *  \param [i/o] ptr_val Pointer to the input vector.
+ *  \param [in,out] ptr_val Pointer to the input vector.
  *  \param [in]  num_val Length of the input vector.
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_nrm_values(FLOAT32 *ptr_val, WORD32 num_val)
@@ -103,10 +104,10 @@ static VOID impeghd_nrm_values(FLOAT32 *ptr_val, WORD32 num_val)
  *
  *  \brief Calculates spread gains.
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object renderer state structure
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object renderer state structure
  *  \param [in]  spread_angle_rad      Spread angle value in radians.
  *
- *  \return VOID
+ *
  *
  */
 
@@ -145,10 +146,10 @@ static VOID impeghd_calc_spread_gains(ia_obj_ren_dec_state_struct *ptr_obj_ren_d
  *
  *  \brief Calculates one source point
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object renderer state structure.
- *  \param [i/o] ptr_vec Pointer to loudspeaker coordinate vector.
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object renderer state structure.
+ *  \param [in,out] ptr_vec Pointer to loudspeaker coordinate vector.
  *
- *  \return VOID
+ *
  *
  */
 
@@ -259,7 +260,7 @@ VOID impeghd_calc_one_source_point(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_
  *  \param [in]  v			    Pointer to vector v coordinate's structure.
  *  \param [in]  p0				Pointer to vector p0 coordinate's structure.
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_vector_process(ia_cart_coord_str *ptr_mdap_vec_array, ia_cart_coord_str u,
@@ -328,7 +329,7 @@ VOID impeghd_vector_process(ia_cart_coord_str *ptr_mdap_vec_array, ia_cart_coord
  *  \param [in]  in_spread_params   Pointer to input spread params.
  *  \param [in]  height_spks_flag   Flag that indicates presence of height speakers.
  *
- *  \return VOID
+ *
  *
  */
 
@@ -423,13 +424,13 @@ VOID impeghd_spreading_calc_mdap_vectors(ia_cart_coord_str *ptr_mdap_vec_array,
  *
  *  \brief Calculates gains that are derived from object audio params
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
  *  \param [in]  gain_fac              Gain value
  *  \param [in]  spread_params_rad     Spread params in radians
  *  \param [in]  vec_p                 Pointer to vector P
- *  \param [i/o] mdap_vec_array        Multi Direction Amplitude Panning Vec array
+ *  \param [in,out] mdap_vec_array        Multi Direction Amplitude Panning Vec array
  *
- *  \return VOID
+ *
  *
  */
 
@@ -474,7 +475,7 @@ VOID impeghd_calc_vbap(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, FLOAT
  *
  *  \brief Vector base amplitude panning processing function.
  *
- *  \param [i/o] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
  *  \param [in]  obj_idx               Index of the object data that is processed.
  *
  *  \return IA_ERRORCODE Error code if any.

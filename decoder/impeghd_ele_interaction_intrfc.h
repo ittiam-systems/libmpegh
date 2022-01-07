@@ -174,7 +174,6 @@ typedef struct
   UWORD32 sd_azimuth;
   UWORD32 sd_elevation;
   UWORD32 sd_radius;
-  UWORD32 sd_psdi_enabled;
   UWORD32 sd_buf_init_done;
   WORD32 min_bits_needed;
   ia_bit_buf_struct sd_buf;
@@ -237,11 +236,13 @@ typedef struct
 } ia_interaction_data_struct;
 
 IA_ERRORCODE impeghd_3da_local_setup_information(ia_bit_buf_struct *ptr_bit_buf,
-                                                 ia_local_setup_struct *ptr_ele_intrface_data);
+                                                 ia_local_setup_struct *ptr_ele_intrface_data,
+                                                 ia_signals_3d pstr_signals_3d);
 
 /* mpegh3daElementInteraction */
 IA_ERRORCODE impeghd_ele_interaction(ia_bit_buf_struct *ptr_bit_buf,
-                                     ia_ele_intrctn *ptr_ele_intrctn);
+                                     ia_ele_intrctn *ptr_ele_intrctn,
+                                     ia_mae_audio_scene_info *str_mae_asi);
 
 /* mpegh3daSceneDisplacementData */
 IA_ERRORCODE impeghd_scene_displacement_data(ia_scene_disp_data *ptr_scene_disp_data);

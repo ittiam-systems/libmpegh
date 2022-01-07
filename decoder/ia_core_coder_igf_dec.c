@@ -79,7 +79,7 @@
  *  \param [out]  swb_offset      output swb offset array pointer
  *  \param [in]    pstr_usac_winmap  sfb info structure
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_igf_get_swb_offset(WORD32 igf_win_type, WORD16 *swb_offset,
@@ -133,7 +133,7 @@ static WORD32 ia_core_coder_igf_quant_ctx(const WORD32 ctx)
  *
  *  \param [in]    it_bit_buf    bit stream buffer
  *  \param [in]    ptr_bit_offset  offset
- *  \param [in/out]  stat      arithmetic decoder state buffer
+ *  \param [in,out]  stat      arithmetic decoder state buffer
  *  \param [in]    num_bits    number of bits
  *
  *  \return WORD32
@@ -163,7 +163,7 @@ static WORD32 ia_core_coder_igf_arith_decode_bits(ia_bit_buf_struct *it_bit_buf,
  *
  *  \param [in]    it_bit_buf      bit stream buffer
  *  \param [in]    ptr_bit_offset    offset
- *  \param [in/out]  stat        arithmetic decoder state buffer
+ *  \param [in,out]  stat        arithmetic decoder state buffer
  *  \param [in]    ptr_cum_freq_table  cumulative freq table
  *  \param [in]    table_offset    table offset
  *
@@ -218,7 +218,7 @@ static WORD32 ia_core_coder_igf_arith_decode_residual(ia_bit_buf_struct *it_bit_
  *
  *  \param [in]    it_bit_buf      bit stream buffer
  *  \param [in]    bit_offset      offset
- *  \param [in/out]  stat        arithmetic decoder state buffer
+ *  \param [in,out]  stat        arithmetic decoder state buffer
  *  \param [in]    igf_win_type    igf window table
  *  \param [in]    igf_config      igf config structure
  *  \param [in]    igf_dec_data    igf decoder data structure
@@ -226,7 +226,7 @@ static WORD32 ia_core_coder_igf_arith_decode_residual(ia_bit_buf_struct *it_bit_
  * levels
  * for  the  current  window
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_arith_decode(ia_bit_buf_struct *it_bit_buf, WORD32 *bit_offset,
@@ -324,7 +324,7 @@ static VOID ia_core_coder_igf_arith_decode(ia_bit_buf_struct *it_bit_buf, WORD32
  *  \param [in]    input    acf Input
  *  \param [in]    order    order of filter
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_tnf_calc_par_coef(FLOAT32 *par_coef, const FLOAT32 *input,
@@ -367,10 +367,9 @@ static VOID ia_core_coder_igf_tnf_calc_par_coef(FLOAT32 *par_coef, const FLOAT32
  *
  *  \param [in]    input    acf Input
  *  \param [in]    order    order of filter
- *  \param [out]  pred_coef  LPC pred coeff
- *  \param [out]  pred_gain  pred gain
+ *  \param [out]   pred_coef  LPC pred coeff
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_tnf_convert_lpc(const FLOAT32 *input, const WORD32 order,
@@ -407,13 +406,13 @@ static VOID ia_core_coder_igf_tnf_convert_lpc(const FLOAT32 *input, const WORD32
  *
  *  \brief Performs igf tnf filtering
  *
- *  \param [out]  spec    tnf spectral coeff
+ *  \param [out]   spec       tnf spectral coeff
  *  \param [in]    tnf_len    tnf length
  *  \param [in]    pred_coef  prediction coeff
- *  \param [in]    order    order of filter
- *  \param [in]    scratch    Scratch buffer for internal processing
+ *  \param [in]    order      order of filter
+ *  \param [in]    pbuf       Scratch buffer for internal processing
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_tnf_filter(FLOAT32 *spec, const WORD32 tnf_len,
@@ -440,7 +439,7 @@ static VOID ia_core_coder_igf_tnf_filter(FLOAT32 *spec, const WORD32 tnf_len,
  *
  *  \brief Calculates norm values
  *
- *  \param [in/out]    x    tnf spec coeff
+ *  \param [in,out]    x    tnf spec coeff
  *  \param [in]      n    range
  *
  *  \return WORD64
@@ -496,10 +495,9 @@ static FLOAT32 ia_core_coder_igf_tnf_autocorrelation(const FLOAT32 *x, const WOR
  *  \param [in]    igf_start  igf start subband
  *  \param [in]    igf_stop  igf start subband
  *  \param [in]    pred_coef  estimate pred coeff
- *  \param [in]    pred_gain   estimate pred gain
  *  \param [in]    order    order
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_igf_tnf_detect(const FLOAT32 *p_spec, const WORD32 igf_start,
@@ -551,11 +549,11 @@ VOID ia_core_coder_igf_tnf_detect(const FLOAT32 *p_spec, const WORD32 igf_start,
  *
  *  \brief Apply tnf
  *
- *  \param [in/out]  igf_dec_data    igf decoder data
+ *  \param [in,out]  igf_dec_data    igf decoder data
  *  \param [in]    igf_bgn        igf start subband
  *  \param [in]    igf_end        igf stop subband
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_tnf_apply(ia_usac_igf_dec_data_struct *igf_dec_data, WORD32 igf_bgn,
@@ -614,7 +612,7 @@ static WORD32 ia_core_coder_igf_get_igf_min(WORD32 igf_win_type, WORD32 ccfl, WO
  *  \param [in]    igf_bitstream    igf bitstream buffer
  *  \param [in]    tile_num      tile index
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_decode_whitening_level(ia_bit_buf_struct *it_bit_buf,
@@ -647,7 +645,7 @@ static VOID ia_core_coder_igf_decode_whitening_level(ia_bit_buf_struct *it_bit_b
  *
  *  \param [in]    ptr_igf_env    igf envelope structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_reset_level(ia_usac_igf_envelope_struct *ptr_igf_env)
@@ -664,7 +662,7 @@ static VOID ia_core_coder_igf_reset_level(ia_usac_igf_envelope_struct *ptr_igf_e
  *  \param [out]    igf_dec_data  igf decoder data structure
  *  \param [in]      igf_frame_id  igf frame id
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_reset_data(ia_usac_igf_dec_data_struct *igf_dec_data,
@@ -697,9 +695,9 @@ static VOID ia_core_coder_igf_reset_data(ia_usac_igf_dec_data_struct *igf_dec_da
  *
  *  \brief Igf reset function which resets data and envelope
  *
- *  \param [in/out]  igf_dec_data
+ *  \param [in,out]  igf_dec_data Pointer to igf dec data structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_reset(ia_usac_igf_dec_data_struct *igf_dec_data)
@@ -903,13 +901,13 @@ FLOAT32 ia_core_coder_igf_get_random_sign(UWORD32 *seed)
  *
  *  \param [in]    igf_config      igf config structure
  *  \param [in]    igf_bit_stream    igf bit stream
- *  \param [in/out]  ptr_igf_input_spec  igf input spectrum
+ *  \param [in,out]  ptr_igf_input_spec  igf input spectrum
  *  \param [in]    swb_offset      offset  table for scalefactor band
  *  \param [in]    igf_win_type    igf window type
  *  \param [in]    ptr_scratch      scartch pointer used for internal
  * processing
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_apply_whitening(ia_usac_igf_config_struct *igf_config,
@@ -994,11 +992,11 @@ static VOID ia_core_coder_igf_apply_whitening(ia_usac_igf_config_struct *igf_con
  *  \brief Normalizes pn and sn vectors
  *
  *  \param [in]    igf_config    igf config structures
- *  \param [in/out]  igf_envelope  igf envelope structure
+ *  \param [in,out]  igf_envelope  igf envelope structure
  *  \param [in]    igf_win_type  igf window type
  *  \param [in]    group_len    group length
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_norm(ia_usac_igf_config_struct *igf_config,
@@ -1027,7 +1025,7 @@ static VOID ia_core_coder_igf_norm(ia_usac_igf_config_struct *igf_config,
  *  \param [in]    swb_offset        offset  table for scalefactor band
  *  \param [in]    igf_levels_curr_float  IGF  levels for the current window
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_rescale(ia_usac_igf_config_struct *igf_config, WORD32 igf_win_type,
@@ -1069,7 +1067,7 @@ static VOID ia_core_coder_igf_rescale(ia_usac_igf_config_struct *igf_config, WOR
  *  \brief Calculate igf envelope parameters for mono
  *
  *  \param [in]      igf_config        igf config structure
- *  \param [in/out]    igf_dec_data      igf decoder structure
+ *  \param [in,out]    igf_dec_data      igf decoder structure
  *  \param [in]      igf_bit_stream      igf bitstream buffer
  *  \param [in]      ptr_coef        coeff pointer
  *  \param [in]      ptr_igf_input_spec    igf spectrum coeff
@@ -1079,7 +1077,7 @@ static VOID ia_core_coder_igf_rescale(ia_usac_igf_config_struct *igf_config, WOR
  *  \param [in]      seed_value        seed value
  *  \param [in]      igf_win_type      igf window type
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_calc_mono(ia_usac_igf_config_struct *igf_config,
@@ -1153,7 +1151,7 @@ static VOID ia_core_coder_igf_calc_mono(ia_usac_igf_config_struct *igf_config,
  *  \brief calculate igf stereo
  *
  *  \param [in]        igf_config    igf config structure
- *  \param [in/out]      usac_data    usac data structure
+ *  \param [in,out]      usac_data    usac data structure
  *  \param [in]        chn        channel under process
  *  \param [in]        group_len    group length
  *  \param [out]      win_offset    window offset
@@ -1165,7 +1163,7 @@ static VOID ia_core_coder_igf_calc_mono(ia_usac_igf_config_struct *igf_config,
  *  \param [in]        seed_value_l  left seed value
  *  \param [in]        seed_value_r  right seed value
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_calc_stereo(const ia_usac_igf_config_struct *igf_config,
@@ -1306,18 +1304,18 @@ static VOID ia_core_coder_igf_calc_stereo(const ia_usac_igf_config_struct *igf_c
  *
  *  \brief igf mono processing
  *
- *  \param [in/out]  igf_dec_data      igf decoder data
+ *  \param [in,out]  igf_dec_data      igf decoder data
  *  \param [in]    igf_config        igf config structure
  *  \param [in]    igf_envelop        igf envelope structure
  *  \param [in]    igf_bit_stream      igf bitstream
- *  \param [in/out]  ptr_coef        USAC coeff
+ *  \param [in,out]  ptr_coef        USAC coeff
  *  \param [in]    ptr_igf_input_spec    igf coeff
  *  \param [in]    swb_offset        offset  table for scalefactor band
  *  \param [in]    seed_value        seed value
  *  \param [in]    igf_win_type      igf window type
  *  \param [in]    grp            group
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_apply_mono(ia_usac_igf_dec_data_struct *igf_dec_data,
@@ -1417,18 +1415,17 @@ static VOID ia_core_coder_igf_apply_mono(ia_usac_igf_dec_data_struct *igf_dec_da
  *  \param [in]      usac_data    usac data structure
  *  \param [in]      chn        channel under process
  *  \param [in]      group_len    group length
- *  \param [in/out]    *win_offset    window offset buffer
+ *  \param [in,out]  win_offset    window offset buffer
  *  \param [in]      bins_per_sbk  bins in subblock
  *  \param [in]      sf_index    scalefactor index
  *  \param [in]      igf_win_type  igf window type
  *  \param [in]      mask      buffer containing igf mask values
- *  \param [in]      swb_offset    offset  table for  scalefactor
- * band
+ *  \param [in]      swb_offset    offset  table for  scalefactor band
  *  \param [in]      seed_value_l  left seed value
  *  \param [in]      seed_value_r  right seed value
  *  \param [in]      grp        group
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_igf_stereo_proc(ia_usac_igf_config_struct *igf_config,
@@ -1609,10 +1606,10 @@ static VOID ia_core_coder_igf_stereo_proc(ia_usac_igf_config_struct *igf_config,
  *
  *  \brief Sync right and left data
  *
- *  \param [in/out]    igf_bitstream_l      left igf bitstream structure
- *  \param [in/out]    igf_bitstream_r      right igf bitstream structure
+ *  \param [in,out]    igf_bitstream_l      left igf bitstream structure
+ *  \param [in,out]    igf_bitstream_r      right igf bitstream structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_sync_data(ia_usac_igf_bitstream_struct *igf_bitstream_l,
@@ -1647,7 +1644,7 @@ static VOID ia_core_coder_sync_data(ia_usac_igf_bitstream_struct *igf_bitstream_
  *
  *  \brief Apply igf stereo
  *
- *  \param [in/out]    usac_data      USAC data structure
+ *  \param [in,out]    usac_data      USAC data structure
  *  \param [in]      chn          Channel under process
  *  \param [in]      igf_config      igf config structure
  *  \param [in]      igf_win_type    igf window type
@@ -1658,7 +1655,7 @@ static VOID ia_core_coder_sync_data(ia_usac_igf_bitstream_struct *igf_bitstream_
  *  \param [in]      bins_per_sbk    bins per subblock
  *  \param [in]      sfb_per_sbk      sfb per sub block
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_igf_apply_stereo(ia_usac_data_struct *usac_data, WORD32 chn,
@@ -1760,7 +1757,7 @@ VOID ia_core_coder_igf_apply_stereo(ia_usac_data_struct *usac_data, WORD32 chn,
 *
 *  \brief Update complex prediction related config structure based on bit stream
 *
-*  \param [in/out]    usac_data      USAC data structure
+*  \param [in,out]    usac_data      USAC data structure
 *  \param [in]      num_window_groups  num of window groups
 *  \param [in]      igf_win_type    igf window type
 *  \param [in]      it_bit_buff      bit stream buffer
@@ -1768,7 +1765,7 @@ VOID ia_core_coder_igf_apply_stereo(ia_usac_data_struct *usac_data, WORD32 chn,
 *  \param [in]      elem_idx      element index in total num ber of
 * elements
 *
-*  \return VOID
+*
 *
 */
 VOID ia_core_coder_igf_stereo_pred_data(ia_usac_data_struct *usac_data, WORD32 num_window_groups,
@@ -1912,14 +1909,16 @@ WORD32 ia_core_coder_get_igf_levels(ia_bit_buf_struct *it_bit_buff,
   WORD32 sf_idx = 0;
   WORD32 igf_start_sfb;
   WORD32 igf_stop_sfb;
-
+  WORD32 flag = 0;
+  WORD32 flag_swb_offset = 0;
   FLOAT32 igf_emphasis = 0;
+  WORD16 *swb_offset = (WORD16 *)usac_data->ptr_fft_scratch;
 
   ia_bit_buf_struct it_bit_buff_temp = {0};
   ia_state_arith stat = {0, 0, 0};
   ia_usac_igf_dec_data_struct *igf_dec_data = &usac_data->igf_dec_data[chn];
-  ia_core_coder_igf_level_scr_t *pscr =
-      (ia_core_coder_igf_level_scr_t *)usac_data->ptr_fft_scratch;
+  ia_core_coder_igf_level_scr_t *pscr;
+  ia_sfb_info_struct *pstr_usac_winmap = usac_data->pstr_usac_winmap[igf_win_type];
 
   if (3 == igf_frame_id)
   {
@@ -1930,12 +1929,13 @@ WORD32 ia_core_coder_get_igf_levels(ia_bit_buf_struct *it_bit_buff,
 
   igf_all_zero = ia_core_coder_read_bits_buf(it_bit_buff, 1);
 
-  /*igf_AllZero shall be 1 if one of the following conditions is true: m_igfStartSfb ==
-   * m_igfStopSfb*/
-  if ((igf_start_sfb == igf_stop_sfb) && (igf_all_zero != 1))
+  ia_core_coder_igf_get_swb_offset(igf_win_type, swb_offset, pstr_usac_winmap);
+  if (swb_offset[igf_start_sfb] <= igf_config->igf_grid[igf_win_type].igf_min)
   {
-    return -1;
+    flag_swb_offset = 1;
   }
+
+  pscr = (ia_core_coder_igf_level_scr_t *)usac_data->ptr_fft_scratch;
 
   if (igf_config->use_high_res || igf_win_type > 1)
   {
@@ -2001,6 +2001,32 @@ WORD32 ia_core_coder_get_igf_levels(ia_bit_buf_struct *it_bit_buff,
   igf_dec_data->igf_bitstream[sf_idx].igf_all_zero = igf_all_zero;
   igf_dec_data->igf_memory.prev_win_type = igf_win_type;
 
+  /*Checking all values in igf_curr[ ][ ][ ] == 0*/
+  for (win = 0; win < num_window_groups; win++)
+  {
+    for (sfb = igf_start_sfb; sfb < igf_stop_sfb; sfb++)
+    {
+      if (pscr->igf_curr_q[win][sfb] != 0)
+      {
+        flag = 1;
+        break;
+      }
+    }
+    if (flag == 1)
+    {
+      break;
+    }
+  }
+  /*igf_AllZero shall be 1 if one of the following conditions is true: m_igfStartSfb == *
+  m_igfStopSfb
+  all values in igf_curr[ ][ ][ ] == 0
+  swb_offset[m_igfStartSfb] ≤ igfMin (flag_swb_offset)*/
+
+  if (((igf_start_sfb == igf_stop_sfb) || (!flag) || (flag_swb_offset)) && (igf_all_zero != 1))
+  {
+    return -1;
+  }
+
   return igf_all_zero;
 }
 
@@ -2011,12 +2037,12 @@ WORD32 ia_core_coder_get_igf_levels(ia_bit_buf_struct *it_bit_buff,
  *
  *  \param [in]    it_bit_buff    bit stream buffer
  *  \param [in]    usac_data    USAC data structure
- *  \param [in/out]  igf_config    igf configuration structure
+ *  \param [in,out]  igf_config    igf configuration structure
  *  \param [in]    chn        channel under process
  *  \param [in]    igf_frame_id  igf frame id type
  *  \param [in]    igf_win_type  igf frame type
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_get_igf_data(ia_bit_buf_struct *it_bit_buff, ia_usac_data_struct *usac_data,
@@ -2131,7 +2157,7 @@ VOID ia_core_coder_get_igf_data(ia_bit_buf_struct *it_bit_buff, ia_usac_data_str
  *
  *  \brief Initialize igf config structure
  *
- *  \param [in/out]  usac_data        usac data config
+ *  \param [in,out]  usac_data        usac data config
  *  \param [in]    ptr_usac_ele_config    usac element config
  *  \param [in]    ele_type        element type
  *  \param [in]    id            element index in number of
@@ -2139,7 +2165,7 @@ VOID ia_core_coder_get_igf_data(ia_bit_buf_struct *it_bit_buff, ia_usac_data_str
  *  \param [in]    sample_rate        sample rate
  *  \param [in]    chan          channel under process
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_igf_init(ia_usac_data_struct *usac_data,
@@ -2265,7 +2291,7 @@ VOID ia_core_coder_igf_init(ia_usac_data_struct *usac_data,
  *  \param [in]    coef      IGF coeff
  *  \param [in]    scratch      Scratch buffer for internal processing
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_igf_tnf(ia_usac_data_struct *usac_data, ia_usac_igf_config_struct *igf_config,
@@ -2313,7 +2339,7 @@ VOID ia_core_coder_igf_tnf(ia_usac_data_struct *usac_data, ia_usac_igf_config_st
  *
  *  \brief Performs igf stereo filling
  *
- *  \param [in/out]  coef            IGF coefficient
+ *  \param [in,out]  coef            IGF coefficient
  *  \param [in]    dmx_prev          Previous downmix coeff
  *  \param [in]    info            sfb info structure
  *  \param [in]    noise_filling        noise filling config
@@ -2325,7 +2351,7 @@ VOID ia_core_coder_igf_tnf(ia_usac_data_struct *usac_data, ia_usac_igf_config_st
  *  \param [in]    grp              group
  *  \param [in]    max_noise_sfb        sfb noise
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_igf_stereofilling(FLOAT32 *coef, FLOAT32 *dmx_prev, ia_sfb_info_struct *info,
@@ -2434,8 +2460,8 @@ VOID ia_core_coder_igf_stereofilling(FLOAT32 *coef, FLOAT32 *dmx_prev, ia_sfb_in
  *
  *  \brief igf mono processing including igf whitening and applying mono igf
  *
- *  \param [in/out]    usac_data      USAC data structure
- *  \param [in/out]    igf_config      IGF config structure
+ *  \param [in,out]    usac_data      USAC data structure
+ *  \param [in,out]    igf_config      IGF config structure
  *  \param [in]      chn          channel under process
  *  \param [in]      igf_win_type    IGF window type
  *  \param [in]      igf_frame_id    index of IGF frame
@@ -2447,7 +2473,7 @@ VOID ia_core_coder_igf_stereofilling(FLOAT32 *coef, FLOAT32 *dmx_prev, ia_sfb_in
  *  \param [in]      scratch        Scratch buffer for internal
  * processing
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_igf_mono(ia_usac_data_struct *usac_data, ia_usac_igf_config_struct *igf_config,

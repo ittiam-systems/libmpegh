@@ -242,6 +242,15 @@ static IA_ERRORCODE impd_drc_decode_slopes(ia_drc_node_struct *pstr_node,
   {
     return IA_MPEGD_DRC_INIT_NONFATAL_UNEXPECTED_ERROR;
   }
+
+  /*nNodes	shall	be	restricted	to	a	maximum	value	of	32,
+  where nNodes	is	the	number	of	encoded	gain values	in
+  the	current	DRC	frame*/
+  if (node > MAX_NODE)
+  {
+    return IA_MPEGD_DRC_INIT_FATAL_INVALID_DRC_PARAM_FOR_LC_PROFILE;
+  }
+
   *no_nodes = node;
 
   ptr_slope_code_table = &(ia_drc_slope_code_tbl_entries_by_size[0]);
@@ -275,14 +284,14 @@ static IA_ERRORCODE impd_drc_decode_slopes(ia_drc_node_struct *pstr_node,
  *
  *  \brief decode time values
  *
- *  \param [out] pstr_node  Pointer to node struct
+ *  \param [out] pstr_node          Pointer to node struct
  *  \param [in]  pstr_it_bit_buff   Pointer to bit buffer
- *  \param [in]  pstr_tables   Pointer to time code tables
- *  \param [in]  no_nodes   No of node
- *  \param [in]  delta_tmin   delta min value
- *  \param [in]  drc_frame_size   drc frame size
- *  \param [in]  full_frame   flag to identify full frame
- *  \param [in]  time_offset  time offset
+ *  \param [in]  pstr_tables        Pointer to time code tables
+ *  \param [in]  delta_tmin         Delta min value
+ *  \param [in]  drc_frame_size     Drc frame size
+ *  \param [in]  full_frame         Flag to identify full frame
+ *  \param [in]  no_of_nodes        No of nodes
+ *  \param [in]  time_offset        Time offset
  *
  *  \return IA_ERRORCODE error
  *
@@ -412,7 +421,7 @@ impd_drc_read_uni_drc_gain_ext(ia_drc_uni_drc_gain_ext_struct *pstr_uni_drc_gain
  *  \brief Parse uni drc gain
  *
  *  \param [out] pstr_uni_drc_gain  Pointer to uni drc gain struct
- *  \param [in/out] pstr_drc_config  Pointer to drc config struct
+ *  \param [in,out] pstr_drc_config  Pointer to drc config struct
  *  \param [in]  pstr_it_bit_buff   Pointer to bit buffer
  *  \param [in]  pstr_drc_uni_bs_dec   Pointer to uni bs dec struct
  *

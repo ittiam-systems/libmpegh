@@ -78,12 +78,12 @@
  *
  *  \param [in]  pres_n           Index of the present code word.
  *  \param [in]  prev_n           Index of the previous code word.
- *  \param [i/o] c_prev           Pointer to previous code word buffer.
- *  \param [i/o] c                Pointer to code word buffer.
+ *  \param [in,out] c_prev           Pointer to previous code word buffer.
+ *  \param [in,out] c                Pointer to code word buffer.
  *  \param [in]  arith_reset_flag State reset flag.
  *  \param [in]  ptr_scratch_32   Pointer to scratch buffer.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_arith_map_context(WORD32 pres_n, WORD32 prev_n, WORD8 *c_prev, WORD8 *c,
@@ -155,7 +155,7 @@ WORD32 ia_core_coder_arith_first_symbol(ia_bit_buf_struct *it_bit_buff, ia_state
 /**
  *  ia_core_coder_arith_get_pk
  *
- *  \brief Brief description
+ *  \brief Function to get peak value
  *
  *  \param [in] c Code word param.
  *
@@ -196,7 +196,7 @@ static UWORD32 ia_core_coder_arith_get_pk(UWORD32 c)
  *  \param [in]  it_bit_buff Pointer to input buffer handle.
  *  \param [in]  bit_count   Bit count value.
  *  \param [out] m           Pointer to buffer to store decoded symbol value.
- *  \param [i/o] s           Pointer to arithmetic state structure.
+ *  \param [in,out] s           Pointer to arithmetic state structure.
  *  \param [in]  cum_freq    Pointer to cumulative frequency table.
  *  \param [in]  cfl         Frame length value.
  *
@@ -294,7 +294,7 @@ WORD32 ia_core_coder_arith_decode(ia_bit_buf_struct *it_bit_buff, WORD32 bit_cou
  *
  *  \param [in]  c_prev Pointer to previous code word buffer.
  *  \param [in]  c_pres Pointer to present code word buffer.
- *  \param [out] c      Pointer to code word buffer.
+ *  \param [out] c_val  Pointer to code word buffer.
  *  \param [in]  i      Index value.
  *
  *  \return WORD32
@@ -325,12 +325,12 @@ static WORD32 ia_core_coder_arith_get_context(WORD8 *c_prev, WORD8 *c_pres, WORD
  *
  *  \brief Arithmetic decoding level 2 function.
  *
- *  \param [in]  it_bit_buff
- *  \param [i/o] c_prev
- *  \param [i/o] c_pres
- *  \param [in]  n
- *  \param [in]  pres_n
- *  \param [out] quant
+ *  \param [in]  it_bit_buff  Pointer to bitbuffer structure
+ *  \param [in,out] c_prev    Pointer to previous code word buffer.
+ *  \param [in,out] c_pres    Pointer to present code word buffer.
+ *  \param [in]  n            Index
+ *  \param [in]  pres_n       Index of the present code word.
+ *  \param [out] quant        Pointer to airthmetic decoder data.
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -505,14 +505,14 @@ static IA_ERRORCODE ia_core_coder_arth_decoding_level2(ia_bit_buf_struct *it_bit
  *
  *  \brief Scale factor application.
  *
- *  \param [i/o] coef          Pointer to coef buffer.
+ *  \param [in,out] coef          Pointer to coef buffer.
  *  \param [in]  fac           Factor value.
  *  \param [in]  pstr_sfb_info Pointer to scale factor band info structure.
  *  \param [in]  win_tot       Length parameter.
  *  \param [in]  sfb           Scalefactor band index.
  *  \param [in]  grp           Group index.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_apply_scale_factor(FLOAT32 *coef, FLOAT32 fac,
@@ -544,7 +544,7 @@ static VOID ia_core_coder_apply_scale_factor(FLOAT32 *coef, FLOAT32 fac,
  *
  *  \brief Random sign generator function.
  *
- *  \param [i/o] seed Seed value used to generate
+ *  \param [in,out] seed Seed value used to generate
  *
  *  \return sign
  *
@@ -569,8 +569,8 @@ static WORD32 ia_core_coder_randomsign_fix(UWORD32 *seed)
  *
  *  \brief Inverse quantization function related to IGF data.
  *
- *  \param [i/o] q                Pointer to the buffer that stores quantized values.
- *  \param [i/o] coef             Pointer to coefficient buffer.
+ *  \param [in,out] q                Pointer to the buffer that stores quantized values.
+ *  \param [in,out] coef             Pointer to coefficient buffer.
  *  \param [in]  igf_config       Pointer to IGF config structure.
  *  \param [in]  igf_all_zero     Flag to indicate if IGF is all zeros.
  *  \param [in]  igf_input_spec_float Input Spectral data.
@@ -580,7 +580,7 @@ static WORD32 ia_core_coder_randomsign_fix(UWORD32 *seed)
  *  \param [in]  seed_value       Pointer to seed value.
  *  \param [in]  length           Frame length parameter.
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_esc_iquant(WORD32 *q, FLOAT32 *coef, ia_usac_igf_config_struct *igf_config,
@@ -654,8 +654,8 @@ static VOID impeghd_esc_iquant(WORD32 *q, FLOAT32 *coef, ia_usac_igf_config_stru
 *  \brief Apply scalefactors and noise filling.
 *
 *  \param [in]  noise_filling  Noise filling presence indicator flag.
-*  \param [i/o] usac_data      Pointer to USAC data structure.
-*  \param [i/o] quant          Pointer to quantization structure.
+*  \param [in,out] usac_data      Pointer to USAC data structure.
+*  \param [in,out] quant          Pointer to quantization structure.
 *  \param [in]  noise_level    Noise level parameter.
 *  \param [in]  max_sfb        Max scalefactor band value.
 *  \param [in]  max_noise_sfb  Max noise scalefactor band value.
@@ -665,7 +665,7 @@ static VOID impeghd_esc_iquant(WORD32 *q, FLOAT32 *coef, ia_usac_igf_config_stru
 *  \param [in]  chn            Channel index.
 *  \param [in]  ch             Channel offset parameter.
 *
-*  \return VOID
+*
 *
 */
 static VOID ia_core_coder_apply_scfs_and_nf(WORD32 noise_filling, ia_usac_data_struct *usac_data,
@@ -798,14 +798,14 @@ static VOID ia_core_coder_apply_scfs_and_nf(WORD32 noise_filling, ia_usac_data_s
  *
  *  \brief Frequency Domain Prediction decoding.
  *
- *  \param [i/o] usac_data Pointer to USAC data structure.
- *  \param [i/o] quant     Pointer to quantization structure.
+ *  \param [in,out] usac_data Pointer to USAC data structure.
+ *  \param [in,out] quant     Pointer to quantization structure.
  *  \param [in]  fdp_spacing_index Spacing index value extracted from bit stream.
  *  \param [in]  pred_bw   Prediction bandwidth.
  *  \param [in]  max_sfb   Max Scalefactor band value.
  *  \param [in]  chn       Processing channel index.
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_fd_chn_fdp_decode(ia_usac_data_struct *usac_data, WORD32 *quant,
@@ -929,7 +929,7 @@ static VOID ia_core_coder_fd_chn_fdp_decode(ia_usac_data_struct *usac_data, WORD
  *
  *  \brief Spectral data decoding.
  *
- *  \param [i/o] usac_data             Pointer to USAC data structure.
+ *  \param [in,out] usac_data             Pointer to USAC data structure.
  *  \param [in]  max_spec_coefficients Maximum spectral coefficients.
  *  \param [in]  noise_level           Noise level parameter.
  *  \param [in]  arith_pres_n          nth arithmetic coded symbol.
@@ -1041,7 +1041,7 @@ IA_ERRORCODE ia_core_coder_ac_spectral_data(
  *
  *  \brief Arithmetic data extraction.
  *
- *  \param [i/o] pstr_td_frame_data Pointer to TD frame data structure.
+ *  \param [in,out] pstr_td_frame_data Pointer to TD frame data structure.
  *  \param [out] x_ac_dec       Pointer to airthmetic decoder data.
  *  \param [in]  usac_data      Pointer to Usac data structure.
  *  \param [in]  it_bit_buff    Pointer to bit buffer structure.

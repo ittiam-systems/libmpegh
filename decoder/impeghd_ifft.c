@@ -56,7 +56,7 @@
 *  \param [in]  inp    Pointer to input data
 *  \param [out] op     Pointer to output data
 *
-*  \return VOID
+*
 *
 */
 static PLATFORM_INLINE VOID impeghd_ifft_7(FLOAT32 *inp, FLOAT32 *op)
@@ -242,7 +242,7 @@ static PLATFORM_INLINE VOID impeghd_ifft_7(FLOAT32 *inp, FLOAT32 *op)
  *  \param [in]    inp    Input buffer
  *  \param [out]  op    Output buffer
  *
- *  \return VOID
+ *
  *
  */
 static PLATFORM_INLINE VOID impeghd_ifft_3(FLOAT32 *inp, FLOAT32 *op)
@@ -286,12 +286,12 @@ static PLATFORM_INLINE VOID impeghd_ifft_3(FLOAT32 *inp, FLOAT32 *op)
  *
  *  \brief Radian based complex inverse fast fourier transform
  *
- *  \param [in/out]  ptr_real  Real buffer
- *  \param [in/out]  ptr_imag  Imaginary buffer
+ *  \param [in,out]  ptr_real  Real buffer
+ *  \param [in,out]  ptr_imag  Imaginary buffer
  *  \param [in]    n_points  Number of points
  *  \param [in]    ptr_scratch  Pointer to scratch buffer for intermediate processing
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_rad2_cplx_ifft(FLOAT32 *ptr_real, FLOAT32 *ptr_imag, WORD32 n_points,
@@ -847,12 +847,12 @@ VOID impeghd_rad2_cplx_ifft(FLOAT32 *ptr_real, FLOAT32 *ptr_imag, WORD32 n_point
  *
  *  \brief Mix radian inverse fast fourier transform
  *
- *  \param [in/out]  ptr_real  Real buffer
- *  \param [in/out]  ptr_imag  Imaginary buffer
+ *  \param [in,out]  ptr_real  Real buffer
+ *  \param [in,out]  ptr_imag  Imaginary buffer
  *  \param [in]    n_points  Number of points
  *  \param [in]    ptr_scratch  Pointer to scratch buffer for intermediate processing
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_mix_rad_ifft_3nx3(FLOAT32 *ptr_real, FLOAT32 *ptr_imag, WORD32 n_points,
@@ -971,7 +971,7 @@ VOID impeghd_mix_rad_ifft_3nx3(FLOAT32 *ptr_real, FLOAT32 *ptr_imag, WORD32 n_po
 *  \param [in]  dim2  Dimension 2
 *  \param [in]  tw    Twiddle array
 *
-*  \return VOID
+*
 *
 */
 static VOID impeghd_mix_rad_ifft_tw_mult(FLOAT32 *inp, FLOAT32 *op, WORD32 dim1, WORD32 dim2,
@@ -1010,12 +1010,12 @@ static VOID impeghd_mix_rad_ifft_tw_mult(FLOAT32 *inp, FLOAT32 *op, WORD32 dim1,
  *
  *  \brief Mix radian inverse fast fourier transform of 3nx7
  *
- *  \param [in/out]  inp        Input and Output buffer inplace
+ *  \param [in,out]  inp        Input and Output buffer inplace
  *  \param [in]    len        Length
  *  \param [in]    ptr_scratch    Pointer to scratch buffer for intermediate
  * processing
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_mix_rad_ifft_3nx7(FLOAT32 *inp, WORD32 len, FLOAT32 *ptr_scratch)
@@ -1097,10 +1097,10 @@ VOID impeghd_mix_rad_ifft_3nx7(FLOAT32 *inp, WORD32 len, FLOAT32 *ptr_scratch)
  *
  *  \brief 8-Point complex IFFT
  *
- *  \param [in/out] x_r Pointer to real part data buffer
- *  \param [in/out] x_i Pointer to imaginary part data buffer
+ *  \param [in,out] x_r Pointer to real part data buffer
+ *  \param [in,out] x_i Pointer to imaginary part data buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_cplx_ifft_8(FLOAT32 *x_r, FLOAT32 *x_i)
@@ -1203,10 +1203,10 @@ VOID impeghd_cplx_ifft_8(FLOAT32 *x_r, FLOAT32 *x_i)
  *
  *  \brief 4-Point complex IFFT
  *
- *  \param [in/out] x_r Pointer to real part data buffer
- *  \param [in/out] x_i Pointer to imaginary part data buffer
+ *  \param [in,out] x_r Pointer to real part data buffer
+ *  \param [in,out] x_i Pointer to imaginary part data buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_cplx_ifft_4(FLOAT32 *x_r, FLOAT32 *x_i)
@@ -1253,12 +1253,12 @@ VOID impeghd_cplx_ifft_4(FLOAT32 *x_r, FLOAT32 *x_i)
  *
  *  \brief Generic radix-2 complex IFFT for sizes greater than 1024 upto 8192
  *
- *  \param [in/out] ptr_in_buf_real Pointer to real part data buffer
- *  \param [in/out] ptr_in_buf_imag Pointer to imaginary part data buffer
+ *  \param [in,out] ptr_in_buf_real Pointer to real part data buffer
+ *  \param [in,out] ptr_in_buf_imag Pointer to imaginary part data buffer
  *  \param [in]     ptr_scratch_buf Pointer to scratch buffer
  *  \param [in]     fft_len         IFFT length.
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_cplx_ifft_8k(FLOAT32 *ptr_in_buf_real, FLOAT32 *ptr_in_buf_imag,

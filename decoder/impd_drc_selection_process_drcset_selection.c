@@ -70,7 +70,8 @@ static const WORD32 effect_types_request_table[] = {
  *	impd_drc_validate_requested_drc_feature
  *  \brief Validation of requested DRC feature
  *
- *  \param [in/out] pstr_drc_sel_proc_params_struct
+ *  \param [in,out] pstr_drc_sel_proc_params_struct Pointer to drc selection process params
+ *structure
  *
  *  \return IA_ERRORCODE
  *
@@ -114,9 +115,9 @@ IA_ERRORCODE impd_drc_validate_requested_drc_feature(
  *	impd_drc_get_dependent_drc_instructions
  *  \brief Initialize get dependent DRC indtruction
  *
- *  \param [in] drc_config
- *  \param [in] str_drc_instruction_str
- *  \param [out] drc_instructions_dependent
+ *  \param [in] drc_config                  Pointer to drc config structure
+ *  \param [in] pstr_drc_instruction_str     Pointer to drc instruction structure
+ *  \param [out] drc_instructions_dependent Pointer to drc instruction dependent structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -150,12 +151,13 @@ static IA_ERRORCODE impd_drc_get_dependent_drc_instructions(
 /**
  *
  *	impd_drc_select_drcs_without_compr_effects
+ *
  *  \brief Select drc without compr effects
  *
- *  \param [in/out] pstr_drc_config
- *  \param [out] match_found_flag
- *  \param [out] selection_candidate_count
- *  \param [out] selection_candidate_info
+ *  \param [in,out] pstr_drc_config         Pointer to drc config structure
+ *  \param [out] match_found_flag           Match found flag
+ *  \param [out] selection_candidate_count  Selection candidate count
+ *  \param [out] selection_candidate_info   Pointer to selection candidate info structure
 
  *  \return error IA_ERRORCODE if any
  *
@@ -224,12 +226,12 @@ IA_ERRORCODE impd_drc_select_drcs_without_compr_effects(
  *	impd_drc_match_effect_type_attempt
  *  \brief Match effect type
  *
- *  \param [in/out] pstr_drc_config
- *  \param [in] requested_effect_type
- *  \param [in] state_requested
- *  \param [out] match_found_flag
- *  \param [out] selection_candidate_count
- *  \param [out] selection_candidate_info
+ *  \param [in,out] pstr_drc_config         Pointer to drc config structure
+ *  \param [in] requested_effect_type       Requested effect type
+ *  \param [in] state_requested             State requested
+ *  \param [out] match_found_flag           Match found flag
+ *  \param [out] selection_candidate_count  Selection candidate count
+ *  \param [out] selection_candidate_info   Pointer to selection candidate info structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -360,12 +362,12 @@ static IA_ERRORCODE impd_drc_match_effect_type_attempt(
  *	impd_drc_match_effect_types
  *  \brief Matchin effect type
  *
- *  \param [in/out] pstr_drc_config
- *  \param [in] effect_type_requested_total_count
- *  \param [in] effect_type_requested_desired_count
- *  \param [in] requested_effect_type
- *  \param [out] selection_candidate_count
- *  \param [out] selection_candidate_info
+ *  \param [in,out] pstr_drc_config         Pointer to drc config structure
+ *  \param [in] effect_type_requested_total_count   Requested effect type total count
+ *  \param [in] effect_type_requested_desired_count Requested effect type desired count
+ *  \param [in] requested_effect_type       Requested effect type
+ *  \param [out] selection_candidate_count  Selection candidate count
+ *  \param [out] selection_candidate_info   Pointer to selection candidate info structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -424,12 +426,13 @@ impd_drc_match_effect_types(ia_drc_config *pstr_drc_config,
  *	impd_drc_match_dynamic_range
  *  \brief Match dymanic range
  *
- *  \param [in/out] pstr_drc_config
- *  \param [in] effect_type_requested_total_count
- *  \param [in] pstr_drc_sel_proc_params_struct
- *  \param [in] num_drc_requests
- *  \param [out] selection_candidate_count
- *  \param [out] selection_candidate_info
+ *  \param [in,out] pstr_drc_config               Pointer to drc config structure
+ *  \param [in] pstr_loudness_info                Pointer to drc loudness info structure
+ *  \param [in] pstr_drc_sel_proc_params_struct   Pointer to drc selection process params
+ *structure
+ *  \param [in] num_drc_requests                  Number of drc requests
+ *  \param [out] selection_candidate_count        Selection candidate count
+ *  \param [out] selection_candidate_info         Pointer to selection candidate info structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -534,11 +537,11 @@ impd_drc_match_dynamic_range(ia_drc_config *pstr_drc_config,
  *	impd_match_drc_characteristic_attempt
  *  \brief Match DRC characterstic attempt
  *
- *  \param [in/out] pstr_drc_config
- *  \param [in] requested_drc_characteristic
- *  \param [out] match_found_flag
- *  \param [out] selection_candidate_count
- *  \param [out] selection_candidate_info
+ *  \param [in,out] pstr_drc_config               Pointer to drc config structure
+ *  \param [in] requested_drc_characteristic      Requested drc characteristic
+ *  \param [out] match_found_flag                 Match found flag
+ *  \param [out] selection_candidate_count        Selection candidate count
+ *  \param [out] selection_candidate_info         Pointer to selection candidate info structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -708,10 +711,10 @@ IA_ERRORCODE impd_match_drc_characteristic_attempt(
  *	impd_drc_match_drc_characteristic
  *  \brief Match DRC characterstics
  *
- *  \param [in/out] pstr_drc_config
- *  \param [in] requested_drc_characteristic
- *  \param [out] selection_candidate_count
- *  \param [out] selection_candidate_info
+ *  \param [in,out] pstr_drc_config               Pointer to drc config structure
+ *  \param [in] requested_drc_characteristic      Requested drc characteristic
+ *  \param [out] selection_candidate_count        Selection candidate count
+ *  \param [out] selection_candidate_info         Pointer to selection candidate info structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -749,10 +752,10 @@ IA_ERRORCODE impd_drc_match_drc_characteristic(
  *	impd_select_drc_coeff3
  *  \brief Select DRC coef
  *
- *  \param [in/out] pstr_drc_config
- *  \param [ouy] requested_drc_characteristic
+ *  \param [in,out] drc_config               Pointer to drc config structure
+ *  \param [out] pstr_p_loc_drc_coefficients_uni_drc     Pointer to unidrc coefficients structure
  *
- *  \return
+ *
  *
  */
 static VOID
@@ -788,12 +791,13 @@ impd_select_drc_coeff3(ia_drc_config *drc_config,
  *	impd_drc_set_pre_selection
  *  \brief Preslect DRC preset
  *
- *  \param [in/out] pstr_drc_sel_proc_params_struct
- *  \param [in/out] pstr_drc_config
- *  \param [in] pstr_loudness_info
- *  \param [in] restrict_to_drc_with_album_loudness
- *  \param [out] selection_candidate_count
- *  \param [out] selection_candidate_info
+ *  \param [in,out] pstr_drc_sel_proc_params_struct Pointer to drc selection process params
+ *structure
+ *  \param [in,out] pstr_drc_config               Pointer to drc config structure
+ *  \param [in] pstr_loudness_info                Pointer to drc loudness info set structure
+ *  \param [in] restrict_to_drc_with_album_loudness Restrict to drc with album loudness flag
+ *  \param [out] selection_candidate_count        Selection candidate count
+ *  \param [out] selection_candidate_info         Pointer to selection candidate info structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -1345,10 +1349,11 @@ IA_ERRORCODE impd_drc_set_pre_selection(
  *	impd_drc_set_final_selection
  *  \brief DRC set final select
  *
- *  \param [in/out] pstr_drc_config
- *  \param [in/out] pstr_drc_sel_proc_params_struct
- *  \param [in] selection_candidate_count
- *  \param [in] selection_candidate_info
+ *  \param [in,out] pstr_drc_config               Pointer to drc config structure
+ *  \param [in,out] pstr_drc_sel_proc_params_struct Pointer to drc selection process params
+ *structure
+ *  \param [out] selection_candidate_count        Selection candidate count
+ *  \param [out] selection_candidate_info         Pointer to selection candidate info structure
  *
  *  \return error IA_ERRORCODE if any
  *

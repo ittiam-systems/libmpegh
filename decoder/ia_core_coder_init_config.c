@@ -91,8 +91,8 @@
  *
  *  \brief Production metadata config
  *
- *  \param [in]       it_bit_buff                Bitstrean buffer
- *  \param [in/out]   ptr_usac_config_struct   USAC config structure
+ *  \param [in]       ptr_bit_buf              Bitstrean buffer
+ *  \param [in,out]   ptr_usac_config_struct   USAC config structure
  *
  *  \return IA_ERRORCODE    error code
  *
@@ -137,13 +137,13 @@ static IA_ERRORCODE impeghd_prod_metadata_config(ia_bit_buf_struct *ptr_bit_buf,
 * which
 *   allows to extend the representable range of values by successive reception of additional bits.
  *
- *  \param [in]    it_bit_buff    Bitstrean buffer
- *  \param [out]  ext_ele_value   Value read from the stream
- *  \param [in]    no_bits1    First set of Bits
- *  \param [in]    no_bits2    Second set of Bits
- *  \param [in]    no_bits3    Third set of Bits
+ *  \param [in]    it_bit_buff     Bitstrean buffer
+ *  \param [out]   ext_ele_value   Value read from the stream
+ *  \param [in]    num_bits_1      First set of Bits
+ *  \param [in]    num_bits_2      Second set of Bits
+ *  \param [in]    num_bits_3      Third set of Bits
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_read_escape_value(ia_bit_buf_struct *it_bit_buff, UWORD32 *ext_ele_value,
@@ -178,13 +178,13 @@ VOID ia_core_coder_read_escape_value(ia_bit_buf_struct *it_bit_buff, UWORD32 *ex
  *  \brief Configure extension elements in USAC config structure
  *
  *  \param [in]    it_bit_buff            Bit stream buffer
- *  \param [in/out]  pstr_usac_element_config    Decoder element config structure
+ *  \param [in,out]  pstr_usac_element_config    Decoder element config structure
  *  \param [in]    ptr_usac_ext_ele_payload    Pointer buffer of extension
  * payload
  *  \param [in]    ptr_usac_ext_ele_payload_len  Payload length of extension element
  *  \param [in]    preroll_flag          Flag to indicate pre-roll
  * frame
- *  \param [in/out]  ia_ext_ele_payload_type      Extension payload type
+ *  \param [in,out]  ia_ext_ele_payload_type      Extension payload type
  *  \param [in]    pstr_usac_conf          USAC config structure
  *  \param [in]    ccfl              Frame Length
  *
@@ -365,15 +365,15 @@ IA_ERRORCODE ia_core_coder_ext_element_config(
  *
  *  \brief Maps element to number of output channel
  *
- *  \param [in/out]    num_output_chns    Number of output channel
+ *  \param [in,out]    num_output_chns    Number of output channel
  *  \param [in]      shift_index      Shift index
  *  \param [in]      shift_channel    Shift channel
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_map_ele_to_channel(WORD32 *num_output_chns, WORD32 shift_index,
-                                             WORD32 shift_channel)
+                                             WORD32 shift_channel, WORD32 *index)
 {
   WORD32 i, j, next_idx = 0, channel = 0;
 
@@ -403,6 +403,7 @@ static VOID ia_core_coder_map_ele_to_channel(WORD32 *num_output_chns, WORD32 shi
   {
     num_output_chns[next_idx] = channel + shift_channel + 1;
   }
+  *index = next_idx;
 }
 
 /**
@@ -411,7 +412,7 @@ static VOID ia_core_coder_map_ele_to_channel(WORD32 *num_output_chns, WORD32 shi
  *  \brief Update cpe configurations in USAC elementconfig structure
  *
  *  \param [in]    it_bit_buff            Bit stream buffer
- *  \param [in/out]  pstr_usac_element_config    USAC decoder element config
+ *  \param [in,out]  pstr_usac_element_config    USAC decoder element config
  * structure
  *  \param [in]    sbr_ratio_index          sbr ratio index
  *  \param [in]    num_output_chns          number of output channels
@@ -427,7 +428,7 @@ static IA_ERRORCODE ia_core_coder_cpe_config(
     WORD32 sbr_ratio_index, WORD32 *num_output_chns, ia_signals_3d *ia_signals_3da)
 {
   WORD32 val = 0, nbits, shift_idx1 = 0, shift_idx0 = 0, shift_channel1 = 0, shift_channel0 = 0,
-         qce_index;
+         qce_index, index = 0;
   if ((ia_signals_3da->num_saoc_transport_ch + ia_signals_3da->num_hoa_transport_ch +
        ia_signals_3da->num_ch + ia_signals_3da->num_audio_obj) != 0)
   {
@@ -463,6 +464,11 @@ static IA_ERRORCODE ia_core_coder_cpe_config(
   nbits = (val + 1);
 
   pstr_usac_element_config->tw_mdct = ia_core_coder_read_bits_buf(it_bit_buff, 1);
+  /*The variable tw_mdct shall be 0*/
+  if (pstr_usac_element_config->tw_mdct != 0)
+  {
+    return IA_MPEGD_DEC_INIT_FATAL_INVALID_CONFIG_FOR_LC_PROFILE;
+  }
   pstr_usac_element_config->full_band_lpd = ia_core_coder_read_bits_buf(it_bit_buff, 1);
   pstr_usac_element_config->noise_filling = ia_core_coder_read_bits_buf(it_bit_buff, 1);
 
@@ -486,6 +492,12 @@ static IA_ERRORCODE ia_core_coder_cpe_config(
   }
 
   qce_index = ia_core_coder_read_bits_buf(it_bit_buff, 2); // qceindex
+  /*The variable qceIndex shall be 0*/
+  if (qce_index != 0)
+  {
+    return IA_MPEGD_DEC_INIT_FATAL_INVALID_CONFIG_FOR_LC_PROFILE;
+  }
+
   if (qce_index > 0)
   {
     shift_idx0 = ia_core_coder_read_bits_buf(it_bit_buff, 1);
@@ -494,13 +506,26 @@ static IA_ERRORCODE ia_core_coder_cpe_config(
       shift_channel0 = ia_core_coder_read_bits_buf(it_bit_buff, nbits);
     }
   }
-  ia_core_coder_map_ele_to_channel(num_output_chns, shift_idx0, shift_channel0);
+  ia_core_coder_map_ele_to_channel(num_output_chns, shift_idx0, shift_channel0, &index);
+  /*shiftChannel0 a shifted channel shall not exceed the maximum
+      channel index of the signal group it is associated with*/
+  if (shift_channel0 > num_output_chns[index])
+  {
+    return IA_MPEGD_DEC_INIT_FATAL_INVALID_SHIFTED_CH;
+  }
+
   shift_idx1 = ia_core_coder_read_bits_buf(it_bit_buff, 1); // do shift
   if (shift_idx1 > 0)
   {
     shift_channel1 = ia_core_coder_read_bits_buf(it_bit_buff, nbits);
   }
-  ia_core_coder_map_ele_to_channel(num_output_chns, shift_idx1, shift_channel1);
+  ia_core_coder_map_ele_to_channel(num_output_chns, shift_idx1, shift_channel1, &index);
+  /*shiftChannel1 a shifted channel shall not exceed the maximum
+    channel index of the signal group it is associated with*/
+  if (shift_channel1 > num_output_chns[index])
+  {
+    return IA_MPEGD_DEC_INIT_FATAL_INVALID_SHIFTED_CH;
+  }
   if (qce_index == 0 && sbr_ratio_index == 0)
     pstr_usac_element_config->lpd_stereo_index = ia_core_coder_read_bits_buf(it_bit_buff, 1);
 
@@ -513,7 +538,7 @@ static IA_ERRORCODE ia_core_coder_cpe_config(
  *  \brief Update USAC config structure fro bitstream
  *
  *  \param [in]      it_bit_buff          bit stream buffer
- *  \param [in/out]    pstr_usac_conf        USAC config structure
+ *  \param [in,out]    pstr_usac_conf        USAC config structure
  *
  *  \return IA_ERRORCODE
  *
@@ -523,6 +548,7 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
 {
   IA_ERRORCODE err = IA_MPEGH_DEC_NO_ERROR;
   UWORD32 elem_idx = 0, sbr_ratio_index = 0;
+  WORD32 index = 0;
   ia_usac_decoder_config_struct *pstr_usac_decoder_config;
   ia_usac_dec_element_config_struct *pstr_usac_element_config;
   pstr_usac_decoder_config = &pstr_usac_conf->str_usac_dec_config;
@@ -581,7 +607,7 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
       pstr_usac_element_config->stereo_config_index = 0;
       pstr_usac_element_config->noise_filling = 0;
       pstr_usac_element_config->tw_mdct = 0;
-      ia_core_coder_map_ele_to_channel(pstr_usac_decoder_config->num_output_chns, 0, 0);
+      ia_core_coder_map_ele_to_channel(pstr_usac_decoder_config->num_output_chns, 0, 0, &index);
       break;
     }
     case ID_USAC_CPE:
@@ -600,6 +626,11 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
     case ID_USAC_SCE:
     {
       pstr_usac_element_config->tw_mdct = ia_core_coder_read_bits_buf(it_bit_buff, 1);
+      /*The variable tw_mdct shall be 0*/
+      if (pstr_usac_element_config->tw_mdct != 0)
+      {
+        return IA_MPEGD_DEC_INIT_FATAL_INVALID_CONFIG_FOR_LC_PROFILE;
+      }
       pstr_usac_element_config->full_band_lpd = ia_core_coder_read_bits_buf(it_bit_buff, 1);
       pstr_usac_element_config->noise_filling = ia_core_coder_read_bits_buf(it_bit_buff, 1);
       pstr_usac_element_config->enhanced_noise_filling =
@@ -621,7 +652,7 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
         pstr_usac_element_config->str_usac_ele_igf_init_config.igf_independent_tilling = 1;
       }
       pstr_usac_element_config->stereo_config_index = 0;
-      ia_core_coder_map_ele_to_channel(pstr_usac_decoder_config->num_output_chns, 0, 0);
+      ia_core_coder_map_ele_to_channel(pstr_usac_decoder_config->num_output_chns, 0, 0, &index);
 
       break;
     }
@@ -643,7 +674,7 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
  * USAC
  * 3DA signal configuration
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_sig_group_info(ia_bit_buf_struct *it_bit_buff, ia_signals_3d *ptr_signal_3d)
@@ -665,7 +696,7 @@ static VOID impeghd_sig_group_info(ia_bit_buf_struct *it_bit_buff, ia_signals_3d
  *
  *  \param [in]    it_bit_buff      bit stream buffer
  *  \param [in]    ui_cicp_layout_idx  cicp layout index to decide speaker layout
- *  \param [in/out]  ptr_dmx_cfg      USAC extension payload downmix cfg
+ *  \param [in,out]  ptr_dmx_cfg      USAC extension payload downmix cfg
  * structure
  *
  *  \return IA_ERRORCODE
@@ -691,6 +722,11 @@ static IA_ERRORCODE impeghd_parse_dmx_ext_config(ia_bit_buf_struct *it_bit_buff,
     if (ptr_dmx_cfg->passive_dmx_flag == 0)
     {
       ptr_dmx_cfg->phase_align_strength = ia_core_coder_read_bits_buf(it_bit_buff, 3);
+      /*phaseAlignStrength shall be 0*/
+      if (ptr_dmx_cfg->phase_align_strength)
+      {
+        return IA_MPEGD_DEC_INIT_FATAL_INVALID_CONFIG_FOR_LC_PROFILE;
+      }
     }
     ptr_dmx_cfg->immersive_downmix_flag = ia_core_coder_read_bits_buf(it_bit_buff, 1);
   }
@@ -789,7 +825,7 @@ static IA_ERRORCODE impeghd_parse_dmx_ext_config(ia_bit_buf_struct *it_bit_buff,
  *  \brief Configure extension element in USAC config structure
  *
  *  \param [in]      it_bit_buff          bit stream buffer
- *  \param [in/out]    pstr_usac_decoder_config  USAC decoder config
+ *  \param [in,out]    pstr_usac_decoder_config  USAC decoder config
  *  \param [in]      ptr_signal_3d        Signal 3d structure in usac
  *  \param [in]      pstr_mae_asi        meta audio element audio scene info
  *  \param [in]      ui_cicp_layout_idx      cicp layout index
@@ -900,9 +936,8 @@ static IA_ERRORCODE ia_core_coder_config_extension(
     case ID_CONFIG_EXT_AUDIOSCENE_INFO:
     {
       /*The variable elementLengthPresent shall be 1, if the Configuration Extension type
-      ID_CONFIG_EXT_AUDIOSCENE_INFO
-      exists and the value mae_numSwitchGroups in bitstream structure mae_AudioSceneInfo() is
-      larger than 0.*/
+      ID_CONFIG_EXT_AUDIOSCENE_INFO exists and the value mae_numSwitchGroups in bitstream
+      structure mae_AudioSceneInfo() is larger than 0.*/
       if ((ptr_mae_asi->num_switch_groups > 0) &&
           (pstr_usac_decoder_config->ele_length_present != 1))
       {
@@ -961,11 +996,9 @@ static IA_ERRORCODE ia_core_coder_config_extension(
 *
 *  \brief Update 3d speaker config data from bitstream
 *
-*  \param [in]  buf_handle          Pointer to input configuration
-* structure
-*  \param [in]  spk_desc          Pointer to brir speaker
-* description
-*  \param [in]  angular_precision      Angular precision
+*  \param [in]  buf_handle        Buffer handle
+*  \param [in]  pstr_spk_desc     Pointer to flexible speaker config structure
+*  \param [in]  angular_precision Angular precision
 *
 *  \return IA_ERRORCODE              Error code
 *
@@ -1049,10 +1082,9 @@ static IA_ERRORCODE impeghd_spk_description(VOID *buf_handle, ia_flex_spk_cfg_st
 *
 *  \brief Update 3d speaker config data from bitstream
 *
-*  \param [in]  buf_handle          Pointer to input configuration
-* structure
-*  \param [in]  spk_config_3d        Pointer to brir flexible spk config
-*  \param [in]  num_spk            Number of speakers
+*  \param [in]  buf_handle          Buffer handle
+*  \param [in]  pstr_flex_spk_data  Pointer to flexible speaker data structure
+*  \param [in]  num_spk             Number of speakers
 *
 *  \return IA_ERRORCODE              Error code
 *
@@ -1119,7 +1151,7 @@ static IA_ERRORCODE impeghd_flexispk_config(VOID *buf_handle,
  *  \brief Configure audio specif config based on MPEGH 3D audio bit stream parameters
  *
  *  \param [in]    it_bit_buff      bit stream buffer
- *  \param [in/out]  mpeghd_state_struct  decoder state struct
+ *  \param [in,out]  mpeghd_state_struct  decoder state struct
  *  \param [in]    ptr_mae_asi      meta audio element audio scene info
  *
  *  \return IA_ERRORCODE
@@ -1144,7 +1176,7 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
   mpeghd_state_struct->is_base_line_profile_3b = 0;
   mpegh_profile_lvl =
       ia_core_coder_read_bits_buf(it_bit_buff, 8); // mpegh_3da_profile_lvl_indication
-  pstr_audio_specific_config->mpegh_profile_lvl = mpegh_profile_lvl;
+  pstr_usac_conf->str_usac_dec_config.mpegh_profile_lvl = mpegh_profile_lvl;
 
   pstr_usac_conf->usac_sampling_frequency_index = ia_core_coder_read_bits_buf(it_bit_buff, 5);
 
@@ -1226,6 +1258,10 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
       {
         pstr_audio_specific_config->ref_spk_layout.cicp_spk_idx[i] =
             ia_core_coder_read_bits_buf(it_bit_buff, 7);
+        if (pstr_audio_specific_config->ref_spk_layout.cicp_spk_idx[i] > CICP_MAX_CH)
+        {
+          return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_CICP_SPK_INDEX;
+        }
       }
     }
   }
@@ -1535,9 +1571,9 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
  *
  *  \brief Configure decoder with default values
  *
- *  \param [in/out] pstr_usac_conf    USAC config structure
+ *  \param [in,out] pstr_usac_conf    USAC config structure
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_conf_default(ia_usac_config_struct *pstr_usac_conf)
@@ -1614,7 +1650,7 @@ IA_ERRORCODE impeghd_speaker_config_3d(VOID *buf_handle,
 *
 *  \brief Maps azimuth index to degrees based on direction and precision
 *
-*  \param [in]  index    azimuth Index
+*  \param [in]  idx        azimuth Index
 *  \param [in]  direction  azimuth direction
 *  \param [in]  precision  Angular precision
 *
@@ -1647,7 +1683,7 @@ WORD32 impeghd_azi_idx_degree(WORD32 idx, WORD32 direction, WORD32 precision)
 *
 *  \brief Maps elevation index to degrees based on direction and precision
 *
-*  \param [in]  index    azimuth Index
+*  \param [in]  idx        azimuth Index
 *  \param [in]  direction  azimuth direction
 *  \param [in]  precision  Angular precision
 *
@@ -1681,7 +1717,7 @@ WORD32 impeghd_elev_idx_degree(WORD32 idx, WORD32 direction, WORD32 precision)
 *  \brief Fills loudspeaker geometry information based on CICP index of the loudspeaker.
 *
 *  \param [in]  cicp_idx     CICP index.
-*  \param [out] az_el_lfe    Pointer to speaker geometery info structure.
+*  \param [out] ptr_geometry Pointer to channel geometery structure.
 *  \param [out] num_channels Pointer to data that carries channels information.
 *  \param [out] num_lfes     Pointer to data that carries LFE channels information.
 *
@@ -1724,10 +1760,10 @@ IA_ERRORCODE impeghd_fill_ls_geom_frm_cicp_spk_idx(WORD32 cicp_idx, ia_ch_geomet
 *
 *  \brief Update binaural renderer 3dspk config data from bitstream
 *
-*  \param [in]  spk_config_3d        Pointer to brir 3d speaker configuretion
+*  \param [in]  speaker_config_3d   Pointer to brir 3d speaker configuretion
 *  \param [in]  ptr_geometry        Pointer to channel geometry
 *  \param [in]  num_channels        Pointer to number of channels
-*  \param [in]  num_lfes          Pointer to number of lfes
+*  \param [in]  num_lfes            Pointer to number of lfes
 *
 *  \return IA_ERRORCODE              Error code
 *

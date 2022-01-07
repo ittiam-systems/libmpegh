@@ -104,9 +104,6 @@ VOID impeghd_hoa_ren_simple_mtrx_svd_pinv(pVOID handle_svd, pVOID handle_sm, FLO
 
 FLOAT32 impeghd_hoa_ren_simple_mtrx_norm_fro(pVOID handle);
 
-VOID impeghd_hoa_ren_simple_mtrx_svd_pinv(pVOID handle_svd, pVOID handle_sm, FLOAT32 threshold,
-                                          pVOID scratch);
-
 VOID impeghd_hoa_ren_simple_mtrx_transpose_keep(pVOID handle_og, pVOID handle);
 
 VOID impeghd_hoa_ren_simple_mtrx_transpose(pVOID handle, pVOID scratch);

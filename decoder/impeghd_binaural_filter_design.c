@@ -100,7 +100,7 @@
 *
 *  \brief TD Binaural renderer filter params are computed.
 *
-*  \param [i/o] ptr_param       Pointer to TD binaural renderer params structure.
+*  \param [in,out] ptr_param       Pointer to TD binaural renderer params structure.
 *  \param [in]  ptr_fir_data    Pointer to Binaural FIR data.
 *  \param [in]  n_brir_pairs    Number of BRIR pairs information.
 *  \param [in]  ptr_scratch_buf Pointer to scratch buffer.

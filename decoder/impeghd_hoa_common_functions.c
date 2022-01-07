@@ -55,10 +55,10 @@
  *
  *  \brief HOA legendre calculation
  *
- *  \param [in] n
- *  \param [in] abs_val
- *  \param [in] cos_theta
- *  \param [in] sin_theta
+ *  \param [in] n           order index
+ *  \param [in] abs_val     absolute value of degree index
+ *  \param [in] cos_theta   cos theta value
+ *  \param [in] sin_theta   sin theta value
  *
  *  \return FLOAT32 legendre value
  *
@@ -102,11 +102,11 @@ static FLOAT32 impeghd_hoa_cal_legendre(WORD32 n, WORD32 abs_val, FLOAT32 cos_th
  *
  *  \brief HOA spherical harmonics calculation
  *
- *  \param [in] n
- *  \param [in] m
- *  \param [in] cos_theta
- *  \param [in] sin_theta
- *  \param [in] phi
+ *  \param [in] n           order index
+ *  \param [in] m           degree index
+ *  \param [in] cos_theta   cos theta value
+ *  \param [in] sin_theta   sin theta value
+ *  \param [in] phi         azimuth
  *
  *  \return FLOAT32
  *
@@ -190,9 +190,8 @@ IA_ERRORCODE impeghd_hoa_table_get_transpose_mode_mat_for_fine_grid(pFLOAT32 tra
  *
  *  \brief Computation of sample count using interp_samples for vector based synthesis
  *
- *  \param [out] sample         Sample count
- *  \param [in]  interp_samples Interpolation samples
- *  \return UWORD32             sample
+ *  \param  [in] interp_samples Interpolation samples
+ *  \return UWORD32 sample
  *
  */
 static UWORD32 impeghd_hoa_get_sample(UWORD32 interp_samples)
@@ -255,7 +254,6 @@ FLOAT32 impeghd_hoa_pow_2(WORD32 exp)
  *  \brief Computation of fade window for vector based synthesis
  *
  *  \param [out] out            Pointer to output fade window for vector based synthesis
- *  \param [in]  frame_sz       Frame size
  *  \param [in]  interp_samples Interpolation samples
  *  \param [in]  interp_method  Interpolation method
  *
@@ -284,7 +282,7 @@ IA_ERRORCODE impeghd_hoa_compute_fade_win_for_vec_based_syn(pFLOAT32 *out, UWORD
  *
  *  \brief Get log2 ceiling value
  *
- *  \param inp        Input
+ *  \param  [in] inp        Input
  *
  *  \return WORD32  Ceiling value of log 2 of given input
  *

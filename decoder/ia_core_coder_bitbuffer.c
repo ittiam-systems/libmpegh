@@ -55,7 +55,7 @@
  *
  *  \brief Helper function to skip bits in bit buffer.
  *
- *  \param [i/o] pstr_bit_buff Pointer to bit buffer structure.
+ *  \param [in,out] pstr_bit_buff Pointer to bit buffer structure.
  *  \param [in]  num_of_bits  No. of bits to skip.
  *
  *  \return WORD32     No. of bits to skip.
@@ -93,7 +93,7 @@ WORD32 ia_core_coder_skip_bits_buf(ia_bit_buf_struct *pstr_bit_buff, WORD num_of
  *
  *  \brief Helper function to read bits, but not update bit buffer structure.
  *
- *  \param [i/o] pstr_bit_buff Pointer to bit buffer structure.
+ *  \param [in,out] pstr_bit_buff Pointer to bit buffer structure.
  *  \param [in]  num_of_bits  No. of bits whose value is needed.
  *
  *  \return WORD32
@@ -144,7 +144,7 @@ WORD32 ia_core_coder_show_bits_buf(ia_bit_buf_struct *pstr_bit_buff, WORD num_of
  *
  *  \brief Helper function to read bits.
  *
- *  \param [i/o] pstr_bit_buff Pointer to bit buffer structure.
+ *  \param [in,out] pstr_bit_buff Pointer to bit buffer structure.
  *  \param [in]  num_of_bits  Pointer to no of bits to be read.
  *
  *  \return WORD32 Value read from bit stream.
@@ -198,8 +198,7 @@ WORD32 ia_core_coder_read_bits_buf(ia_bit_buf_struct *pstr_bit_buff, WORD num_of
 *
 *  \brief Helper function to read bits.
 *
-*  \param pstr_bit_buff Pointer to bit buffer structure.
-*  \param num_of_bits  Pointer to no of bits to be read.
+*  \param [in,out] pstr_bit_buff Pointer to bit buffer structure.
 *
 *  \return UWORD32 Value read from bit stream.
 *
@@ -248,12 +247,10 @@ UWORD32 ia_core_coder_read_bits_buf_32(ia_bit_buf_struct *pstr_bit_buff)
  *
  *  \brief Function to read bit stream data.
  *
- *  \param [i/o] ptr_read_next Pointer to the next location to be read in bit buffer.
- *  \param [i/o] ptr_bit_pos   Pointer to bit position.
+ *  \param [in,out] ptr_read_next Pointer to the next location to be read in bit buffer.
+ *  \param [in,out] ptr_bit_pos   Pointer to bit position.
  *  \param [out] ptr_read_word      Pointer to the word read from bit stream.
  *  \param [in]  ptr_bit_buf_end Pointer to the end of bit buffer
- *
- *  \return VOID
  *
  */
 VOID ia_core_coder_mpeghd_read_byte_corr1(UWORD8 **ptr_read_next, WORD32 *ptr_bit_pos,
@@ -282,12 +279,12 @@ VOID ia_core_coder_mpeghd_read_byte_corr1(UWORD8 **ptr_read_next, WORD32 *ptr_bi
 /**
  *  impeghd_create_write_bit_buffer
  *
- *  \brief Brief description
+ *  \brief Function to create write bitbuffer
  *
- *  \param pstr_bit_buff
- *  \param ptr_bit_buf_base
- *  \param bit_buffer_size
- *  \param init
+ *  \param [in,out] pstr_bit_buff    Pointer to bit buffer structure.
+ *  \param [in]     ptr_bit_buf_base Pointer to bit buffer base
+ *  \param [in]     bit_buffer_size  bitbuffer size
+ *  \param [in]     init             init flag
  *
  *  \return ia_bit_buf_struct
  *
@@ -315,11 +312,11 @@ WORD32 impeghd_create_write_bit_buffer(ia_write_bit_buf_struct *pstr_bit_buff,
 /**
  *  impeghd_write_bits_buf
  *
- *  \brief Brief description
+ *  \brief Function to write to bitbuffer
  *
- *  \param pstr_bit_buff
- *  \param write_val
- *  \param num_of_bits
+ *  \param [in,out] pstr_bit_buff Pointer to bit buffer structure.
+ *  \param [in]     write_val     Value to write
+ *  \param [in]     num_of_bits   Number of bits to write
  *
  *  \return UWORD8
  *
@@ -374,13 +371,13 @@ UWORD8 impeghd_write_bits_buf(ia_write_bit_buf_struct *pstr_bit_buff, UWORD32 wr
 /**
  *  impeghd_write_escape_value
  *
- *  \brief Brief description
+ *  \brief Function to write escape value
  *
- *  \param pstr_bit_buff
- *  \param value
- *  \param no_bits1
- *  \param no_bits2
- *  \param no_bits3
+ *  \param [in,out] pstr_bit_buff Pointer to bit buffer structure.
+ *  \param [in]     value         Value to write
+ *  \param [in]     no_bits1      No of bits to write
+ *  \param [in]     no_bits2      No of bits to write
+ *  \param [in]     no_bits3      No of bits to write
  *
  *  \return WORD32
  *

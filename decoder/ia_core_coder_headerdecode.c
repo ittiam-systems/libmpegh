@@ -77,7 +77,7 @@
  *
  *  \brief Decode 3d audio config
  *
- *  \param[in/out]    mpeghd_state_struct  decoder state structure
+ *  \param[in,out]    mpeghd_state_struct  decoder state structure
  *  \param [out]    bytes_consumed    Header bytes consumed
  *  \param [in]      it_bit_buff      bit stream buffer
  *

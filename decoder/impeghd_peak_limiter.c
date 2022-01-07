@@ -60,7 +60,7 @@
 *  \param [in] ptr_delayed_in pointer to delay input buffer
 *  \param [out] ptr_samples pointer to sample buffer
 *  \param [in] attack_time_samples attack constant
-*  \return VOID
+*
 *
 */
 static VOID impeghd_cpy_delay_samples(UWORD32 frame_size, UWORD32 *delay_in_idx,
@@ -98,7 +98,7 @@ static VOID impeghd_cpy_delay_samples(UWORD32 frame_size, UWORD32 *delay_in_idx,
 *  \param [out] ptr_samples pointer to sample buffer
 *  \param [in] attack_time_samples attack constant
 *  \param [in] limit_threshold limit threshold value
-*  \return VOID
+*
 *
 */
 static VOID impeghd_cpy_delay_samples_with_gain(UWORD32 i, UWORD32 *delay_in_idx,
@@ -135,7 +135,7 @@ static VOID impeghd_cpy_delay_samples_with_gain(UWORD32 i, UWORD32 *delay_in_idx
 *
 *  \brief Peak Limiter initialization
 *
-*  \param [in/out] pstr_peak_limiter Pointer to peak_limiter struct
+*  \param [in,out] pstr_peak_limiter Pointer to peak_limiter struct
 *  \param [in] channel_num Number of ouptut channels
 *  \param [in] sample_rate Sampling rate value
 *  \param [in] ptr_buff Peak limiter buffer of size PEAK_LIM_SIZE
@@ -180,11 +180,11 @@ IA_ERRORCODE impeghd_peak_limiter_init(ia_peak_limiter_struct *pstr_peak_limiter
 *
 *  \brief Peak Limiter process
 *
-*  \param [in/out] pstr_peak_limiter
-*  \param [in] ptr_samples
-*  \param [in] frame_size
+*  \param [in,out] pstr_peak_limiter Pointer to peak limiter structure
+*  \param [in] ptr_samples           Pointer to sample buffer
+*  \param [in] frame_size            Framesize
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_peak_limiter_process(ia_peak_limiter_struct *pstr_peak_limiter, FLOAT32 *ptr_samples,

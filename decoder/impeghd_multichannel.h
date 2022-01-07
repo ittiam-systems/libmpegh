@@ -53,12 +53,12 @@ VOID impeghd_mc_save_prev(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_spec, 
                           const WORD32 num_windows, const WORD32 bins_per_sbk,
                           const WORD32 zero_spec_save);
 
-VOID impeghd_mc_get_prev_dmx(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_prev_spec1,
-                             FLOAT32 *ptr_prev_spec2, FLOAT32 *ptr_prev_dmx,
-                             const WORD32 bands_per_window, const WORD32 *ptr_mask,
-                             const WORD32 *ptr_coeff_sfb_idx, const WORD32 num_samples,
-                             const WORD32 pair, const WORD32 total_sfb,
-                             const WORD16 *ptr_sfb_offset);
+IA_ERRORCODE impeghd_mc_get_prev_dmx(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_prev_spec1,
+                                     FLOAT32 *ptr_prev_spec2, FLOAT32 *ptr_prev_dmx,
+                                     const WORD32 bands_per_window, const WORD32 *ptr_mask,
+                                     const WORD32 *ptr_coeff_sfb_idx, const WORD32 num_samples,
+                                     const WORD32 pair, const WORD32 total_sfb,
+                                     const WORD16 *ptr_sfb_offset);
 
 VOID impeghd_mc_stereofilling_add(FLOAT32 *ptr_coef, FLOAT32 *ptr_dmx_prev,
                                   FLOAT32 *ptr_scale_factors, const WORD32 total_sfb,

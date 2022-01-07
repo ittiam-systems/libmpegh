@@ -100,12 +100,12 @@
 *
 *  \brief Helper function to re-arrange spectral data.
 *
-*  \param [i/o] ptr_xr      Pointer to real part of input data.
-*  \param [i/o] ptr_xi      Pointer to imaginary part of input data.
+*  \param [in,out] ptr_xr      Pointer to real part of input data.
+*  \param [in,out] ptr_xi      Pointer to imaginary part of input data.
 *  \param [in]  fft_size    FFT size information.
 *  \param [in]  ptr_scratch Pointer to scratch buffer.
 *
-*  \return error IA_ERRORCODE if any
+*
 *
 */
 static VOID impeghd_fft_complex_to_perm_fmt_i(FLOAT32 *ptr_xr, FLOAT32 *ptr_xi, WORD32 fft_size,
@@ -240,7 +240,7 @@ static IA_ERRORCODE impeghd_binaural_struct_init(WORD32 direct_len, WORD32 diffu
 *  \param [out] ptr_binaural
 * Pointer to binaural data structure.
 *
-*  \return VOID
+*
 *
 */
 static VOID
@@ -334,7 +334,7 @@ impeghd_binaural_struct_set(ia_binaural_ren_pers_mem_str *ptr_binaural, WORD8 *p
 *
 *  \brief TD Binaural renderer module initalization.
 *
-*  \param [i/o] binaural_info_handle Pointer to binaural renderer data structure.
+*  \param [in,out] binaural_info_handle Pointer to binaural renderer data structure.
 *  \param [in]  wav_param            Pointer to input stream properties structure.
 *  \param [in]  binaural_handle      Pointer to binaural persistent structure.
 *
@@ -447,12 +447,12 @@ IA_ERRORCODE impeghd_binaural_renderer_init(ia_binaural_renderer *binaural_info_
 *
 *  \brief Helper function to re-arrange spectral data.
 *
-*  \param [i/o] ptr_x_r      Pointer to real part of input data.
-*  \param [i/o] ptr_x_i      Pointer to imaginary part of input data.
-*  \param [in]  fft_len      FFT size information.
-*  \param [in]  ptr_scratch Pointer to scratch buffer.
+*  \param [in,out] ptr_x_r      Pointer to real part of input data.
+*  \param [in,out] ptr_x_im     Pointer to imaginary part of input data.
+*  \param [in]  fft_len         FFT size information.
+*  \param [in]  ptr_scratch_buf Pointer to scratch buffer.
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_fft_perm_fmt_to_complex_i(FLOAT32 *ptr_x_r, FLOAT32 *ptr_x_im, WORD32 fft_len,
@@ -535,7 +535,7 @@ IA_ERRORCODE impeghd_binaural_mul_add_perm(const FLOAT32 *ptr_src1c, const FLOAT
 *  \param [out] ptr_dst      Pointer to imaginary part of input data.
 *  \param [in]  samples_len  Samples length information.
 *  \param [in]  ptr_work     Pointer to interim buffer to store data.
-*  \param [i/o] ptr_binaural Pointer to binaural persistent memory structure.
+*  \param [in,out] ptr_binaural Pointer to binaural persistent memory structure.
 *
 *  \return no of sample processed
 *

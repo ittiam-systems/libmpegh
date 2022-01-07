@@ -37,7 +37,6 @@
 #include <string.h>
 
 #include <impeghd_type_def.h>
-#include "ia_core_coder_definitions.h"
 #include <impeghd_intrinsics_flt.h>
 #include "impeghd_mp4_parser.h"
 #include "impeghd_mp4_file_wrapper.h"
@@ -58,7 +57,7 @@ WORD32 g_mhm1_tag;
 *
 *  \brief Wrapper function to open file
 *
-*  \param file_name
+*  \param [in] file_name Filename
 *
 *  \return ia_file_wrapper *
 *
@@ -118,10 +117,10 @@ ia_file_wrapper *impeghd_mp4_fw_open(WORD8 file_name[])
 *
 *  \brief Wrapper function to read file
 *
-*  \param transport
-*  \param buffer
-*  \param buf_size
-*  \param length
+*  \param [in] transport File wrapper
+*  \param [out] buffer   Buffer pointer
+*  \param [in] buf_size  Buffer size
+*  \param [out]length    Filled length
 *
 *  \return WORD32
 *
@@ -194,7 +193,7 @@ WORD32 impeghd_mp4_fw_read(ia_file_wrapper *transport, pUWORD8 buffer, WORD32 bu
 *
 *  \brief Wrapper function to close file
 *
-*  \param transport
+*  \param [in] transport File wrapper
 *
 *  \return WORD32
 *
@@ -204,7 +203,6 @@ UWORD32 impeghd_mp4_fw_close(ia_file_wrapper *transport)
   if (transport == 0)
     return 0;
 
-  // if (transport->is_mp4_file)
   if (transport->mp4_cntxt)
   {
     impeghd_mp4_parser_close(transport->mp4_cntxt);

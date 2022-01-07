@@ -50,7 +50,7 @@
  *
  *  \brief Initialize huffman code book and sort codewords by length
  *
- *  \param [in/out]    ptr_huff_code_book      Huffman code book
+ *  \param [in,out]    ptr_huff_code_book      Huffman code book
  * structure
  *  \param [in]      ptr_huff_code_word      Huffman code word
  * structure
@@ -66,7 +66,7 @@
  * unsigned
  *  \param [in]      max_code_word_len      maximum code word length
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_hufftab(ia_huff_code_book_struct *ptr_huff_code_book,
@@ -107,7 +107,7 @@ VOID ia_core_coder_hufftab(ia_huff_code_book_struct *ptr_huff_code_book,
  *
  *  \brief Read Huffman codeword from bitstream
  *
- *  \param [in/out]    ptr_huff_code_word  Huffman code word structure
+ *  \param [in,out]    ptr_huff_code_word  Huffman code word structure
  *  \param [in]      it_bit_buff      bit stream buffer
  *
  *  \return WORD32

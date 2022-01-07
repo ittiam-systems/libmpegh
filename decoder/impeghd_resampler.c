@@ -87,7 +87,7 @@
  *  \param [out] ptr_output     Pointer to output PCM samples
  *  \param [in]  ptr_scratch    Pointer to scratch buffer
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_resample(ia_resampler_struct *pstr_resampler, FLOAT32 *ptr_input,

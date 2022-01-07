@@ -64,12 +64,12 @@
  *
  *  \brief Decode LTPF params such as gain, and pitch parameters
  *
- *  \param [in/out]    pitch_int    Integer part of pitch
- *  \param [in/out]    pitch_fr    Fractional part of pitch
- *  \param [in/out]    gain      gain
+ *  \param [in,out]    pitch_int    Integer part of pitch
+ *  \param [in,out]    pitch_fr    Fractional part of pitch
+ *  \param [in,out]    gain      gain
  *  \param [in]      ptr_ltpf_data  ltpf data structure
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_ltpf_dec_params(WORD32 *pitch_int, WORD32 *pitch_fr, FLOAT32 *gain,
@@ -128,7 +128,7 @@ static VOID ia_core_coder_ltpf_dec_params(WORD32 *pitch_int, WORD32 *pitch_fr, F
  *  \param [in]    mode    mode
  *  \param [in]    zir      zero input response buffer
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_ltpf_filter(FLOAT32 *input, FLOAT32 *output, WORD32 length,
@@ -205,9 +205,9 @@ static VOID ia_core_coder_ltpf_filter(FLOAT32 *input, FLOAT32 *output, WORD32 le
  *
  *  \param [in]    input      input buffer
  *  \param [in]    length      lag length under consideration
- *  \param [in/out]  lpc_coeffs    LPC coefficients
+ *  \param [in,out]  lpc_coeffs    LPC coefficients
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_ltpf_get_lpc(FLOAT32 *input, WORD32 length, FLOAT32 *lpc_coeffs)
@@ -269,7 +269,7 @@ static VOID ia_core_coder_ltpf_get_lpc(FLOAT32 *input, WORD32 length, FLOAT32 *l
  *
  *  \param [in]    input      input buffer
  *  \param [in]    output      output buff
- *  \param [in/out]  zir        zir coeff
+ *  \param [in,out]  zir        zir coeff
  *  \param [in]    length      length
  *  \param [in]    lpc_coeffs    LPC coeff
  *  \param [in]    lpc_order    order of LPC coeff
@@ -279,7 +279,7 @@ static VOID ia_core_coder_ltpf_get_lpc(FLOAT32 *input, WORD32 length, FLOAT32 *l
  *  \param [in]    pitch_fr    fractional part of pitch
  *  \param [in]    ptr_scratch_buf  Scratch buffer for internal processing
  *
- *  \return VOID
+ *
  *
  */
 static VOID ia_core_coder_ltpf_get_zir(FLOAT32 *input, FLOAT32 *output, FLOAT32 *zir,
@@ -343,14 +343,14 @@ static VOID ia_core_coder_ltpf_get_zir(FLOAT32 *input, FLOAT32 *output, FLOAT32 
  *
  *  \brief Initialize LTPF structure
  *
- *  \param [in/out]    ptr_ltpf_data      LTPF data structure
+ *  \param [in,out]    ptr_ltpf_data      LTPF data structure
  *  \param [in]      samp_rate        Sample rate of processing
  *  \param [in]      block_size_samples    Samples to process
  *  \param [in]      ptr_scratch        Scratch buffer for
  * intermediate
  * processing
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_ltpf_init(ia_ltpf_data_str *ptr_ltpf_data, WORD32 samp_rate,
@@ -389,7 +389,7 @@ VOID ia_core_coder_ltpf_init(ia_ltpf_data_str *ptr_ltpf_data, WORD32 samp_rate,
  *  \param [in]    ptr_ltpf_data    LTPF data structure
  *  \param [in]    time_sample_vector  Output data pointer
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_usac_ltpf_process(ia_ltpf_data_str *ptr_ltpf_data, FLOAT32 *time_sample_vector)

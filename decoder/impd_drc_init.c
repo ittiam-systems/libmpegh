@@ -308,7 +308,7 @@ static IA_ERRORCODE impd_drc_init_params(ia_drc_params_struct *pstr_ia_drc_param
  *  \param [out] drc_eff_type_req  effect type request
  *  \param [in] drc_eff_type_req_plus_fallbacks  drc_eff_type_req_plus_fallbacks
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_update_effect_type_request(WORD8 *num_drc_eff_type_req, WORD8 *drc_eff_type_req,
@@ -378,9 +378,9 @@ impd_drc_select_coefficients(ia_drc_uni_drc_coeffs_struct **ppstr_drc_coefficien
  *
  *  \brief Set channel group info
  *
- *  \param [in/out] pstr_drc_instructions_uni_drc  Pointer to unidrc instruction struct
+ *  \param [in,out] pstr_drc_instructions_uni_drc  Pointer to unidrc instruction struct
  *
- *  \return VOID
+ *
  *
  */
 static VOID
@@ -415,7 +415,7 @@ impd_drc_set_channel_group_info(ia_drc_instructions_struct *pstr_drc_instruction
  *
  *  \brief Set multiband info
  *
- *  \param [in/out] pstr_drc_instructions_uni_drc  Pointer to unidrc instruction struct
+ *  \param [in,out] pstr_drc_instructions_uni_drc  Pointer to unidrc instruction struct
  *  \param [out] selected_drc_is_multiband  variable to update if multiband
  *  \param [in] pstr_ia_drc_params  Pointer to drc params struct
  *
@@ -471,9 +471,9 @@ impd_drc_set_multiband(ia_drc_instructions_struct *pstr_drc_instructions_uni_drc
  *
  *  \brief Initialise selected drc set
  *
- *  \param [in/out] pstr_ia_drc_params  Pointer to DRC params structure
- *  \param [in/out] pstr_ia_filter_banks  Pointer to filter banks structure
- *  \param [in/out] pstr_overlap_params  Pointer to overlap params structure
+ *  \param [in,out] pstr_ia_drc_params  Pointer to DRC params structure
+ *  \param [in,out] pstr_ia_filter_banks  Pointer to filter banks structure
+ *  \param [in,out] pstr_overlap_params  Pointer to overlap params structure
  *  \param [in] audio_num_chan  No of audio channels
  *  \param [in] drc_set_id_selected  drc set id selected
  *  \param [in] downmix_id_selected  downmix id selected
@@ -628,7 +628,7 @@ IA_ERRORCODE impd_drc_init_decode(ia_drc_gain_dec_struct *pstr_drc_gain_dec, WOR
  *
  *  \brief Initialise selected drc set
  *
- *  \param [in/out] pstr_drc_gain_dec  Pointer to DRC gain dec structure
+ *  \param [in,out] pstr_drc_gain_dec  Pointer to DRC gain dec structure
  *  \param [in] audio_num_chan  No of audio channels
  *  \param [in] drc_set_id_processed  drc set id processed
  *  \param [in] downmix_id_processed  downmix id processed

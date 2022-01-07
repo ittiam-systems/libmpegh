@@ -54,7 +54,7 @@
  *  \param [out] str_tables  Pointer to drc tables struct
  *  \param [in]  num_gain_max_values   number of gain max values
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_init_tbls(ia_drc_tables_struct *str_tables, const WORD32 num_gain_max_values)
@@ -69,9 +69,10 @@ VOID impd_drc_init_tbls(ia_drc_tables_struct *str_tables, const WORD32 num_gain_
  *  \brief Create delta gain code table
  *
  *  \param [out] ppstr_delta_gain_code_tbl  Pointer to gain code table struct
- *  \param [in]  num_gain_max_values   number of gain max values
+ *  \param [out] num_entries                number of entries
+ *  \param [in]  gain_coding_profile        Gain coding profile
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_create_delta_gain_code_tbl(
@@ -98,7 +99,7 @@ VOID impd_drc_create_delta_gain_code_tbl(
  *  \param [out] pstr_delta_time_code_tbl_item  Pointer to time code table struct
  *  \param [in]  num_gain_max_values   number of gain max values
  *
- *  \return VOID
+ *
  *
  */
 VOID impd_drc_create_delta_time_code_tbl(

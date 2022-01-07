@@ -59,10 +59,11 @@
  *	impd_drc_uni_selction_proc_init
  *  \brief Initialize drc uni selection process
  *
- *  \param [in/out] ia_drc_sel_pro_struct structure to be initialized
- *  \param [in] pstr_drc_sel_proc_params_struct
- *  \param [in] pstr_drc_interface
- *  \param [in] subband_domain_mode
+ *  \param [in,out] pstr_drc_uni_sel_proc         Pointer to drc selection process structure
+ *  \param [in] pstr_drc_sel_proc_params_struct   Pointer to drc selection process params
+ *structure
+ *  \param [in] pstr_drc_interface                Pointer to drc interface structure
+ *  \param [in] subband_domain_mode               Subband domain mode
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -106,12 +107,13 @@ impd_drc_uni_selction_proc_init(ia_drc_sel_pro_struct *pstr_drc_uni_sel_proc,
  *	impd_drc_mpegh_params_set_sel_process
  *  \brief Sets select process
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
- *  \param [in] num_group_ids_requested
- *  \param [in] group_id_requested
- *  \param [in] num_group_preset_ids_requested
- *  \param [in] num_members_group_preset_ids_requested
- *  \param [in] group_preset_id_requested_preference
+ *  \param [in,out] pstr_drc_uni_sel_proc               Pointer to drc selection process structure
+ *  \param [in] num_group_ids_requested                 Number of group ids requested
+ *  \param [in] group_id_requested                      Group id requested
+ *  \param [in] num_group_preset_ids_requested          Number of group preset ids requested
+ *  \param [in] num_members_group_preset_ids_requested  Number of members group preset ids
+ *requested
+ *  \param [in] group_preset_id_requested_preference    Group preset id requested preference
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -187,8 +189,8 @@ IA_ERRORCODE impd_drc_mpegh_params_set_sel_process(ia_drc_sel_pro_struct *pstr_d
  *	impd_select_drc_set
  *  \brief Select DRC set
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
- *  \param [in] drc_set_id_selected
+ *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc selection process structure
+ *  \param [in]     drc_set_id_selected   DRC set id selected
  *
  *  \return IA_ERRORCODE error if any
  *
@@ -357,8 +359,8 @@ static IA_ERRORCODE impd_select_drc_set(ia_drc_sel_pro_struct *pstr_drc_uni_sel_
  *	impd_get_selected_drc_set
  *  \brief gets selected drc set
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
- *  \param [in] drc_set_id_selected
+ *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc selection process structure
+ *  \param [in]     drc_set_id_selected   DRC set id selected
  *
  *  \return IA_ERRORCODE error if any
  *
@@ -388,7 +390,7 @@ static IA_ERRORCODE impd_get_selected_drc_set(ia_drc_sel_pro_struct *pstr_drc_un
  *	impd_get_dependent_drc_set
  *  \brief Get dependent DRC set
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
+ *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc selection process structure
  *
  *  \return IA_ERRORCODE erro if any
  *
@@ -429,7 +431,7 @@ static IA_ERRORCODE impd_get_dependent_drc_set(ia_drc_sel_pro_struct *pstr_drc_u
  *	impd_get_fading_drc_set
  *  \brief Get fadding DRC set
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
+ *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc selection process structure
  *
  *  \return IA_ERRORCODE error if any
  *
@@ -500,7 +502,7 @@ static IA_ERRORCODE impd_get_fading_drc_set(ia_drc_sel_pro_struct *pstr_drc_uni_
  *	impd_get_ducking_drc_set
  *  \brief Get duckling DRC set
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
+  *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc selection process structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -582,10 +584,10 @@ static IA_ERRORCODE impd_get_ducking_drc_set(ia_drc_sel_pro_struct *pstr_drc_uni
  *	impd_sel_downmix_matrix
  *  \brief Select down mix matrix
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
- *  \param [in] pstr_drc_config
+ *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc selection process structure
+ *  \param [in]     pstr_drc_config       Pointer to drc config structure
  *
- *  \return
+ *
  *
  */
 static VOID impd_sel_downmix_matrix(ia_drc_sel_pro_struct *pstr_drc_uni_sel_proc,
@@ -641,8 +643,8 @@ static VOID impd_sel_downmix_matrix(ia_drc_sel_pro_struct *pstr_drc_uni_sel_proc
  *	impd_drc_map_target_config_req_downmix_id
  *  \brief Mapping tarquired configuration downmix id
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
- *  \param [in] pstr_drc_config
+ *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc selection process structure
+ *  \param [in]     pstr_drc_config       Pointer to drc config structure
 
  *
  *  \return error IA_ERRORCODE if any
@@ -750,10 +752,11 @@ impd_drc_map_target_config_req_downmix_id(ia_drc_sel_pro_struct *pstr_drc_uni_se
  *	impd_drc_uni_sel_proc_process
  *  \brief Process selected uni DRC process
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
- *  \param [in] pstr_drc_config
- *  \param [in] pstr_loudness_info
- *  \param [out] hia_drc_sel_proc_output_struct
+ *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc selection process structure
+ *  \param [in]     pstr_drc_config       Pointer to drc config structure
+ *  \param [in]     pstr_loudness_info    Pointer to drc loudness info structure
+ *  \param [out]    ia_drc_sel_proc_output_struct Pointer to drc selection process output
+ *structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -762,7 +765,7 @@ IA_ERRORCODE
 impd_drc_uni_sel_proc_process(ia_drc_sel_pro_struct *pstr_drc_uni_sel_proc,
                               ia_drc_config *pstr_drc_config,
                               ia_drc_loudness_info_set_struct *pstr_loudness_info,
-                              ia_drc_sel_proc_output_struct *hia_drc_sel_proc_output_struct)
+                              ia_drc_sel_proc_output_struct *ia_drc_sel_proc_output_struct)
 {
   WORD32 i, drc_set_id_selected, activeDrcSetIndex;
   IA_ERRORCODE err;
@@ -966,7 +969,7 @@ impd_drc_uni_sel_proc_process(ia_drc_sel_pro_struct *pstr_drc_uni_sel_proc,
       }
     }
   }
-  *hia_drc_sel_proc_output_struct = pstr_drc_uni_sel_proc->uni_drc_sel_proc_output;
+  *ia_drc_sel_proc_output_struct = pstr_drc_uni_sel_proc->uni_drc_sel_proc_output;
 
   return IA_MPEGH_DEC_NO_ERROR;
 }

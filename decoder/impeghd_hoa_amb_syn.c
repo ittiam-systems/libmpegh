@@ -67,7 +67,7 @@
  *
  *  \brief HOA ambience synthesis processing
  *
- *  \param [in/out] dec_handle      Pointer to Spatial decoder handle
+ *  \param [in,out] dec_handle      Pointer to Spatial decoder handle
  *  \param [in]     reassign_vec    Reassign vector pointer
  *
  *  \return IA_ERRORCODE                  Error

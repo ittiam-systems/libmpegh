@@ -67,12 +67,12 @@
  *
  *  \brief Performs pre-emphasis filtering
  *
- *  \param [i/o] ptr_signal Pointer to input signal.
+ *  \param [in,out] ptr_signal Pointer to input signal.
  *  \param [in]  mu     Only coeff on filter.
  *  \param [in]  length    Input length.
  *  \param [in]  mem    Filter states memory.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_preemphsis_tool(FLOAT32 *ptr_signal, FLOAT32 mu, WORD32 length, FLOAT32 mem)
@@ -91,11 +91,11 @@ VOID ia_core_coder_preemphsis_tool(FLOAT32 *ptr_signal, FLOAT32 mu, WORD32 lengt
  *
  *  \brief Performs de-emphasis filtering
  *
- *  \param [i/o] ptr_signal Pointer to input ptr_signal.
+ *  \param [in,out] ptr_signal Pointer to input ptr_signal.
  *  \param [in]  length    Input length.
  *  \param [in]  mem    Filter states memory.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_deemphsis_tool(FLOAT32 *ptr_signal, WORD32 length, FLOAT32 mem)
@@ -117,7 +117,7 @@ VOID ia_core_coder_deemphsis_tool(FLOAT32 *ptr_signal, WORD32 length, FLOAT32 me
  *  \param [out] ptr_x Pointer to ouptut signal.
  *  \param [in]  l Length of input.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_lpc_wt_synthesis_tool(FLOAT32 *ptr_a, FLOAT32 *ptr_x, WORD32 l)
@@ -153,10 +153,10 @@ VOID ia_core_coder_lpc_wt_synthesis_tool(FLOAT32 *ptr_a, FLOAT32 *ptr_x, WORD32 
  *  \param [out] ptr_x       Pointer to output signal.
  *  \param [out] ptr_y       Pointer to output buffer
  *  \param [in]  l       Length of input.
- *  \param [i/o] mem     Pointer to filter states memory.
+ *  \param [in,out] mem     Pointer to filter states memory.
  *  \param [in]  scratch Pointer to scratch buffer.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_synthesis_tool(FLOAT32 *ptr_a, FLOAT32 *ptr_x, FLOAT32 *ptr_y, WORD32 l,
@@ -194,7 +194,7 @@ VOID ia_core_coder_synthesis_tool(FLOAT32 *ptr_a, FLOAT32 *ptr_x, FLOAT32 *ptr_y
  *  \param [out] ptr_x Pointer to ouptut signal.
  *  \param [in]  l Length of input.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_synthesis_tool1(FLOAT32 *ptr_a, FLOAT32 *ptr_x, WORD32 l)
@@ -228,7 +228,7 @@ VOID ia_core_coder_synthesis_tool1(FLOAT32 *ptr_a, FLOAT32 *ptr_x, WORD32 l)
  *  \param [in]  loop_count Loop count variable
  *  \param [in]  incr_val   Step size for incrementing.
  *
- *  \return VOID
+ *
  *
  */
 VOID ia_core_coder_residual_tool(FLOAT32 *ptr_a, FLOAT32 *ptr_x, FLOAT32 *ptr_y, WORD32 l,

@@ -79,7 +79,7 @@
  *  \brief Intialize renderer
  *      near field compensation (NFC)
  *
- *  \param [in/out]  handle    HOA Renderer handle
+ *  \param [in,out]  handle    HOA Renderer handle
  *  \param [in]    order    HOA order
  *  \param [in]    nfc_radius  Near field compensation radius
  *  \param [in]    sample_rate  Sample rate
@@ -125,7 +125,7 @@ IA_ERRORCODE impeghd_hoa_ren_nfc_init(pVOID handle, UWORD32 order, FLOAT32 nfc_r
  *  \brief Preprocess renderer
  *      near field compensation (NFC)
  *
- *  \param [in/out]  handle  HOA Renderer handle
+ *  \param [in,out]  handle  HOA Renderer handle
  *  \param [in]    in_buf  Input buffer
  *  \param [in]    rows  Number of rows
  *  \param [in]    cols  Number of columns
@@ -296,10 +296,10 @@ WORD32 impeghd_hoa_ren_get_loudspeaker_type(pVOID handle, WORD32 *ls_types)
  *
  *  \brief Permute Low-frequency effects channel
  *
- *  \param [in/out]  handle    HOA Renderer handle
- *  \param [in]    spk_pos    HOA renderer space position handle
- *  \param [in]    ls_types    Loudspeaker types array
- *  \param [in]    ls_types_sz  Loudspeaker types array size
+ *  \param [in,out]  handle       HOA Renderer handle
+ *  \param [in]    spk_pos        HOA renderer space position handle
+ *  \param [in]    ls_types       Loudspeaker types array
+ *  \param [in]    ls_types_size  Loudspeaker types array size
  *
  *  \return IA_ERRORCODE Error code
  *
@@ -374,7 +374,7 @@ static FLOAT32 impeghd_hoa_ren_angular_distance(FLOAT32 incl_a, FLOAT32 azi_a, F
  *
  *  \brief Permutes signaled rendering matrix
  *
- *  \param [in/out]  handle    HOA Renderer handle
+ *  \param [in,out]  handle    HOA Renderer handle
  *  \param [in]    spk_pos    HOA renderer space position handle
  *  \param [in]    lfe_pos    LFE handle
  *  \param [in]    ls_types  Loudspeaker types array
@@ -502,11 +502,11 @@ WORD32 impeghd_hoa_ren_permute_signaled_rendering_matrix(pVOID handle, pVOID spk
  *
  *  \brief Validate renderer signaled matrix
  *
- *  \param handle    HOA Renderer handle
- *  \param spk_pos    HOA renderer space position handle
- *  \param ls_types    Loudspeaker types array
- *  \param ls_types_sz  Loudspeaker types array size
- *  \param n      Matrix index
+ *  \param [in] handle    HOA Renderer handle
+ *  \param [in] spk_pos    HOA renderer space position handle
+ *  \param [in] ls_types    Loudspeaker types array
+ *  \param [in] ls_types_sz  Loudspeaker types array size
+ *  \param [in] n      Matrix index
  *
  *  \return WORD32  Is matching mtx
  *

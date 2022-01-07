@@ -111,7 +111,6 @@ typedef struct
 typedef struct
 {
   WORD8 allow_gain_interact;
-  WORD8 allow_on_off;
   WORD8 allow_pos_interact;
   WORD8 default_on_off;
   WORD8 group_id;
@@ -127,6 +126,7 @@ typedef struct
   WORD8 min_el_offset;
   WORD8 min_gain;
   WORD8 start_id;
+  WORD8 allow_on_off;
   WORD8 metadata_ele_id[MAX_GROUP_NUM_MEMBERS];
 } ia_mae_group_def;
 

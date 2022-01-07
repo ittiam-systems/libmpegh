@@ -122,7 +122,7 @@
 *  \param [in]  sfb_width_short     Pointer to scale factor band width data - short.
 *  \param [in]  sfb_width_long      Pointer to scale factor band width data - long.
 *
-*  \return VOID
+*
 *
 */
 static VOID ia_core_coder_info_init(ia_sfb_info_struct *pstr_sfb_info_long,
@@ -227,9 +227,9 @@ static VOID ia_core_coder_info_init(ia_sfb_info_struct *pstr_sfb_info_long,
 *
 *  \brief Decoder initialization
 *
-*  \param [in/out] handle             Pointer to decoder handle.
-*  \param [in/out] usac_data          Pointer to USAC data structure.
-*  \param [in/out] pstr_stream_config Pointer to audio specific configuration structure.
+*  \param [in,out] handle             Pointer to decoder handle.
+*  \param [in,out] usac_data          Pointer to USAC data structure.
+*  \param [in,out] pstr_stream_config Pointer to audio specific configuration structure.
 *  \param [in]  sample_rate        Sampling rate of the input stream.
 *
 *  \return IA_ERRORCODE Error code if any.
@@ -385,9 +385,9 @@ static IA_ERRORCODE ia_core_coder_decode_init(VOID *handle, ia_usac_data_struct 
 *
 *  \brief Initialization of decoder data
 *
-*  \param [in/out] handle          Pointer to decoder handle.
-*  \param [in/out] pstr_frame_data Pointer to frame data
-*  \param [in/out] usac_data       Pointer to USAC data structure.
+*  \param [in,out] handle          Pointer to decoder handle.
+*  \param [in,out] pstr_frame_data Pointer to frame data
+*  \param [in,out] usac_data       Pointer to USAC data structure.
 *
 *  \return IA_ERRORCODE Error code if any.
 *
@@ -487,11 +487,11 @@ static IA_ERRORCODE ia_core_coder_dec_data_init(VOID *handle,
 *
 *  \brief Updates track per layers
 *
-*  \param [in/out] max_layer       Pointer to max layers buffer.
-*  \param [in/out] stream_count    Pointer to stream count buffer.
-*  \param [in/out] tracks_in_layer Pointer to number of tracks in layer buffer.
+*  \param [in,out] max_layer       Pointer to max layers buffer.
+*  \param [in,out] stream_count    Pointer to stream count buffer.
+*  \param [in,out] tracks_in_layer Pointer to number of tracks in layer buffer.
 *
-*  \return VOID
+*
 *
 */
 static VOID ia_core_coder_count_tracks_per_layer(WORD32 *max_layer, WORD32 *stream_count,
@@ -533,8 +533,8 @@ static VOID ia_core_coder_count_tracks_per_layer(WORD32 *max_layer, WORD32 *stre
 *
 *  \brief Initializatoin of usac frame data
 *
-*  \param [in/out] pstr_audio_conf Pointer to audio specific config structure.
-*  \param [in/out] pstr_dec_data   Pointer to decoder data structure.
+*  \param [in,out] pstr_audio_conf Pointer to audio specific config structure.
+*  \param [in,out] pstr_dec_data   Pointer to decoder data structure.
 *
 *  \return WORD32 num_dec_streams
 *
@@ -618,8 +618,8 @@ WORD32 ia_core_coder_frm_data_init(ia_audio_specific_config_struct *pstr_audio_c
 *
 *  \brief Creates decoder handle
 *
-*  \param [in/out] handle             Pointer to decoder api structure.
-*  \param [in/out] pstr_dec_data      Pointer to decoder state structure.
+*  \param [in,out] handle             Pointer to decoder api structure.
+*  \param [in,out] pstr_dec_data      Pointer to decoder state structure.
 *  \param [in]  tracks_for_decoder Number of decoder tracks.
 *
 *  \return IA_ERRORCODE Error code if any.

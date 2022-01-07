@@ -50,8 +50,8 @@
 #include "ia_core_coder_cnst.h"
 #include "ia_core_coder_config.h"
 #include "impeghd_binaural.h"
-#include "impeghd_ele_interaction_intrfc.h"
 #include "impeghd_mhas_parse.h"
+#include "impeghd_ele_interaction_intrfc.h"
 #include "impeghd_3d_vec_struct_def.h"
 #include "impeghd_cicp_defines.h"
 #include "impeghd_cicp_struct_def.h"
@@ -300,12 +300,29 @@ static IA_ERRORCODE impeghd_lcl_scrn_sz_info(ia_bit_buf_struct *ptr_bit_buf,
 *
 */
 static IA_ERRORCODE impeghd_ei_grp_intrctvty_status(ia_bit_buf_struct *ptr_bit_buf,
-                                                    ia_ele_intrctn *ptr_ele_intrctn)
+                                                    ia_ele_intrctn *ptr_ele_intrctn,
+                                                    ia_mae_audio_scene_info *str_mae_asi)
 {
+  WORD32 valid_id = 0;
   WORD32 num_grps = ptr_ele_intrctn->ei_num_groups;
   for (WORD32 grp = 0; grp < num_grps; grp++)
   {
     ptr_ele_intrctn->ei_grp_id[grp] = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 7);
+    if (str_mae_asi->asi_present)
+    {
+      for (WORD32 grp1 = 0; grp1 < str_mae_asi->num_groups; grp1++)
+      {
+        if (str_mae_asi->group_definition[grp1].group_id == ptr_ele_intrctn->ei_grp_id[grp])
+        {
+          valid_id++;
+        }
+      }
+      /*ei_groupID shall contain a valid groupID (ID of a group defined in the bitstream)*/
+      if (!valid_id)
+      {
+        return IA_MPEGH_EI_INIT_FATAL_INVALID_ID;
+      }
+    }
     ptr_ele_intrctn->ei_on_off[grp] = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 1);
     ptr_ele_intrctn->ei_route_to_wire[grp] = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 1);
     if (ptr_ele_intrctn->ei_route_to_wire[grp] != 1)
@@ -320,6 +337,17 @@ static IA_ERRORCODE impeghd_ei_grp_intrctvty_status(ia_bit_buf_struct *ptr_bit_b
     if (ptr_ele_intrctn->ei_on_off[grp] == 1)
     {
       ptr_ele_intrctn->ei_change_pos[grp] = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 1);
+
+      /*ei_changePosition shall be 1 if the value mae_allowPositionInteractivity of the
+      corresponding
+      group equals 1*/
+      if (str_mae_asi->asi_present &&
+          ((str_mae_asi->group_definition[grp].allow_pos_interact == 1) &&
+           (!ptr_ele_intrctn->ei_change_pos[grp])))
+      {
+        return IA_MPEGH_EI_INIT_FATAL_INVALID_CHANGE_POSITION;
+      }
+
       if (ptr_ele_intrctn->ei_change_pos[grp])
       {
         ptr_ele_intrctn->ei_az_offset[grp] = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 8);
@@ -327,6 +355,18 @@ static IA_ERRORCODE impeghd_ei_grp_intrctvty_status(ia_bit_buf_struct *ptr_bit_b
         ptr_ele_intrctn->ei_dist_fact[grp] = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 4);
       }
       ptr_ele_intrctn->ei_change_gain[grp] = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 1);
+
+      /*ei_changeGain shall be set to 1 if the value mae_allowGainInteractivity of the
+      corresponding
+      group equals 1*/
+
+      if (str_mae_asi->asi_present &&
+          ((str_mae_asi->group_definition[grp].allow_gain_interact == 1) &&
+           (!ptr_ele_intrctn->ei_change_gain[grp])))
+      {
+        return IA_MPEGH_EI_INIT_FATAL_INVALID_CHANGE_GAIN;
+      }
+
       if (ptr_ele_intrctn->ei_change_gain[grp])
       {
         ptr_ele_intrctn->ei_gain[grp] = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 7);
@@ -349,15 +389,51 @@ static IA_ERRORCODE impeghd_ei_grp_intrctvty_status(ia_bit_buf_struct *ptr_bit_b
 *
 */
 static IA_ERRORCODE impeghd_ele_interaction_data(ia_bit_buf_struct *ptr_bit_buf,
-                                                 ia_ele_intrctn *ptr_ele_intrctn)
+                                                 ia_ele_intrctn *ptr_ele_intrctn,
+                                                 ia_mae_audio_scene_info *str_mae_asi)
 {
+  WORD32 valid_id = 0;
   ptr_ele_intrctn->ei_intrctn_mode = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 1);
+
+  /*ei_interactionMode in case mae_numGroupPresets equals zero ei_interactionMode shall be zero,
+  otherwise ei_interactionMode shall be one*/
+  if (str_mae_asi->asi_present &&
+      ((str_mae_asi->num_group_presets != 0) && (ptr_ele_intrctn->ei_intrctn_mode != 1)))
+  {
+    return IA_MPEGH_EI_INIT_FATAL_UNSUPPORTED_INTRCTN_MODE;
+  }
+
   ptr_ele_intrctn->ei_num_groups = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 7);
+
+  /*ei_numGroups shall be the same number as mae_numGroups*/
+  if (str_mae_asi->asi_present && (ptr_ele_intrctn->ei_num_groups != str_mae_asi->num_groups))
+  {
+    return IA_MPEGH_EI_INIT_FATAL_UNSUPPORTED_NUM_GRPS;
+  }
+
   if (ptr_ele_intrctn->ei_intrctn_mode != 0)
   {
     ptr_ele_intrctn->ei_group_preset_id = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 5);
+    if (str_mae_asi->asi_present)
+    {
+      for (WORD32 grp = 0; grp < str_mae_asi->num_groups; grp++)
+      {
+        if (str_mae_asi->group_presets_definition[grp].group_id ==
+            ptr_ele_intrctn->ei_group_preset_id)
+        {
+          valid_id++;
+        }
+      }
+      /*ei_groupPresetID shall contain a valid preset ID (ID of a preset defined in the
+       * bitstream)*/
+      if (!valid_id)
+      {
+        return IA_MPEGH_EI_INIT_FATAL_INVALID_ID;
+      }
+    }
   }
-  impeghd_ei_grp_intrctvty_status(ptr_bit_buf, ptr_ele_intrctn);
+
+  impeghd_ei_grp_intrctvty_status(ptr_bit_buf, ptr_ele_intrctn, str_mae_asi);
   ptr_ele_intrctn->ei_data_present = 1;
   return IA_MPEGH_DEC_NO_ERROR;
 }
@@ -397,7 +473,8 @@ static IA_ERRORCODE impeghd_lcl_zoom_area_size(ia_bit_buf_struct *ptr_bit_buf,
 *
 */
 IA_ERRORCODE impeghd_ele_interaction(ia_bit_buf_struct *ptr_bit_buf,
-                                     ia_ele_intrctn *ptr_ele_intrctn)
+                                     ia_ele_intrctn *ptr_ele_intrctn,
+                                     ia_mae_audio_scene_info *str_mae_asi)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 c;
@@ -412,7 +489,12 @@ IA_ERRORCODE impeghd_ele_interaction(ia_bit_buf_struct *ptr_bit_buf,
           (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 8);
     }
   }
-  impeghd_ele_interaction_data(ptr_bit_buf, ptr_ele_intrctn);
+  err_code = impeghd_ele_interaction_data(ptr_bit_buf, ptr_ele_intrctn, str_mae_asi);
+  if (err_code)
+  {
+    return err_code;
+  }
+
   ptr_ele_intrctn->has_zoom_area_sz = (UWORD8)ia_core_coder_read_bits_buf(ptr_bit_buf, 1);
   if (ptr_ele_intrctn->has_zoom_area_sz)
   {
@@ -431,7 +513,7 @@ IA_ERRORCODE impeghd_ele_interaction(ia_bit_buf_struct *ptr_bit_buf,
 *
 *  \brief Update scene displacement data structure
 *
-*  \param [in/out]  ptr_scene_disp_data   Pointer to scene displacement data structure
+*  \param [in,out]  ptr_scene_disp_data   Pointer to scene displacement data structure
 *
 *  \return error IA_ERRORCODE if any
 *
@@ -463,7 +545,8 @@ IA_ERRORCODE impeghd_scene_displacement_data(ia_scene_disp_data *ptr_scene_disp_
 *
 */
 IA_ERRORCODE impeghd_3da_local_setup_information(ia_bit_buf_struct *ptr_bit_buf,
-                                                 ia_local_setup_struct *pstr_local_setup_data)
+                                                 ia_local_setup_struct *pstr_local_setup_data,
+                                                 ia_signals_3d pstr_signals_3d)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   UWORD32 ren_type = 0, num_wire_out = 0, has_lcl_scrn_sz_info = 0;
@@ -488,6 +571,14 @@ IA_ERRORCODE impeghd_3da_local_setup_information(ia_bit_buf_struct *ptr_bit_buf,
     break;
   }
   num_wire_out = ia_core_coder_read_bits_buf(ptr_bit_buf, 16);
+
+  /*bsNumWIREoutputs shall not be larger than (numAudioChannels +
+  numAudioObjects)*/
+  if (num_wire_out > (pstr_signals_3d.num_audio_obj + pstr_signals_3d.num_ch))
+  {
+    return IA_MPEGH_DEC_INIT_FATAL_INVALID_NUM_WIRE_OUTS;
+  }
+
   if (num_wire_out > 0)
   {
     for (UWORD32 n = 0; n < num_wire_out; n++)

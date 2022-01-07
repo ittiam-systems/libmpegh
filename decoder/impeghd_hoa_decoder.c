@@ -78,7 +78,7 @@
  *
  *  \brief HOA decoder initialization
  *
- *  \param [in/out] dec_handle          Pointer to HOA decoder handle
+ *  \param [in,out] dec_handle          Pointer to HOA decoder handle
  *  \param [in]     spk_idx             Speaker index
  *  \param [in]     samp_freq           Sampling frequency
  *  \param [in]     scratch             Pointer to scratch buffer
@@ -119,7 +119,7 @@ IA_ERRORCODE impeghd_hoa_dec_init(impeghd_hoa_dec_struct *dec_handle, WORD32 spk
  *
  *  \brief HOA decode processing
  *
- *  \param [in/out] dec_handle      Pointer to HOA decoder handle
+ *  \param [in,out] dec_handle      Pointer to HOA decoder handle
  *  \param [out]    ptr_out_buf     Pointer to output buffer
  *  \param [in]     ptr_in_buf      Pointer to input buffer
  *  \param [in]     ptr_prev_in_buf Pointer to previous input buffer

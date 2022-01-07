@@ -301,10 +301,10 @@ static IA_ERRORCODE impd_drc_interpolate_drc_gain(FLOAT32 *interp_out,
  *
  *  \brief Advance interpolation buffer
  *
- *  \param [in/out]  pstr_gain_buf   Poiter to gain buffer structure
+ *  \param [in,out]  pstr_gain_buf   Poiter to gain buffer structure
  *  \param [in]  frame_size   framesize
  *
- *  \return VOID
+ *
  *
  */
 static VOID impd_drc_advance_buf(ia_drc_gain_buffer_struct *pstr_gain_buf, WORD32 frame_size)
@@ -328,7 +328,7 @@ static VOID impd_drc_advance_buf(ia_drc_gain_buffer_struct *pstr_gain_buf, WORD3
  *
  *  \brief Concatenate interpolation segments
  *
- *  \param [in/out]  pstr_buf_interp   Poiter to buffer interpolation structure
+ *  \param [in,out]  pstr_buf_interp   Poiter to buffer interpolation structure
  *  \param [in]  frame_size   framesize
  *  \param [in]  drc_band   drc band count
  *  \param [in]  pstr_interp_params   Pointer to interpolation param structure
@@ -378,7 +378,7 @@ static IA_ERRORCODE impd_drc_concatenate_segments(ia_drc_interp_buf_struct *pstr
  *
  *  \brief Get gain function
  *
- *  \param [in/out]  pstr_drc_gain_buffers   Poiter to drc gain buffers
+ *  \param [in,out]  pstr_drc_gain_buffers   Poiter to drc gain buffers
  *  \param [in]  pstr_drc_gain_dec   Pointer to drc gain decode structure
  *  \param [in]  pstr_drc_config   Pointer to drc config structure
  *  \param [in]  pstr_drc_gain   Pointer to drc gain structure

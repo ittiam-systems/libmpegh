@@ -44,6 +44,7 @@ typedef struct
   UWORD8 igf_sfb_stop;
   UWORD8 igf_num_tiles;
   UWORD8 igf_min;
+  WORD16 *swb_offset;
 } ia_usac_igf_grid_config_struct;
 
 typedef struct

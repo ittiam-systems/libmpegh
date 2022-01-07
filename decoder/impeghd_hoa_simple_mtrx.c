@@ -77,7 +77,7 @@
  *  \param [in]    rows  Number of rows
  *  \param [in]    cols  Number of columns
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_ren_simple_mtrx_init_with_size(pVOID handle, WORD32 rows, WORD32 cols)
@@ -96,7 +96,7 @@ VOID impeghd_hoa_ren_simple_mtrx_init_with_size(pVOID handle, WORD32 rows, WORD3
 *  \param [in]  handle_og  Input matrix
 *  \param [out]  handle    Output matrix
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_hoa_ren_simple_mtrx_init_with_matrix(pVOID handle_og, pVOID handle)
@@ -117,7 +117,7 @@ VOID impeghd_hoa_ren_simple_mtrx_init_with_matrix(pVOID handle_og, pVOID handle)
  *  \param [in]    handle_og  Input matrix
  *  \param [out]  handle    Output matrix
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_ren_simple_mtrx_transpose_keep(pVOID handle_og, pVOID handle)
@@ -140,10 +140,10 @@ VOID impeghd_hoa_ren_simple_mtrx_transpose_keep(pVOID handle_og, pVOID handle)
  *
  *  \brief Transpose matrix and store in same matrix using temproary matrix.
  *
- *  \param [in/out]  handle  Matrix for inplace transpose
+ *  \param [in,out]  handle  Matrix for inplace transpose
  *  \param [out]  scratch  Pointer to scratch buffer for intermediate processing
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_ren_simple_mtrx_transpose(pVOID handle, pVOID scratch)
@@ -222,7 +222,7 @@ IA_ERRORCODE impeghd_hoa_ren_simple_mtrx_mult(pVOID handle_1, pVOID handle_2, pV
 *  \param [out]  handle  Matrix handle
 *  \param [in]  arr    Diagonal array
 *
-*  \return VOID
+*
 *
 */
 VOID impeghd_hoa_ren_simple_mtrx_diag_mult(pVOID handle, pVOID arr, WORD32 diag_len)
@@ -273,11 +273,11 @@ FLOAT32 impeghd_hoa_ren_simple_mtrx_norm_fro(pVOID handle)
  *
  *  \brief Reaggrange matrix columns with given set of columns
  *
- *  \param [in/out]  handle  Matrix handle
+ *  \param [in,out]  handle  Matrix handle
  *  \param [in]    idx    Array of indices
  *  \param [in]    scratch  Pointer to scratch buffer for intermediate processing
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_hoa_ren_simple_mtrx_swap_cols(pVOID handle, pWORD32 idx, pVOID scratch)
@@ -305,7 +305,7 @@ static VOID impeghd_hoa_ren_simple_mtrx_swap_cols(pVOID handle, pWORD32 idx, pVO
  *  \param [in]    n  Size of array
  *  \param [out]  idx  Sorted array index sequence of original array
  *
- *  \return VOID
+ *
  *
  */
 static VOID impeghd_hoa_get_sort_idx(const pFLOAT32 arr, WORD32 n, pWORD32 idx)
@@ -656,7 +656,7 @@ static IA_ERRORCODE impeghd_hoa_dsvd(pVOID handle_a, WORD32 rows, WORD32 cols, p
  *
  *  \brief Initialize simple matrix for svd
  *
- *  \param [in/out]  svd_handle    Matrix svd handle to init
+ *  \param [in,out]  svd_handle    Matrix svd handle to init
  *  \param [out]  sm_handle_og  Matrix handle
  *  \param [in]    scratch      Pointer to scratch buffer for intermediate
  * processing
@@ -721,14 +721,14 @@ IA_ERRORCODE impeghd_hoa_ren_simple_mtrx_svd_init(ia_render_hoa_simple_mtrx_svd_
 /**
  *  impeghd_hoa_ren_simple_mtrx_svd_pinv
  *
- *  \brief Brief description
+ *  \brief svd matrix inverse calculation function
  *
  *  \param [in]    handle_svd  Matrix svd matrix
- *  \param [out]  handle_sm  Output matrix
- *  \param [in]    threshold  Threshold value
- *  \param scratch
+ *  \param [out]   handle_sm   Output matrix
+ *  \param [in]    threshold   Threshold value
+ *  \param [in]    scratch     Scratch pointer
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_ren_simple_mtrx_svd_pinv(pVOID handle_svd, pVOID handle_sm, FLOAT32 threshold,

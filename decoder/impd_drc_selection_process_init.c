@@ -55,9 +55,10 @@
 /**
  *
  *  impd_drc_sel_proc_init_dflt
+ *
  *  \brief Set ia_drc_sel_pro_struct structure to default value
  *
- *  \param [in/out] ia_drc_sel_pro_struct structure to be initialized
+ *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc uni selection process structure
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -123,8 +124,8 @@ IA_ERRORCODE impd_drc_sel_proc_init_dflt(ia_drc_sel_pro_struct *pstr_drc_uni_sel
  *  impd_drc_sel_proc_init_sel_proc_params
  *  \brief initalize selected structure parameters
  *
- *  \param [in/out] pstr_drc_uni_sel_proc structre ti be initalized
- *  \param [in]  pstr_drc_sel_proc_params_struct sructre to copy the values
+ *  \param [in,out] pstr_drc_uni_sel_proc structure to be initalized
+ *  \param [in]  pstr_drc_sel_proc_params_struct sructure to copy the values
  *
  *  \return error IA_ERRORCODE if any
  *
@@ -152,12 +153,13 @@ IA_ERRORCODE impd_drc_sel_proc_init_sel_proc_params(
 /**
  *
  *	impd_drc_sel_proc_init_interface_params
+ *
  *  \brief Initialize interface parameter
  *
- *  \param [in/out] pstr_drc_uni_sel_proc
- *  \param [in] pstr_drc_interface
+ *  \param [in,out] pstr_drc_uni_sel_proc Pointer to drc uni selction process structure
+ *  \param [in] pstr_drc_interface        Pointer to drc interface structure
  *
- *  \return
+ *
  *
  */
 VOID impd_drc_sel_proc_init_interface_params(ia_drc_sel_pro_struct *pstr_drc_uni_sel_proc,

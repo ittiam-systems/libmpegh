@@ -79,9 +79,9 @@
  *
  *  \brief HOA decoder frame parameters initialization
  *
- *  \param [in/out] dec_handle  Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle  Pointer to spatial decoder handle
  *
- *  \return VOID
+ *
  *
  */
 VOID impeghd_hoa_dec_frame_param_init(ia_spatial_dec_str *dec_handle)
@@ -119,7 +119,7 @@ VOID impeghd_hoa_dec_frame_param_init(ia_spatial_dec_str *dec_handle)
  *
  *  \brief HOA direction based pre-dominant sound synthesis initialization
  *
- *  \param [in/out] dec_handle  Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle  Pointer to spatial decoder handle
  *
  *  \return IA_ERRORCODE Error code if any
  *
@@ -159,7 +159,7 @@ static IA_ERRORCODE impeghd_hoa_dir_based_pre_dom_sound_syn_init(ia_spatial_dec_
  *
  *  \brief HOA vector based pre-dominant sound synthesis initialization
  *
- *  \param [in/out] dec_handle  Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle  Pointer to spatial decoder handle
  *
  *  \return IA_ERRORCODE        Error
  *
@@ -190,7 +190,7 @@ static IA_ERRORCODE impeghd_hoa_vector_based_predom_sound_syn_init(ia_spatial_de
  *
  *  \brief HOA pre-dominant sound synthesis initialization
  *
- *  \param [in/out] dec_handle  Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle  Pointer to spatial decoder handle
  *
  *  \return IA_ERRORCODE        Error code if any
  *
@@ -242,7 +242,7 @@ IA_ERRORCODE impeghd_hoa_pre_dom_sound_syn_init(ia_spatial_dec_str *dec_handle)
  *
  *  \brief HOA ambience synthesis initialization
  *
- *  \param [in/out] dec_handle  Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle  Pointer to spatial decoder handle
  *
  *  \return IA_ERRORCODE             Error
  *
@@ -301,7 +301,7 @@ IA_ERRORCODE impeghd_hoa_ambience_synthesis_init(ia_spatial_dec_str *dec_handle)
  *
  *  \brief Get HOA table CICP speaker points
  *
- *  \param [in/out] dec_handle  Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle  Pointer to spatial decoder handle
  *
  *  \return IA_ERRORCODE Error
  *
@@ -346,7 +346,7 @@ IA_ERRORCODE impeghd_hoa_table_get_dict_cicp_speaker_points(ia_spatial_dec_str *
  *
  *  \brief Get HOA table 2D points
  *
- *  \param [in/out] dec_handle  Pointer to spatial decoder handle
+ *  \param [in,out] dec_handle  Pointer to spatial decoder handle
  *
  *  \return IA_ERRORCODE              Error
  *
@@ -386,7 +386,7 @@ IA_ERRORCODE impeghd_hoa_table_get_dict_2d_points(ia_spatial_dec_str *dec_handle
  *
  *  \brief HOA renderer initialization
  *
- *  \param [in/out] rh_handle       Pointer to HOA renderer structure
+ *  \param [in,out] rh_handle       Pointer to HOA renderer structure
  *  \param [in]     spk_id          Speaker index
  *  \param [in]     hoa_orders      HOA orders
  *  \param [in]     num_hoa_orders  Number of HOA orders
@@ -467,7 +467,7 @@ IA_ERRORCODE impeghd_hoa_ren_renderer_init(ia_render_hoa_str *rh_handle, WORD32 
  *
  *  \brief HOA renderer input initialization
  *
- *  \param [in/out] handle              Pointer to HOA renderer structure
+ *  \param [in,out] handle              Pointer to HOA renderer structure
  *  \param [in]     order               HOA order
  *  \param [in]     config_handle       Pointer to HOA config structure
  *  \param [in]     hoa_mtx_file_cnt    Matrix present flag
@@ -496,10 +496,11 @@ IA_ERRORCODE impeghd_hoa_ren_input_init(pVOID handle, ia_speaker_config_3d *ref_
   }
   else
   {
-    /*The	near	field	compensation	(NFC)	processing	may	be	applied	to HOA content of an
-    order
-    which	is	smaller	or	equal	to 2 for LC lvl 3, 1 for LC lvl 2, not allowed for LC
-    lvl 1*/
+    /*The	near	field	compensation	(NFC)	processing	may	be	applied	to HOA content
+    of
+    an order which	is	smaller	or	equal	to 2 for LC lvl 3, 1 for LC lvl 2, not
+    allowed
+    for LC lvl 1*/
     if (((mpegh_profile_lvl == MPEGH_PROFILE_LC_LVL_3) && (order <= 2)) ||
         ((mpegh_profile_lvl == MPEGH_PROFILE_LC_LVL_2) && (order <= 1)) ||
         ((mpegh_profile_lvl == MPEGH_PROFILE_BP_LVL_3) ||

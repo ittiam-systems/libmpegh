@@ -72,7 +72,7 @@
  *
  *  \brief Format conversion downmix initialization
  *
- *  \param [in/out] active_dmx          Pointer to format convert downmix structure
+ *  \param [in,out] active_dmx          Pointer to format convert downmix structure
  *  \param [in]     format_conv_params  Pointer to format convert params structure
  *
  *  \return IA_ERRORCODE                      Error
@@ -146,8 +146,10 @@ static WORD8 impeghd_u_channel(const WORD32 channel)
  *
  *  \brief Calculate peak filter value with negative gain
  *
- *  \param [in] peak_filter_params  Pointer to filter params array
- *  \param [in] fc                  Filter cut off frequency
+ *  \param [in] ptr_peak_filter_params  Pointer to filter params array
+ *  \param [in] frequency               Filter cut off frequency
+ *  \param [in] strength                1st equaliser strength
+ *  \param [in] strength_1               2nd equaliser strength
  *
  *  \return FLOAT32                 Peak filter value
  *
@@ -183,7 +185,7 @@ static FLOAT32 impeghd_format_conv_peak_filter_neg_gain(const FLOAT32 *ptr_peak_
  *
  *  \brief Calculate peak filter value
  *
- *  \param [in] *params     Pointer to filter params array
+ *  \param [in] params      Pointer to filter params array
  *  \param [in] freq        Filter cut off frequency
  *
  *  \return FLOAT32         Peak filter value
@@ -301,7 +303,7 @@ static IA_ERRORCODE impeghd_fc_eq_compute(const WORD32 samp_rate,
  *  \brief Compute equalize value for the deviation for speaker specification
  *
  *  \param [in]  samp_rate  Sample rate
- *  \param [in/out] pstr_params  Pointer to format convert state structure
+ *  \param [in,out] pstr_params  Pointer to format convert state structure
  *  \param [in]  eq_1_idx  1st equaliser index
  *  \param [in]  eq_2_idx  2nd equaliser index
  *  \param [in]  eq_1_strength  1st equaliser strength
@@ -464,10 +466,11 @@ impeghd_format_conv_compute_eq_dev(const WORD32 samp_rate, ia_format_conv_data_s
  *  impeghd_format_conv_init_data
  *
  *  \brief Format conversion data initialization
- *  \param [in] pointer to scratch memory
- *  \param [in/out] pstr_azi_elev_array  Pointer to azimuth elevation array
- *  \param [in] pointer to format converter param structure
- *  \param [in] pointer to 3d speaker config structure
+ *
+ *  \param [in] ptr_scratch              Pointer to scratch memory
+ *  \param [in,out] pstr_azi_elev_array  Pointer to azimuth elevation array
+ *  \param [in] params                   Pointer to format converter param structure
+ *  \param [in] ref_spk_layout           Pointer to 3d speaker config structure
  *  \return IA_ERRORCODE          Error
  *
  */
@@ -478,7 +481,8 @@ IA_ERRORCODE impeghd_format_conv_init_data(FLOAT32 *ptr_scratch,
 {
   ia_cicp_ls_geo_str *pstr_azi_ele[CICP_MAX_CH];
   ia_format_conv_data_state *pstr_params = params->data_state;
-  WORD32 i, channel, ptr, j, erb;
+  WORD32 ptr, j, erb;
+  UWORD32 channel;
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 invalid_order = 0, k;
   WORD32 *ptr_io_src, *ptr_io_dst;
@@ -491,7 +495,7 @@ IA_ERRORCODE impeghd_format_conv_init_data(FLOAT32 *ptr_scratch,
   WORD32 start_chn;
   WORD32 idx, idx2;
   WORD32 input_channel_id, output_channel_idx;
-  WORD32 out_chn_num = params->num_out_ch;
+  UWORD32 out_chn_num = params->num_out_ch, i;
   WORD32 num_chanl, chnl_u;
   WORD32 *ptr_dst_params = (params->data_state)->in_out_dst;
   WORD32 *ptr_src_params = (params->data_state)->in_out_src;
@@ -659,7 +663,7 @@ IA_ERRORCODE impeghd_format_conv_init_data(FLOAT32 *ptr_scratch,
     }
   }
   channel = 0;
-  for (i = 0; i < num_in_ch; i++)
+  for (i = 0; i < (UWORD32)num_in_ch; i++)
   {
     input_channel_id = ptr_in_ch_format[i];
     output_channel_idx =
@@ -989,7 +993,7 @@ IA_ERRORCODE impeghd_format_conv_init_data(FLOAT32 *ptr_scratch,
  *  impeghd_format_conv_post_proc_dmx_mtx
  *
  *  \brief Post process gains to Downmix matrix
- *  \param [in/out] params        pointer to format converter param structure
+ *  \param [in,out] params        pointer to format converter param structure
  *  \return IA_ERRORCODE          Error
  *
  */
@@ -1059,7 +1063,7 @@ IA_ERRORCODE impeghd_format_conv_post_proc_dmx_mtx(ia_format_conv_param *params)
  *  impeghd_format_conv_map_lfes
  *
  *  \brief Post process gains to Downmix matrix
- *  \param [in/out] params                pointer to format converter param structure
+ *  \param [in,out] params                pointer to format converter param structure
  *  \param [in]     pp_cicp_in_geometry   Pointer input channel configuration
  *  \param [in]     pp_cicp_out_geometry  Pointer input channel configuration
  *  \return IA_ERRORCODE          Error
