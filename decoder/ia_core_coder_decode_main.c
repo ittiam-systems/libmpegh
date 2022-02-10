@@ -1602,17 +1602,16 @@ impeghd_uni_drc_dec_process(ia_usac_decoder_config_struct *pstr_usac_dec_cfg,
     if (err_code != IA_MPEGH_DEC_NO_ERROR)
       return (err_code);
   }
+  if (pstr_drc_dec_payload->pstr_drc_config == NULL)
+  {
+    return IA_MPEGD_DRC_INIT_FATAL_UNEXPECTED_ERROR;
+  }
 
   if (0 == dom_swi_flag)
   {
     for (i = 0; i < num_channels; i++)
     {
       audio_buff[i] = &pstr_dec_data->str_usac_data.time_sample_vector[i][0];
-    }
-
-    if (pstr_drc_dec_payload->pstr_drc_config == NULL)
-    {
-      return IA_MPEGD_DRC_INIT_FATAL_UNEXPECTED_ERROR;
     }
 
     err_code = impd_drc_td_process(

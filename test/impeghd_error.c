@@ -288,6 +288,7 @@ pWORD8 impeghd_ppb_exe_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "Uni DRC coefficients pointer NULL",
     (pWORD8) "Invalid scale factor",
     (pWORD8) "sfb exceeded maximum value",
+    (pWORD8) "Domain switcher process failed",
 };
 
 // DRC

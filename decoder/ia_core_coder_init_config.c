@@ -377,9 +377,9 @@ static VOID ia_core_coder_map_ele_to_channel(WORD32 *num_output_chns, WORD32 shi
 {
   WORD32 i, j, next_idx = 0, channel = 0;
 
-  for (i = 0; i < 16; i++)
+  for (i = 0; i < MAX_NUM_CHANNELS; i++)
   {
-    for (j = 0; j < 16; j++)
+    for (j = 0; j < MAX_NUM_CHANNELS; j++)
     {
       if (num_output_chns[j] == channel)
       {
@@ -387,7 +387,7 @@ static VOID ia_core_coder_map_ele_to_channel(WORD32 *num_output_chns, WORD32 shi
       }
     }
   }
-  for (i = 0; i < 16; i++)
+  for (i = 0; i < MAX_NUM_CHANNELS; i++)
   {
     if (num_output_chns[i] < 0)
     {
@@ -552,7 +552,8 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
   ia_usac_decoder_config_struct *pstr_usac_decoder_config;
   ia_usac_dec_element_config_struct *pstr_usac_element_config;
   pstr_usac_decoder_config = &pstr_usac_conf->str_usac_dec_config;
-  memset(pstr_usac_decoder_config->num_output_chns, -1, 16 * sizeof(WORD32));
+  memset(pstr_usac_decoder_config->num_output_chns, -1,
+         MAX_ELEMENTS_USAC * sizeof(pstr_usac_decoder_config->num_output_chns[0]));
 
   ia_core_coder_read_escape_value(it_bit_buff, &(pstr_usac_decoder_config->num_elements), 4, 8,
                                   16);
@@ -946,7 +947,11 @@ static IA_ERRORCODE ia_core_coder_config_extension(
 
       cnt_bits = it_bit_buff->cnt_bits;
       ptr_mae_asi->asi_present = 1;
-      impeghd_mae_asi_parse(ptr_mae_asi, it_bit_buff);
+      IA_ERRORCODE err_code = impeghd_mae_asi_parse(ptr_mae_asi, it_bit_buff);
+      if (IA_MPEGH_DEC_NO_ERROR != err_code)
+      {
+        return err_code;
+      }
       cnt_bits = cnt_bits - it_bit_buff->cnt_bits;
       if (cnt_bits < (WORD32)(usac_config_ext_len << 3))
       {
@@ -1450,28 +1455,28 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
   {
   case MPEGH_PROFILE_LC_LVL_1:
   case MPEGH_PROFILE_BP_LVL_1:
-    if (dec_proc_core_chans > 5 || ref_layout_chans > 5)
+    if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL1 || ref_layout_chans > MAX_NUM_CHANNELS_LVL1)
     {
       return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
     }
     break;
   case MPEGH_PROFILE_LC_LVL_2:
   case MPEGH_PROFILE_BP_LVL_2:
-    if (dec_proc_core_chans > 9 || ref_layout_chans > 9)
+    if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL2 || ref_layout_chans > MAX_NUM_CHANNELS_LVL2)
     {
       return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
     }
     break;
   case MPEGH_PROFILE_BP_LVL_3:
-    if (dec_proc_core_chans > 24 || ref_layout_chans > 24 ||
-        (dec_proc_core_chans > 16 && (num_hoa_based_grps != 0 || num_ch_based_grps != 0)) ||
-        (ref_layout_chans > 16 && (num_hoa_based_grps != 0 || num_ch_based_grps != 0)))
+    if (dec_proc_core_chans > MAX_NUM_CHANNELS || ref_layout_chans > MAX_NUM_CHANNELS ||
+        (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3 && (num_hoa_based_grps != 0 || num_ch_based_grps != 0)) ||
+        (ref_layout_chans > MAX_NUM_CHANNELS_LVL3 && (num_hoa_based_grps != 0 || num_ch_based_grps != 0)))
     {
       return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
     }
     break;
   default:
-    if (dec_proc_core_chans > 16 || ref_layout_chans > 16)
+    if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3 || ref_layout_chans > MAX_NUM_CHANNELS_LVL3)
     {
       return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
     }

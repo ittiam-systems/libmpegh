@@ -89,6 +89,13 @@ extern const FLOAT32 ia_hoa_cos_table_inv_dyn_correction_compute_win_func[1024];
 extern const FLOAT32 ia_hoa_cos_table_fade_win_for_vec_based_syn[2][8][2048];
 extern const FLOAT32 ia_hoa_inv_dyn_win_pow_table[7][1024];
 extern const WORD32 ia_hoa_frame_length_table[3];
+extern const FLOAT32 ia_hoa_coded_vec_q_mat_elems_0[1];
+extern const FLOAT32 ia_hoa_coded_vec_q_mat_elems_1[16];
+extern const FLOAT32 ia_hoa_coded_vec_q_mat_elems_2[81];
+extern const FLOAT32 ia_hoa_coded_vec_q_mat_elems_3[256];
+extern const FLOAT32 ia_hoa_coded_vec_q_mat_elems_4[800];
+extern const FLOAT32 ia_hoa_coded_vec_q_mat_elems_5[1296];
+extern const FLOAT32 ia_hoa_coded_vec_q_mat_elems_6[2401];
 
 // extern const FLOAT32 ia_hoa_nf_roots_re_abs[];
 

@@ -496,11 +496,9 @@ IA_ERRORCODE impeghd_hoa_ren_input_init(pVOID handle, ia_speaker_config_3d *ref_
   }
   else
   {
-    /*The	near	field	compensation	(NFC)	processing	may	be	applied	to HOA content
-    of
-    an order which	is	smaller	or	equal	to 2 for LC lvl 3, 1 for LC lvl 2, not
-    allowed
-    for LC lvl 1*/
+    /*The	near	field	compensation	(NFC)	processing	may	be	applied	to
+    HOA content of an order which	is	smaller	or	equal	to 2 for LC
+    lvl 3, 1 for LC lvl 2, not allowed for LC lvl 1*/
     if (((mpegh_profile_lvl == MPEGH_PROFILE_LC_LVL_3) && (order <= 2)) ||
         ((mpegh_profile_lvl == MPEGH_PROFILE_LC_LVL_2) && (order <= 1)) ||
         ((mpegh_profile_lvl == MPEGH_PROFILE_BP_LVL_3) ||
