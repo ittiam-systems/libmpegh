@@ -385,14 +385,7 @@ static IA_ERRORCODE impeghd_mae_asi_group_def(ia_mae_group_def *pstr_group_defin
       pstr_group_definition[grp].min_gain = (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 6);
       pstr_group_definition[grp].max_gain = (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 5);
     }
-    /* shall be identical for groups contained in the same switch group */
-    for (WORD32 grp1 = grp - 1; grp1 >= 0; grp1--)
-    {
-      if (!memcmp(&pstr_group_definition[grp], &pstr_group_definition[grp1], 10 * sizeof(WORD8)))
-      {
-        return IA_MPEGH_DEC_INIT_FATAL_INVALID_ASI_PARAM;
-      }
-    }
+
     pstr_group_definition[grp].group_num_members =
         (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 7) + 1;
 

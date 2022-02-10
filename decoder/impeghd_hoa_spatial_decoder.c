@@ -370,9 +370,11 @@ impeghd_hoa_spatial_decode_frame_side_info(pVOID handle, ia_hoa_frame_struct *ia
       if (HOA_VVEC_VQ_WORD == ia_hoa_frame_t->n_bits_q[ch])
       {
         UWORD32 mat_offset = HOA_MAXIMUM_MATRIX_SIZE;
+        UWORD32 curr_vq_vec_ptr_size = 0;
         WORD32 normalize = 1;
         pFLOAT32 curr_vq_vec_ptr =
             &(pstr_spatial_dec->transpose_mod_mtx_grid_pts[pstr_spatial_dec->vec_start]);
+        curr_vq_vec_ptr_size = sizeof(pstr_spatial_dec->transpose_mod_mtx_grid_pts);
         FLOAT32 inv_norm_coeff = impeghd_hoa_pow_2(14) / (FLOAT32)(pstr_hoa_config->order + 1);
         FLOAT32 weight_value;
         WORD32 v_idx = ((WORD32)ia_hoa_frame_t->vvec_idx[0] - (WORD32)1);
@@ -382,19 +384,47 @@ impeghd_hoa_spatial_decode_frame_side_info(pVOID handle, ia_hoa_frame_struct *ia
         case 7:
           mat_offset = pstr_hoa_config->num_coeffs;
           curr_vq_vec_ptr = &(pstr_spatial_dec->ptr_inv_mode_mat[0]);
+          switch (pstr_hoa_config->order)
+          {
+          case 0:
+            curr_vq_vec_ptr_size = sizeof(ia_hoa_coded_vec_q_mat_elems_0);
+            break;
+          case 1:
+            curr_vq_vec_ptr_size = sizeof(ia_hoa_coded_vec_q_mat_elems_1);
+            break;
+          case 2:
+            curr_vq_vec_ptr_size = sizeof(ia_hoa_coded_vec_q_mat_elems_2);
+            break;
+          case 3:
+            curr_vq_vec_ptr_size = sizeof(ia_hoa_coded_vec_q_mat_elems_3);
+            break;
+          case 4:
+            curr_vq_vec_ptr_size = sizeof(ia_hoa_coded_vec_q_mat_elems_4);
+            break;
+          case 5:
+            curr_vq_vec_ptr_size = sizeof(ia_hoa_coded_vec_q_mat_elems_5);
+            break;
+          case 6:
+            curr_vq_vec_ptr_size = sizeof(ia_hoa_coded_vec_q_mat_elems_6);
+            break;
+          }
           break;
         case 3:
           curr_vq_vec_ptr = &(pstr_spatial_dec->dict_2d_points[0]);
+          curr_vq_vec_ptr_size = sizeof(pstr_spatial_dec->dict_2d_points);
           break;
         case 2:
           normalize = 0;
           curr_vq_vec_ptr = &(pstr_spatial_dec->dict_cicp_speaker_points[0]);
+          curr_vq_vec_ptr_size = sizeof(pstr_spatial_dec->dict_cicp_speaker_points);
           break;
         case 1:
           curr_vq_vec_ptr = &(pstr_spatial_dec->dict_cicp_speaker_points[0]);
+          curr_vq_vec_ptr_size = sizeof(pstr_spatial_dec->dict_cicp_speaker_points);
           break;
         case 0:
           curr_vq_vec_ptr = &(pstr_spatial_dec->transpose_mod_mtx_grid_pts[0]);
+          curr_vq_vec_ptr_size = sizeof(pstr_spatial_dec->transpose_mod_mtx_grid_pts);
         }
         if (1 != ia_hoa_frame_t->num_vvec_indices[ch])
         {
@@ -415,7 +445,8 @@ impeghd_hoa_spatial_decode_frame_side_info(pVOID handle, ia_hoa_frame_struct *ia
             }
 
             weight_value *= 2 * ia_hoa_frame_t->sgn_val[ch][vec_idx] - 1;
-            if (v_idx < 0)
+            if ((v_idx < 0) || ((v_idx + (pstr_hoa_config->num_coeffs - 1)) >
+                                (curr_vq_vec_ptr_size / sizeof(FLOAT32))))
             {
               return IA_MPEGH_HOA_INIT_FATAL_INVALID_VIDX;
             }
