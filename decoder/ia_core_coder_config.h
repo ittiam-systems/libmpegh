@@ -37,7 +37,7 @@
 
 #include <impeghd_type_def.h>
 
-#define MAX_ELEMENTS_USAC (25)
+#define MAX_ELEMENTS_USAC (50)
 // The bit stream extracted value can be 32.
 // Currently this is limited to 3 considering:
 // Audio Channels, Objects and HOA Transport channels.

@@ -528,6 +528,12 @@ impeghd_domain_switcher_process(ia_mpegh_dec_api_struct *p_obj_mpegh_dec, WORD32
   ptr_out_im_stft = ptr_out_re_stft + len_fft_stft;
   ptr_stft_in_buf = ptr_out_im_stft + len_fft_stft;
   pstr_ds_state = &p_obj_mpegh_dec->p_state_mpeghd->state_domain_switcher;
+
+  if (pstr_ds_state->ds_params == NULL)
+  {
+    return IA_MPEGH_DEC_EXE_FATAL_DOMAIN_SWITCHER_PROCESS_FAILED;
+  }
+
   num_chn_in = pstr_ds_state->ds_params->num_in_ch;
   *num_chn_out = pstr_ds_state->ds_params->num_out_ch;
   ptr_in_stft_buf = pstr_ds_state->stft_in_buf;

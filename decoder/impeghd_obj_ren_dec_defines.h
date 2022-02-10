@@ -42,7 +42,7 @@
 #define MDAP_ALPHA_MAX_VAL (90.0f * DEG_2_RAD)
 #define MDAP_ALPHA_MIN_VAL_DEGREE (0.001f)
 #define MDAP_ALPHA_MAX_VAL_DEGREE (90.0f)
-#define CICP_MAX_NUM_LS (32)
+#define CICP_MAX_NUM_LS (42)
 #define ROW_SIZE (9)
 #define ANGLE_ZERO_TO_TWO_PI (361)
 #define FOUR_BIT (16)

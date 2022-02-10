@@ -363,8 +363,8 @@ static WORD32 impeghd_ls_subset_empty(ia_renderer_ls_params *ptr_ls_vertex, WORD
   for (i = 0; i < num_sub_ls; i++)
   {
     ls_idx = ptr_ls_idx[i];
-    polygon[2 * i + 1] = ptr_ls_geo_tbls[ls_idx].ls_elevation;
-    polygon[2 * i + 0] = ptr_ls_geo_tbls[ls_idx].ls_azimuth;
+    polygon[2 * i + 1] = ptr_ls_vertex[ls_idx].ls_elevation;
+    polygon[2 * i + 0] = ptr_ls_vertex[ls_idx].ls_azimuth;
   }
   for (j = 0; j < num_ls; j++)
   {
@@ -381,11 +381,11 @@ static WORD32 impeghd_ls_subset_empty(ia_renderer_ls_params *ptr_ls_vertex, WORD
       point[0] = ptr_ls_vertex[j].ls_azimuth;
 
       flag_poly = 1;
-      FLOAT32 front = 180 - (FLOAT32)fmod(180 - point[0], 360);
+      FLOAT32 front = 180 - (FLOAT32)fmod(360 - point[0], 360);
       for (index = 0; index < num_sub_ls; index++)
       {
         vertices[2 * index + 0] =
-            ia_sub_flt(180 - (FLOAT32)fmod(180 - polygon[2 * index], 360), front);
+            ia_sub_flt(180 - (FLOAT32)fmod(360 - polygon[2 * index], 360), front);
         vertices[2 * index + 1] = ia_sub_flt(polygon[2 * index + 1], point[1]);
       }
 
@@ -423,9 +423,12 @@ static WORD32 impeghd_ls_subset_exist(ia_renderer_ls_params *ptr_ls_vertex, WORD
   WORD32 i, j;
   WORD32 num_sub_ls_present = 0;
   WORD32 flag;
+  WORD32 *subset = (WORD32 *)malloc(num_sub_ls * sizeof(WORD32));
+
   for (i = 0; i < num_sub_ls; i++)
   {
     WORD32 ls_idx = ptr_ls_idx[i];
+    subset[i] = ls_idx;
     flag = 0;
     for (j = 0; j < num_ls; j++)
     {
@@ -437,6 +440,7 @@ static WORD32 impeghd_ls_subset_exist(ia_renderer_ls_params *ptr_ls_vertex, WORD
           azi <= ptr_ls_geo_tbls[ls_idx].ls_azimuth_end)
       {
         flag = 1;
+        subset[i] = j;
       }
     }
     num_sub_ls_present = num_sub_ls_present + flag;
@@ -444,8 +448,7 @@ static WORD32 impeghd_ls_subset_exist(ia_renderer_ls_params *ptr_ls_vertex, WORD
 
   if (num_sub_ls == num_sub_ls_present)
   {
-    flag =
-        impeghd_ls_subset_empty(ptr_ls_vertex, ptr_ls_idx, num_sub_ls, num_ls, ptr_ls_geo_tbls);
+    flag = impeghd_ls_subset_empty(ptr_ls_vertex, subset, num_sub_ls, num_ls, ptr_ls_geo_tbls);
     return flag;
   }
   else
@@ -1142,10 +1145,18 @@ IA_ERRORCODE impeghd_obj_renderer_dec_init(ia_obj_ren_dec_state_struct *ptr_obj_
     if (ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i] &&
         !ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->lfe_flag)
     {
-      ptr_obj_ren_dec_state->non_lfe_ls_str[j].ls_elevation =
-          ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_elevation;
+      ptr_obj_ren_dec_state->non_lfe_ls_str[j].ls_elevation = (FLOAT32)ia_max_flt(
+          -90.0, ia_min_flt(90., ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_elevation));
+      if (ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_azimuth >= 180)
+      {
       ptr_obj_ren_dec_state->non_lfe_ls_str[j].ls_azimuth =
+            ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_azimuth - 360;
+      }
+      else
+      {
+        ptr_obj_ren_dec_state->non_lfe_ls_str[j].ls_azimuth =
           ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_azimuth;
+      }
       ptr_obj_ren_dec_state->non_lfe_ls_str[j].ls_index =
           impeghd_ls_get_index(ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_azimuth,
                                ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_elevation);

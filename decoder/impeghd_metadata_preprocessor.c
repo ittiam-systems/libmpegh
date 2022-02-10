@@ -2889,12 +2889,12 @@ static IA_ERRORCODE impeghd_apply_on_off_intrct(ia_interaction_data_struct *pstr
       /* loop over all groups */
       for (i = 0; i < pstr_interact_cfg->num_decoded_groups; i++)
       {
-        WORD32 allowOnOff = pstr_mae_asi->group_definition[i].allow_on_off;
+        WORD32 allow_on_off = pstr_mae_asi->group_definition[i].allow_on_off;
         WORD32 grp_index = -1;
         WORD32 group_id = pstr_mae_asi->group_definition[i].group_id;
         WORD32 temp = 0;
 
-        if (!(allowOnOff))
+        if (!(allow_on_off))
         {
           pstr_interact_cfg->on_off_status_modified[i] =
               pstr_mae_asi->group_definition[i].default_on_off;
@@ -2965,23 +2965,23 @@ static IA_ERRORCODE impeghd_apply_on_off_intrct(ia_interaction_data_struct *pstr
         {
           if (pstr_interact_cfg->apply_intrct_data == 1)
           {
-            /* ... the onoff status of the interaction data should be used, if allowOnOff == 1 and
-             * interaction data is available */
+            /* ... the onoff status of the interaction data should be used, if allow_on_off == 1
+             * and  interaction data is available */
             pstr_interact_cfg->on_off_status_modified[i] =
                 pstr_interact_cfg->ptr_ele_interaction_data->ei_on_off[i];
           }
           else
           {
-            /* ... the default onoff status should be used, if allowOnOff == 1 and no interaction
-             * data is available */
+            /* ... the default onoff status should be used, if allow_on_off == 1 and no
+             * interaction data is available */
             pstr_interact_cfg->on_off_status_modified[i] =
                 pstr_mae_asi->group_definition[grp_index].default_on_off;
           }
         }
         else
         {
-          /* ... the default onoff status of the interaction data should be used, if allowOnOff ==
-           * 0 */
+          /* ... the default onoff status of the interaction data should be used, if allow_on_off
+           * == 0 */
           pstr_interact_cfg->on_off_status_modified[i] =
               pstr_mae_asi->group_definition[grp_index].default_on_off;
         }
@@ -3081,11 +3081,11 @@ static IA_ERRORCODE impeghd_apply_on_off_intrct(ia_interaction_data_struct *pstr
           if (pstr_mae_asi->switch_group_definition[k].group_id == sg_id)
           {
             WORD32 idx = -1;
-            WORD32 allowOnOff = pstr_mae_asi->switch_group_definition[k].allow_on_off;
+            WORD32 allow_on_off = pstr_mae_asi->switch_group_definition[k].allow_on_off;
 
             switch_grp_found = 1;
 
-            if (allowOnOff == 0)
+            if (allow_on_off == 0)
             {
               /*
                * Error: Violation of SwitchGroup Logic, is is not allowed to
