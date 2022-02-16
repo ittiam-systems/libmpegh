@@ -511,13 +511,14 @@ impeghd_format_conv_earcon_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
  *  \param [in]  pstr_audio_specific_config Pointer to audio specific config structure.
  *  \param [out] num_channel_out            Pointer to output channel variable.
  *  \param [in]  ds_flag                    Domain Switcher flag.
+ *  \param [in] ptr_scratch                 Pointer to scratch memory.
  *
  *  \return IA_ERRORCODE                    Error code in case of any processing errors.
  *
  */
 IA_ERRORCODE impeghd_format_conv_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
                                       ia_audio_specific_config_struct *pstr_audio_specific_config,
-                                      WORD32 *num_channel_out, WORD32 ds_flag)
+                                      WORD32 *num_channel_out, WORD32 ds_flag, pVOID ptr_scratch)
 {
   WORD32 num_chnl_in = 0;
   IA_ERRORCODE error_num = IA_MPEGH_DEC_NO_ERROR;
@@ -673,8 +674,8 @@ IA_ERRORCODE impeghd_format_conv_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
       pstr_obj_renderer->pstr_local_setup = &pstr_decoder->str_local_setup_interaction;
       pstr_obj_renderer->cicp_out_idx = cicp_idx;
 
-      error_num = impeghd_obj_renderer_dec_init(pstr_obj_renderer,
-                                                &pstr_audio_specific_config->ref_spk_layout);
+      error_num = impeghd_obj_renderer_dec_init(
+          pstr_obj_renderer, &pstr_audio_specific_config->ref_spk_layout, ptr_scratch);
       if (error_num != IA_MPEGH_DEC_NO_ERROR)
       {
         return IA_MPEGH_FORMAT_CONV_INIT_FATAL_INIT_FAIL;
@@ -1773,7 +1774,8 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
             &pstr_dec_data->str_local_setup_interaction;
         err_code = impeghd_obj_renderer_dec_init(
             &pstr_dec_data->str_obj_ren_dec_state,
-            &pstr_dec_data->str_frame_data.str_audio_specific_config.ref_spk_layout);
+            &pstr_dec_data->str_frame_data.str_audio_specific_config.ref_spk_layout,
+            mpegh_dec_handle->mpeghd_scratch_mem_v);
         if (err_code != IA_MPEGH_DEC_NO_ERROR)
         {
           return err_code;
@@ -1833,12 +1835,14 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
 
   if (pstr_asc->str_usac_config.signals_3d.format_converter_enable == 1)
   {
-    impeghd_format_conv_init(handle, pstr_asc, num_channel_out, 0);
+    impeghd_format_conv_init(handle, pstr_asc, num_channel_out, 0,
+                             mpegh_dec_handle->mpeghd_scratch_mem_v);
   }
 
   if (pstr_asc->str_usac_config.signals_3d.domain_switcher_enable == 1)
   {
-    impeghd_format_conv_init(handle, pstr_asc, num_channel_out, 1);
+    impeghd_format_conv_init(handle, pstr_asc, num_channel_out, 1,
+                             mpegh_dec_handle->mpeghd_scratch_mem_v);
   }
   if (suitable_tracks <= 0)
   {

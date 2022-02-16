@@ -36,11 +36,11 @@
 #define IMPEGHD_VER_NUMBER_H
 
 #ifdef _ARM_
-#define MPEG_H_3D_AUD_DEC_ITTIAM_VER "_ARM $Rev: 1.1 $"
+#define MPEG_H_3D_AUD_DEC_ITTIAM_VER "_ARM $Rev: 1.2 $"
 #elif _X86_
-#define MPEG_H_3D_AUD_DEC_ITTIAM_VER "_X86 $Rev: 1.1 $"
+#define MPEG_H_3D_AUD_DEC_ITTIAM_VER "_X86 $Rev: 1.2 $"
 #else
-#define MPEG_H_3D_AUD_DEC_ITTIAM_VER "_MSVC $Rev: 1.1 $"
+#define MPEG_H_3D_AUD_DEC_ITTIAM_VER "_MSVC $Rev: 1.2 $"
 #endif
 
 #endif /* IMPEGHD_VER_NUMBER_H */

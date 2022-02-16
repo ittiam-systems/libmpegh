@@ -164,6 +164,10 @@ IA_ERRORCODE impeghd_mp4_parse_mae_boxes(ia_file_wrapper* g_pf_inp_str, pVOID pt
   data_size = (UWORD32 *)&charbuf[0];
   itf = (it_avi_file_ctxt *)g_pf_inp_str->file_cntxt;
   impeghd_mp4_fseek(itf, 0, SEEK_SET);
+  impeghd_mp4_clear_buffer(m_mp4->imp_trak_info[0]);
+  impeghd_mp4_clear_buffer(m_mp4->imp_trak_info[1]);
+  impeghd_mp4_free_all_nodes(&(m_mp4->ptr_mem));
+  impeghd_mp4_free_wrapper((pVOID)m_mp4);
 
   error = impeghd_mp4_find_stsz(itf, &offset, &stsz_size);
   if (error)

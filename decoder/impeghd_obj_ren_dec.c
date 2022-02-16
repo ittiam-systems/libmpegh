@@ -412,18 +412,19 @@ static WORD32 impeghd_ls_subset_empty(ia_renderer_ls_params *ptr_ls_vertex, WORD
  *  \param [in] num_sub_ls      Number of loud speakers subsets.
  *  \param [in] num_ls          Number of loud speakers.
  *  \param [in] ptr_ls_geo_tbls Pointer to loud speaker gemoetry tables.
+ *  \param [in] ptr_scratch     Pointer to scratch memory.
  *
  *  \return WORD32 Flag that indicates whether or not ls subset exists.
  *
  */
 static WORD32 impeghd_ls_subset_exist(ia_renderer_ls_params *ptr_ls_vertex, WORD32 *ptr_ls_idx,
                                       WORD32 num_sub_ls, WORD32 num_ls,
-                                      ia_cicp_ls_geo_str *ptr_ls_geo_tbls)
+                                      ia_cicp_ls_geo_str *ptr_ls_geo_tbls, pVOID ptr_scratch)
 {
   WORD32 i, j;
   WORD32 num_sub_ls_present = 0;
   WORD32 flag;
-  WORD32 *subset = (WORD32 *)malloc(num_sub_ls * sizeof(WORD32));
+  WORD32 *subset = ptr_scratch;
 
   for (i = 0; i < num_sub_ls; i++)
   {
@@ -577,12 +578,13 @@ static FLOAT32 impeghd_cicpidx_calc_ls_mean_azi(WORD32 *ptr_ls_idx, WORD32 num_s
  *  \brief Add imaginary loud speakers.
  *
  *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in] ptr_scratch     Pointer to scratch memory.
  *
  *  \return IA_ERRORCODE Error code if any.
  *
  */
 IA_ERRORCODE
-impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state)
+impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, pVOID ptr_scratch)
 {
   WORD32 i, j = 0;
   WORD32 ls_order;
@@ -599,9 +601,10 @@ impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state)
   i = impeghd_adjust_ele_azi_ind(ptr_obj_ren_dec_state, &num_imag_ls, &max_ele_spk_idx,
                                  &min_ele_spk_idx);
   /* Step 3 Check if subset A speaker set is present in the speaker layout */
-  flag = impeghd_ls_subset_exist(
-      &ptr_obj_ren_dec_state->non_lfe_ls_str[0], (WORD32 *)&ia_loud_speaker_subset_A[0],
-      LS_SUBSET_A_LEN, (num_ls + num_imag_ls), (ia_cicp_ls_geo_str *)&ia_cicp_ls_geo_tbls[0]);
+  flag = impeghd_ls_subset_exist(&ptr_obj_ren_dec_state->non_lfe_ls_str[0],
+                                 (WORD32 *)&ia_loud_speaker_subset_A[0], LS_SUBSET_A_LEN,
+                                 (num_ls + num_imag_ls),
+                                 (ia_cicp_ls_geo_str *)&ia_cicp_ls_geo_tbls[0], ptr_scratch);
   if (flag)
   {
     FLOAT32 mean_azi = 0.0f, mean_ele = 0.0f;
@@ -621,9 +624,10 @@ impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state)
   else
   {
     /* Step 3 Check if subset B speaker set is present in the speaker layout */
-    flag = impeghd_ls_subset_exist(
-        &ptr_obj_ren_dec_state->non_lfe_ls_str[0], (WORD32 *)&ia_loud_speaker_subset_B[0],
-        LS_SUBSET_B_LEN, (num_ls + num_imag_ls), (ia_cicp_ls_geo_str *)&ia_cicp_ls_geo_tbls[0]);
+    flag = impeghd_ls_subset_exist(&ptr_obj_ren_dec_state->non_lfe_ls_str[0],
+                                   (WORD32 *)&ia_loud_speaker_subset_B[0], LS_SUBSET_B_LEN,
+                                   (num_ls + num_imag_ls),
+                                   (ia_cicp_ls_geo_str *)&ia_cicp_ls_geo_tbls[0], ptr_scratch);
     if (flag)
     {
       FLOAT32 mean_azi = 0.0f, mean_ele = 0.0f;
@@ -644,9 +648,10 @@ impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state)
   }
 
   /* Step 4 Check if subset C speaker set is present in the speaker layout */
-  flag = impeghd_ls_subset_exist(
-      &ptr_obj_ren_dec_state->non_lfe_ls_str[0], (WORD32 *)&ia_loud_speaker_subset_C[0],
-      LS_SUBSET_C_LEN, (num_ls + num_imag_ls), (ia_cicp_ls_geo_str *)&ia_cicp_ls_geo_tbls[0]);
+  flag = impeghd_ls_subset_exist(&ptr_obj_ren_dec_state->non_lfe_ls_str[0],
+                                 (WORD32 *)&ia_loud_speaker_subset_C[0], LS_SUBSET_C_LEN,
+                                 (num_ls + num_imag_ls),
+                                 (ia_cicp_ls_geo_str *)&ia_cicp_ls_geo_tbls[0], ptr_scratch);
   if (flag)
   {
     FLOAT32 mean_azi = 0.0f, mean_ele = 0.0f;
@@ -668,9 +673,10 @@ impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state)
   else
   {
     /* Step 4 Check if subset D speaker set is present in the speaker layout */
-    flag = impeghd_ls_subset_exist(
-        &ptr_obj_ren_dec_state->non_lfe_ls_str[0], (WORD32 *)&ia_loud_speaker_subset_D[0],
-        LS_SUBSET_D_LEN, (num_ls + num_imag_ls), (ia_cicp_ls_geo_str *)&ia_cicp_ls_geo_tbls[0]);
+    flag = impeghd_ls_subset_exist(&ptr_obj_ren_dec_state->non_lfe_ls_str[0],
+                                   (WORD32 *)&ia_loud_speaker_subset_D[0], LS_SUBSET_D_LEN,
+                                   (num_ls + num_imag_ls),
+                                   (ia_cicp_ls_geo_str *)&ia_cicp_ls_geo_tbls[0], ptr_scratch);
     if (flag)
     {
       FLOAT32 mean_azi = 0.0f, mean_ele = 0.0f;
@@ -1048,12 +1054,14 @@ static IA_ERRORCODE impeghd_vbap_core_init(ia_obj_ren_dec_state_struct *ptr_obj_
  *  \brief Object renderer decoder state init function.
  *
  *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structure.
+ *  \param [in] ptr_scratch     Pointer to scratch memory.
  *
  *  \return IA_ERRORCODE Error code if any.
  *
  */
 IA_ERRORCODE impeghd_obj_renderer_dec_init(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state,
-                                           ia_speaker_config_3d *ptr_ref_spk_layout)
+                                           ia_speaker_config_3d *ptr_ref_spk_layout,
+                                           pVOID ptr_scratch)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
 
@@ -1166,7 +1174,7 @@ IA_ERRORCODE impeghd_obj_renderer_dec_init(ia_obj_ren_dec_state_struct *ptr_obj_
   }
   ptr_obj_ren_dec_state->num_non_lfe_ls = j;
 
-  err_code = impeghd_add_imaginary_ls(ptr_obj_ren_dec_state);
+  err_code = impeghd_add_imaginary_ls(ptr_obj_ren_dec_state, ptr_scratch);
   if (err_code)
   {
     return err_code;

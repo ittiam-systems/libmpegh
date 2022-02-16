@@ -1469,8 +1469,10 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
     break;
   case MPEGH_PROFILE_BP_LVL_3:
     if (dec_proc_core_chans > MAX_NUM_CHANNELS || ref_layout_chans > MAX_NUM_CHANNELS ||
-        (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3 && (num_hoa_based_grps != 0 || num_ch_based_grps != 0)) ||
-        (ref_layout_chans > MAX_NUM_CHANNELS_LVL3 && (num_hoa_based_grps != 0 || num_ch_based_grps != 0)))
+        (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3 &&
+         (num_hoa_based_grps != 0 || num_ch_based_grps != 0)) ||
+        (ref_layout_chans > MAX_NUM_CHANNELS_LVL3 &&
+         (num_hoa_based_grps != 0 || num_ch_based_grps != 0)))
     {
       return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
     }
