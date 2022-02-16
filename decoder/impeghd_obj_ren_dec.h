@@ -36,7 +36,8 @@
 #define IMPEGHD_OBJ_REN_DEC_H
 
 IA_ERRORCODE impeghd_obj_renderer_dec_init(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state,
-                                           ia_speaker_config_3d *ptr_ref_spk_layout);
+                                           ia_speaker_config_3d *ptr_ref_spk_layout,
+                                           pVOID ptr_scratch);
 IA_ERRORCODE
 impegh_obj_ren_vbap_process(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, WORD32 obj_idx);
 IA_ERRORCODE
