@@ -944,10 +944,36 @@ VOID print_usage()
   printf("\n  <target_loudness>  is target loudness in dB.");
   printf("\n  <drc_effect_type>  is drc effect type.");
   printf("\n  <target_layout>    is target speaker layout.");
+  printf("\n \tDescription in format Front/Surr.LFE"
+         "\n \t1: 1/0.0    - C"
+         "\n \t2: 2/0.0    - L, R"
+         "\n \t3: 3/0.0    - C, L, R"
+         "\n \t4: 3/1.0    - C, L, R, Cs"
+         "\n \t5: 3/2.0    - C, L, R, Ls, Rs"
+         "\n \t6: 3/2.1    - C, L, R, Ls, Rs, LFE"
+         "\n \t7: 5/2.1    - C, Lc, Rc, L, R, Ls, Rs, LFE"
+         "\n \t8: NA"
+         "\n \t9: 2/1.0    - L, R, Cs"
+         "\n \t10: 2/2.0   - L, R, Ls, Rs"
+         "\n \t11: 3/3.1   - C, L, R, Ls, Rs, Cs, LFE"
+         "\n \t12: 3/4.1   - C, L, R, Ls, Rs, Lsr, Rsr, LFE"
+         "\n \t13: 11/11.2 - C, Lc, Rc, L, R, Lss, Rss, Lsr, Rsr, Cs, LFE, LFE2, Cv, Lv, Rv, "
+         "\n \t              Lvss, Rvss, Ts, Lvr, Rvr, Cvr, Cb, Lb, Rb"
+         "\n \t14: 5/2.1   - C, L, R, Ls, Rs, LFE, Lv, Rv"
+         "\n \t15: 5/5.2   - C, L, R, Lss, Rss, Ls, Rs, Lv, Rv, Cvr, LFE, LFE2"
+         "\n \t16: 5/4.1   - C, L, R, Ls, Rs, LFE, Lv, Rv, Lvs, Rvs"
+         "\n \t17: 6/5.1   - C, L, R, Ls, Rs, LFE, Lv, Rv, Cv, Lvs, Rvs, Ts"
+         "\n \t18: 6/7.1   - C, L, R, Ls, Rs, Lbs, Rbs, LFE, Lv, Rv, Cv, Lvs, Rvs, Ts"
+         "\n \t19: 5/6.1   - C, L, R, Lss, Rss, Lsr, Rsr, LFE, Lv, Rv, Lvr, Rvr"
+         "\n \t20: 7/6.1   - C, Leos, Reos, L, R, Lss, Rss, Lsr, Rsr, LFE, Lv, Rv, Lvs, Rvs"
+         "\n \tNote: CICP 13 is applicable for baseline profile streams with only object audio.");
   printf("\n  <lsi_file>         bitstream file with local setup information.");
   printf("\n  <sd_file>          bitstream file with scene displacement information.");
   printf("\n  <ei_file>          bitstream file with element interaction information.");
   printf("\n  <brir_file>        bitstream file with binaural renderer impulse response data.");
+  printf("\n  Note: The <lsi_file>, <sd_file>, <ei_file> and <brir_file> are bitstream files"
+         "\n        expected from the user."
+         "\n        The bitstream syntax is specified in the MPEG-H specification document.");
   printf("\n  <output_samp_freq> desired sampling frequency of the output stream - ");
   printf("\n                     invokes resampler if needed.");
   printf("\n  <extrn_rend_flag>  flag to enable external rendering interfaces creation.");

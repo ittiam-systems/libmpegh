@@ -149,10 +149,35 @@ where,
   <target_loudness>  is target loudness in dB.
   <drc_effect_type>  is drc effect type.
   <target_layout>    is target speaker layout.
+        Description in format Front/Surr.LFE
+        1: 1/0.0    - C
+        2: 2/0.0    - L, R
+        3: 3/0.0    - C, L, R
+        4: 3/1.0    - C, L, R, Cs
+        5: 3/2.0    - C, L, R, Ls, Rs
+        6: 3/2.1    - C, L, R, Ls, Rs, LFE
+        7: 5/2.1    - C, Lc, Rc, L, R, Ls, Rs, LFE
+        8: NA
+        9: 2/1.0    - L, R, Cs
+        10: 2/2.0   - L, R, Ls, Rs
+        11: 3/3.1   - C, L, R, Ls, Rs, Cs, LFE
+        12: 3/4.1   - C, L, R, Ls, Rs, Lsr, Rsr, LFE
+        13: 11/11.2 - C, Lc, Rc, L, R, Lss, Rss, Lsr, Rsr, Cs, LFE, LFE2, Cv, Lv, Rv, Lvss, Rvss,
+                      Ts, Lvr, Rvr, Cvr, Cb, Lb, Rb
+        14: 5/2.1   - C, L, R, Ls, Rs, LFE, Lv, Rv
+        15: 5/5.2   - C, L, R, Lss, Rss, Ls, Rs, Lv, Rv, Cvr, LFE, LFE2
+        16: 5/4.1   - C, L, R, Ls, Rs, LFE, Lv, Rv, Lvs, Rvs
+        17: 6/5.1   - C, L, R, Ls, Rs, LFE, Lv, Rv, Cv, Lvs, Rvs, Ts
+        18: 6/7.1   - C, L, R, Ls, Rs, Lbs, Rbs, LFE, Lv, Rv, Cv, Lvs, Rvs, Ts
+        19: 5/6.1   - C, L, R, Lss, Rss, Lsr, Rsr, LFE, Lv, Rv, Lvr, Rvr
+        20: 7/6.1   - C, Leos, Reos, L, R, Lss, Rss, Lsr, Rsr, LFE, Lv, Rv, Lvs, Rvs
+		Note: CICP 13 is applicable for baseline profile streams with only object audio.
   <lsi_file>         bitstream file with local setup information.
   <sd_file>          bitstream file with scene displacement information.
   <ei_file>          bitstream file with element interaction information.
   <brir_file>        bitstream file with binaural renderer impulse response data.
+  Note: The <lsi_file>, <sd_file>, <ei_file> and <brir_file> are bitstream files expected from the user.
+        The bitstream syntax is specified in the MPEG-H specification document.
   <output_samp_freq> desired sampling frequency of the output stream -
                      invokes resampler if needed.
   <extrn_rend_flag>  flag to enable external rendering interfaces creation.
