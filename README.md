@@ -1,23 +1,23 @@
 # Introduction of the MPEG-H 3D Audio Low Complexity Profile Decoder
 
 
-The advent of object-based audio and scene-based audio has revolutionized the 
+The advent of object-based audio and scene-based audio has revolutionized 
 3D sound experience. 
 Traditional channel-based coding expects the capture and playback geometric 
-locations to be exactly the same for best reconstruction of the audio scene. 
+locations to be exactly the same for the best reconstruction of the audio scene. 
 On the other hand, object-based audio coding represents discrete sound sources 
 in the audio scene. The positional information of each of the objects in the 
 audio scene is conveyed in the form of metadata. 
 Scene-based audio coding attempts to reconstruct the sound field at the playback
-end using the coded higher order ambisonics (HOA) information. In case of both 
+end using the coded higher order ambisonics (HOA) information. In the case of both 
 object-based and scene-based audio, the rendering algorithm can adapt based on 
 the configuration of the playback end loudspeaker arrangement, thus making the 
 sound experience agnostic to the configuration of speakers at the playback end.
 
 MPEG-H 3D Audio is a coding standard that supports traditional channel-based, 
-object-based and scene-based audio coding. 
+object-based, and scene-based audio coding. 
 The immersive 3D sound experience created by MPEG-H 3D Audio is significantly enhanced in
-comparison with the traditional channel-based multichannel programs and playback
+comparison with traditional channel-based multichannel programs and playback
 systems.
 
 The MPEG-H 3D Audio Low Complexity Profile decoder supports all specified formats, 
@@ -218,11 +218,11 @@ Any CLI mentioned after `@Stop` will not be processed.
 
 In case there are multiple `@Start` and `@Stop`, only the options between the first `@Start` and `@Stop` will be processed.
 
-A sample [`paramfilesimple.txt`](build/msvs/paramfilesimple.txt) can be found in `build/msvs` folder.
+A sample [`paramfilesimple.txt`](build/msvs/paramfilesimple.txt) can be found in the `build/msvs` folder.
 
 The Parameter file can be given as an argument to the application with the path specified.
 
-The input and the output paths in parameter file should either be relative to the executable path or the absolute paths.
+The input and the output paths in the parameter file should either be relative to the executable path or the absolute paths.
 
 If no argument is given, by default the application reads the test vectors names from the parameter file located in the same directory as executable, with the name as paramfilesimple.txt.
 
@@ -258,12 +258,12 @@ $ cd docs
 $ doxygen doxy.conf
 ```
 
-Documentation will be generated in `docs/documentation` folder.
-Browse through the documentation from `index.html` located in `docs/documentation/html` folder.
+Documentation will be generated in the `docs/documentation` folder.
+Browse through the documentation from `index.html` located in the `docs/documentation/html` folder.
 
 # Additional Documents
 
-Brief description about documents present in  `docs` folder
+Brief description about documents present in  the `docs` folder
 
 * [`IA-MPEG-H-3D-Audio-Dec-API.doc`](docs/IA-MPEG-H-3D-Audio-Dec-API.doc) - Describes Application Program Interface for the MPEG-H 3D Audio Low Complexity Profile Decoder.
 * [`IA-MPEG-H-3D-Audio-Dec-BP.doc`](docs/IA-MPEG-H-3D-Audio-Dec-BP.doc) - Describes the build procedure for the MPEG-H 3D Audio Low Complexity Profile Decoder on Unix/MacOS platforms. 
