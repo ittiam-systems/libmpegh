@@ -1,0 +1,106 @@
+<!Copyright, Ittiam Systems>
+<html>
+  <head>
+    <title>Ittiam MPEG-H 3D Audio Decoder Demonstration</title>
+    <link rel="stylesheet" href="style-index.css">
+  </head>
+  <body>
+    <div class="banner">
+    </div>
+    <hr>
+    <div>
+        <h1> <p id="title" class="title"> Ittiam MPEG-H 3D Audio Decoder Demonstration </p> </h1>
+        <h3> <p><label for="files"> File: </label>
+        <input type="file" id="files" class="inputs" name="files[]"/>
+        </p> </h3>
+    </div>
+	<footer>Copyright © 2022, Ittiam Systems (P) Ltd</footer>
+    <hr>
+    <br/>
+    <br/>
+	<canvas id="view" width="1280px" height="720px"></canvas>
+    <script src="decode-mpegh3da.js"></script>
+    <script>
+        let wasm_loaded = false;
+        let mpegh3da_decoder = null;
+        let data_source = null;
+        let audio_buffer = null;
+        let frame_count = 0;
+        let samp_freq = 48000;
+        let num_chans = 1;
+        let status = 0;
+        let size_of_float32 = 4;
+        let pcm_word_size = 2;
+        let num_frames = 12000;
+        let frame_length = 1024;
+        let AudioContext = window.AudioContext || window.webkitAudioContext;
+
+        Module.onRuntimeInitialized = function() {
+            wasm_loaded = true;
+        }
+        var fileAsArray = undefined;
+        function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+
+            // files is a FileList of File objects. grab the name.
+            if (files[0]) {
+                var f = files[0];
+
+                var reader = new FileReader();
+                reader.onload = (function(theFile) {
+                    return function(e) {
+                        fileAsArray = e.target.result;
+                        if (fileAsArray.byteLength > 0) {
+                            start_playback();
+                        }
+                    };
+                })(f);
+                reader.readAsArrayBuffer(f);
+            }
+        }
+        function start_playback() {
+            // Allocate a data source, get some memory from Wasm land and copy
+            // the source audio data into it, then start off the decode
+            mpegh3da_decoder = Module._MPEGH3DA_Decoder_new();
+            data_source = Module._DS_open();
+            let num_elements = frame_length * num_chans * pcm_word_size * num_frames;
+            let comp_mem = Module._malloc(fileAsArray.byteLength);
+            audio_buffer = Module._malloc(num_elements * size_of_float32);
+            Module.HEAPU8.set(new Uint8Array(fileAsArray), comp_mem);
+            Module._DS_set_blob(data_source, comp_mem, fileAsArray.byteLength);
+            Module._MPEGH3DA_Decoder_set_source(mpegh3da_decoder, data_source);
+            status = Module._MPEGH3DA_initDecoder(mpegh3da_decoder);
+            // Run the decoder at the start to read the headers
+            Module._MPEGH3DA_Decoder_run(mpegh3da_decoder, audio_buffer);
+            // Get the sampling frequency and number of channels of the audio
+            samp_freq = Module._MPEGH3DA_Decoder_get_sampFreq(mpegh3da_decoder);
+            num_chans = Module._MPEGH3DA_Decoder_get_numChans(mpegh3da_decoder);
+            num_frames = Module._MPEGH3DA_Decoder_get_numDecFrames(mpegh3da_decoder);
+            frame_length = Module._MPEGH3DA_Decoder_get_frameLength(mpegh3da_decoder);
+            console.log("Sampling Frequency: ", samp_freq);
+            console.log("Number of channels: ", num_chans);
+            console.log("Number of decoded frames: ", num_frames);
+            let audioCtx = new AudioContext();
+            let source = audioCtx.createBufferSource();
+            let playout_chans = num_chans;
+            let myArrayBuffer = audioCtx.createBuffer(playout_chans, num_frames * frame_length, samp_freq);
+            for (let chan = 0; chan < playout_chans; chan++)
+            {
+                let nowBuffering = myArrayBuffer.getChannelData(chan);
+                for (let i = 0; i < num_frames * frame_length; i++) {
+                    nowBuffering[i] = HEAPF32[((audio_buffer + (i * num_chans + chan) * 4) >> 2)];
+                }
+            }
+            source.connect(audioCtx.destination);
+            source.buffer = myArrayBuffer;
+            source.start(0);
+            Module._DS_close(data_source);
+            Module._MPEGH3DA_Decoder_destroy(mpegh3da_decoder);
+            Module._free(comp_mem);
+            Module._free(audio_buffer);
+            console.log("Playing Out");
+        }
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+    </script>
+  </body>
+</html>

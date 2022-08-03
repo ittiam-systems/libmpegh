@@ -1,0 +1,34 @@
+body { 
+    font-family: sans-serif; 
+}
+p {
+    text-align: left;
+}
+canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 100px;
+    margin-right: 100px;
+    display: block;
+    width: 1280px;
+    height: 50px;
+}
+.banner {
+    background-image: url('ittiam.png');
+	width: 496px;
+    height:161px;
+    background-size: auto;
+}
+.title {
+    padding-left:;
+	text-align: left;
+}
+label,
+select,
+input {
+    display: inline-block;
+}
+#title {
+    color:Black;
+    padding-top: 0px;
+}

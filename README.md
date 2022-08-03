@@ -271,6 +271,11 @@ Brief description about documents present in  `docs` folder
 * [`IA-MPEG-H-3D-Audio-Dec-GSG.doc`](docs/IA-MPEG-H-3D-Audio-Dec-GSG.doc) - Getting Started Guide for the MPEG-H 3D Audio Low Complexity Profile Decoder.
 * [`IA-MPEG-H-3D-Audio-Dec-TR.doc`](docs/IA-MPEG-H-3D-Audio-Dec-TR.doc) - Documents the conformance test report for the MPEG-H 3D Audio Low Complexity Profile decoder on `x86`, `x86_64`, `armv7` and `armv8` platforms.
 
+# Web Browser Plug-in Demo
+
+A demonstartion of integrating the MPEG-H 3D Audio decoder to browsers is added. Please refer to the
+document [`IA-MPEG-H-3D-Audio-Dec-Browser-Plugin-UG.doc`](web_plugin/IA-MPEG-H-3D-Audio-Dec-Browser-Plugin-UG.doc) for running the demo.
+
 ### Guidelines working with GitHub
 
 Please refer to the [guildelines](GUIDELINES.md) for the following processes
