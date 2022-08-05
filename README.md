@@ -273,7 +273,7 @@ Brief description about documents present in  `docs` folder
 
 # Web Browser Plug-in Demo
 
-A demonstartion of integrating the MPEG-H 3D Audio decoder to browsers is added. Please refer to the
+A demonstartion of how the MPEG-H 3D Audio decoder may be integrated and used in browsers is added. Please refer to the
 document [`IA-MPEG-H-3D-Audio-Dec-Browser-Plugin-UG.doc`](web_plugin/IA-MPEG-H-3D-Audio-Dec-Browser-Plugin-UG.doc) for running the demo.
 
 ### Guidelines working with GitHub
