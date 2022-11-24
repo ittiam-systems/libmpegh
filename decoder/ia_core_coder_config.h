@@ -56,6 +56,9 @@
 #define MAX_CICP_INDEX (20)
 #define MAX_CICP_SPK_INDEX (42)
 #define MAX_CONFIG_EXTENSIONS (5)
+#define SIG_GROUP_TYPE_CHN (0)
+#define SIG_GROUP_TYPE_OBJ (1)
+#define SIG_GROUP_TYPE_HOA (3)
 
 #define ID_USAC_SCE 0
 #define ID_USAC_CPE 1

@@ -119,28 +119,20 @@ static IA_ERRORCODE impeghd_flex_spk_2_ls_geometry(ia_cicp_ls_geo_str *array_cic
   WORD32 i;
   WORD32 num_speakers;
   WORD32 ch_idx;
-  WORD32 cicp_idx = ptr_ref_spk_layout->cicp_spk_layout_idx;
   ia_flex_spk_data_str *ptr_flex_spk = &ptr_ref_spk_layout->str_flex_spk;
-  if (cicp_idx == 0 || cicp_idx == 8 || cicp_idx > NUM_LS_CFGS)
-  {
-    return IA_MPEGH_DEC_INIT_FATAL_INVALID_CICP_SPKR_INDEX;
-  }
-  num_speakers = impgehd_cicp_get_num_ls[cicp_idx];
-  *channel_names = ia_cicp_idx_ls_set_map_tbl[cicp_idx];
-  *num_channels = num_speakers;
-  *num_lfe = 0;
+  num_speakers = ptr_ref_spk_layout->num_speakers;
+
   if (ptr_ref_spk_layout->spk_layout_type == 2)
   {
     for (i = 0; i < num_speakers; i++)
     {
-      ch_idx = channel_names[0][i];
       pp_cicp_ls_geometry[i] = &array_cicp_ls_geometry[i];
-      pp_cicp_ls_geometry[i]->ls_elevation = ptr_flex_spk->str_flex_spk_descr[i].el_angle_idx;
-      pp_cicp_ls_geometry[i]->ls_elevation_start = ia_cicp_ls_geo_tbls[ch_idx].ls_elevation_start;
-      pp_cicp_ls_geometry[i]->ls_elevation_end = ia_cicp_ls_geo_tbls[ch_idx].ls_elevation_end;
-      pp_cicp_ls_geometry[i]->ls_azimuth = ptr_flex_spk->str_flex_spk_descr[i].az_angle_idx;
-      pp_cicp_ls_geometry[i]->ls_azimuth_start = ia_cicp_ls_geo_tbls[ch_idx].ls_azimuth_start;
-      pp_cicp_ls_geometry[i]->ls_azimuth_end = ia_cicp_ls_geo_tbls[ch_idx].ls_azimuth_end;
+      pp_cicp_ls_geometry[i]->ls_elevation = ptr_flex_spk->elevation[i];
+      pp_cicp_ls_geometry[i]->ls_elevation_start = ptr_flex_spk->elevation[i];
+      pp_cicp_ls_geometry[i]->ls_elevation_end = ptr_flex_spk->elevation[i];
+      pp_cicp_ls_geometry[i]->ls_azimuth = ptr_flex_spk->azimuth[i];
+      pp_cicp_ls_geometry[i]->ls_azimuth_start = ptr_flex_spk->azimuth[i];
+      pp_cicp_ls_geometry[i]->ls_azimuth_end = ptr_flex_spk->azimuth[i];
       pp_cicp_ls_geometry[i]->lfe_flag = ptr_flex_spk->str_flex_spk_descr[i].is_lfe;
       *num_lfe += ptr_flex_spk->str_flex_spk_descr[i].is_lfe;
     }
@@ -152,13 +144,13 @@ static IA_ERRORCODE impeghd_flex_spk_2_ls_geometry(ia_cicp_ls_geo_str *array_cic
     {
       WORD32 idx = ptr_ref_spk_layout->cicp_spk_idx[i];
       pp_cicp_ls_geometry[i] = &array_cicp_ls_geometry[idx];
-      pp_cicp_ls_geometry[i]->ls_elevation = ptr_flex_spk->str_flex_spk_descr[idx].el_angle_idx;
+      pp_cicp_ls_geometry[i]->ls_elevation = ia_cicp_ls_geo_tbls[idx].ls_elevation;
       pp_cicp_ls_geometry[i]->ls_elevation_start = ia_cicp_ls_geo_tbls[idx].ls_elevation_start;
       pp_cicp_ls_geometry[i]->ls_elevation_end = ia_cicp_ls_geo_tbls[idx].ls_elevation_end;
-      pp_cicp_ls_geometry[i]->ls_azimuth = ptr_flex_spk->str_flex_spk_descr[idx].az_angle_idx;
+      pp_cicp_ls_geometry[i]->ls_azimuth = ia_cicp_ls_geo_tbls[idx].ls_azimuth;
       pp_cicp_ls_geometry[i]->ls_azimuth_start = ia_cicp_ls_geo_tbls[idx].ls_azimuth_start;
       pp_cicp_ls_geometry[i]->ls_azimuth_end = ia_cicp_ls_geo_tbls[idx].ls_azimuth_end;
-      pp_cicp_ls_geometry[i]->lfe_flag = ptr_flex_spk->str_flex_spk_descr[idx].is_lfe;
+      pp_cicp_ls_geometry[i]->lfe_flag = ia_cicp_ls_geo_tbls[idx].lfe_flag;
       *num_lfe += ptr_flex_spk->str_flex_spk_descr[idx].is_lfe;
     }
   }
@@ -464,8 +456,7 @@ static WORD32 impeghd_ls_subset_exist(ia_renderer_ls_params *ptr_ls_vertex, WORD
  *  \brief Addjust ele,azi,idx of speaker.
  *
  *  \param [in,out] ptr_obj_ren_dec_state Pointer to object rederer state structurem,number of
-*imaginary ls,
-*				\max_ele_speak_idx min_ele_speak_idx
+ *                  imaginary ls, max_ele_speak_idx min_ele_speak_idx
  *
  *  \return WORD32 index.
  *
@@ -1157,13 +1148,13 @@ IA_ERRORCODE impeghd_obj_renderer_dec_init(ia_obj_ren_dec_state_struct *ptr_obj_
           -90.0, ia_min_flt(90., ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_elevation));
       if (ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_azimuth >= 180)
       {
-      ptr_obj_ren_dec_state->non_lfe_ls_str[j].ls_azimuth =
+        ptr_obj_ren_dec_state->non_lfe_ls_str[j].ls_azimuth =
             ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_azimuth - 360;
       }
       else
       {
         ptr_obj_ren_dec_state->non_lfe_ls_str[j].ls_azimuth =
-          ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_azimuth;
+            ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_azimuth;
       }
       ptr_obj_ren_dec_state->non_lfe_ls_str[j].ls_index =
           impeghd_ls_get_index(ptr_obj_ren_dec_state->ptr_cicp_ls_geo[i]->ls_azimuth,

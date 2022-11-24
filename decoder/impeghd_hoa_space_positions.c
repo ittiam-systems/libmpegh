@@ -183,7 +183,10 @@ impeghd_hoa_ren_space_positions_init_with_param(ia_render_hoa_space_positions_st
       {
         continue;
       }
-
+      else if (ref_spk_layout->cicp_spk_idx[i] == 8)
+      {
+        return IA_MPEGH_DEC_CONFIG_NONFATAL_INVALID_CICP_INDEX;
+      }
       speaker_table = ia_cicp_idx_ls_set_map_tbl[ref_spk_layout->cicp_spk_idx[i]];
       if (force_lfe && ia_cicp_ls_geo_tbls[speaker_table[i]].lfe_flag == 1)
       {
