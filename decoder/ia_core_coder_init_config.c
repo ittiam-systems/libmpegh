@@ -1400,14 +1400,13 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
             return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_CICP_LAYOUT_INDEX;
           }
         }
-        if (ia_signals_3da->group_type[i] == SIG_GROUP_TYPE_CHN)
+        if ((impgehd_cicp_get_num_ls[speaker_config_3d->cicp_spk_layout_idx] !=
+                ia_signals_3da->num_ch) &&
+                  (impgehd_cicp_get_num_ls[speaker_config_3d->cicp_spk_layout_idx] >
+                    impgehd_cicp_get_num_ls[pstr_audio_specific_config->ref_spk_layout
+                      .cicp_spk_layout_idx]))
         {
-          if ((impgehd_cicp_get_num_ls[speaker_config_3d->cicp_spk_layout_idx] != ia_signals_3da->num_ch)
-            && (impgehd_cicp_get_num_ls[speaker_config_3d->cicp_spk_layout_idx] >
-                 impgehd_cicp_get_num_ls[pstr_audio_specific_config->ref_spk_layout.cicp_spk_layout_idx]))
-          {
-            return IA_MPEGH_DEC_INIT_FATAL_INVALID_CONFIG_FOR_NUM_CH;
-          }
+          return IA_MPEGH_DEC_INIT_FATAL_INVALID_CONFIG_FOR_NUM_CH;
         }
       }
       audio_ch_layout_cntr++;

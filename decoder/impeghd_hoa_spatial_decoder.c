@@ -635,18 +635,16 @@ impeghd_hoa_spatial_decode_frame_side_info(pVOID handle, ia_hoa_frame_struct *ia
   while (frame_param->amb_coeff_indices_to_enable[count_enable] != -1) {
     count_enable = count_enable + 1;
   }
-  num_coeffs = count_enable;
   frame_param->num_enable_coeff = num_coeffs;
   ptr_coeff += HOA_MAXIMUM_SET_SIZE;
 
-  num_coeffs = (UWORD32)((disable_coeff - ptr_coeff) / sizeof(disable_coeff[0]));
+  num_coeffs = (UWORD32)(((size_t)disable_coeff - (size_t)ptr_coeff) / sizeof(disable_coeff[0]));
   frame_param->num_disable_coeff = num_coeffs;
   impeghd_hoa_spatial_sort_array_ascending(ptr_coeff, frame_param->amb_coeff_indices_to_disable,
                                            HOA_MAXIMUM_SET_SIZE);
   while (frame_param->amb_coeff_indices_to_disable[count_disable] != -1) {
     count_disable = count_disable + 1;
   }
-  num_coeffs = count_disable;
   frame_param->num_disable_coeff = num_coeffs;
   ptr_coeff += HOA_MAXIMUM_SET_SIZE;
 

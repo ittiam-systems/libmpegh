@@ -169,6 +169,8 @@ pWORD8 impeghd_ppb_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "Invalid number of shifted channel",
     (pWORD8) "Invalid max sfb",
     (pWORD8) "Invalid ASI parameter",
+    (pWORD8) "Invalid config for number of channels",
+    (pWORD8) "Unsupported signal group type",
 };
 
 pWORD8 impeghd_ppb_drc_init_fatal[IA_MAX_ERROR_SUB_CODE] = {
