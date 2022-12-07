@@ -302,6 +302,7 @@ pWORD8 impeghd_ppb_drc_exe_fatal[IA_MAX_ERROR_SUB_CODE] = {
 // HOA
 pWORD8 impeghd_ppb_hoa_exe_fatal[IA_MAX_ERROR_SUB_CODE] = {
     (pWORD8) "HOA spatial process failed", (pWORD8) "HOA scratch pointer NULL",
+    (pWORD8) "Invalid hoa coded gain",
 };
 
 // Binaural

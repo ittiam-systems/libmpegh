@@ -95,5 +95,6 @@
 #define HOA_MAX_CODED_GAIN (65)
 #define USE_LOOK_UP_TABLE
 #define HOA_MIN_AMB_COEFF (1)
+#define HOA_MAX_CICP_LS_IDX (20)
 
 #endif //__IA_MPEGH_HOA_COMMON_VALUES_H__

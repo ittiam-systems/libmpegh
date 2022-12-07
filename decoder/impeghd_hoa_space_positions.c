@@ -179,7 +179,7 @@ impeghd_hoa_ren_space_positions_init_with_param(ia_render_hoa_space_positions_st
     loop = ref_spk_layout->num_speakers;
     for (WORD32 i = 0; i < loop; i++)
     {
-      if (!ref_spk_layout->cicp_spk_idx[i] || ref_spk_layout->cicp_spk_idx[i] > 20)
+      if (!ref_spk_layout->cicp_spk_idx[i] || ref_spk_layout->cicp_spk_idx[i] > HOA_MAX_CICP_LS_IDX)
       {
         continue;
       }
