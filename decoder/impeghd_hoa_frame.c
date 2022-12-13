@@ -310,6 +310,10 @@ IA_ERRORCODE impeghd_hoa_frame(ia_bit_buf_struct *ptr_bit_buf,
     {
       coded_gain++;
     } while (!(ia_core_coder_read_bits_buf(ptr_bit_buf, 1)));
+    if (coded_gain > HOA_MAX_CODED_GAIN)
+    {
+      return IA_MPEGH_HOA_EXE_FATAL_INVALID_HOA_CODED_GAIN;
+    }
     ptr_frame_data->coded_gain_correction_exp[i] = coded_gain;
     ptr_frame_data->gain_correction_exception[i] = ia_core_coder_read_bits_buf(ptr_bit_buf, 1);
 

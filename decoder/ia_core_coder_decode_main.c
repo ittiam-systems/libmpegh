@@ -2252,16 +2252,22 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
         err_code = impeghd_hoa_dec_main_process(
             pstr_usac_dec_cfg, pstr_dec_data, ele, ptr_out_buf_hoa, num_channel_out, ch_offset,
             pstr_asc->str_usac_config.signals_3d.domain_switcher_enable);
-
+        if (err_code != IA_MPEGH_DEC_NO_ERROR)
+        {
+          return err_code;
+        }
         if (pstr_usac_config->signals_3d.num_ch != 0)
         {
-          for (channel = 0; channel < *num_channel_out; channel++)
+          if (ptr_out_buf != NULL)
           {
-            for (s = 0; s < num_samples_out; s++)
+            for (channel = 0; channel < *num_channel_out; channel++)
             {
-              pstr_dec_data->str_usac_data.time_sample_vector[channel][s] =
-                  ia_add_flt(pstr_dec_data->str_usac_data.time_sample_vector[channel][s],
-                             ptr_out_buf[channel * num_samples_out + s]);
+              for (s = 0; s < num_samples_out; s++)
+              {
+                pstr_dec_data->str_usac_data.time_sample_vector[channel][s] =
+                ia_add_flt(pstr_dec_data->str_usac_data.time_sample_vector[channel][s],
+                  ptr_out_buf[channel * num_samples_out + s]);
+              }
             }
           }
           ch_offset += pstr_usac_config->signals_3d.num_hoa_transport_ch;
