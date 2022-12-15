@@ -172,6 +172,7 @@ IA_ERRORCODE impeghd_mp4_parse_mae_boxes(ia_file_wrapper* g_pf_inp_str, pVOID pt
   error = impeghd_mp4_find_stsz(itf, &offset, &stsz_size);
   if (error)
   {
+    free(length_store);
     return error;
   }
   /* Seeking to a position after version, sample_size and sample_count */
@@ -183,5 +184,6 @@ IA_ERRORCODE impeghd_mp4_parse_mae_boxes(ia_file_wrapper* g_pf_inp_str, pVOID pt
     length_store[j] = impeghd_mp4_rev32(*data_size);
   }
     impeghd_mp4_fseek(itf, 0, SEEK_SET);
+    free(length_store);
     return IT_OK;
 }
