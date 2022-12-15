@@ -284,7 +284,7 @@ VOID impeghd_mp4_free_all_nodes(ia_mp4_mem_node **m)
 */
 pVOID impeghd_mp4_malloc_wrapper(WORD32 size)
 {
-  pVOID ptr = malloc(size);
+  pVOID ptr = calloc(1, size);
   return ptr;
 }
 
