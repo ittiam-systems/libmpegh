@@ -808,7 +808,7 @@ IA_ERRORCODE impd_drc_set_pre_selection(
     WORD32 restrict_to_drc_with_album_loudness, WORD32 *selection_candidate_count,
     ia_drc_selection_candidate_info_struct *selection_candidate_info)
 {
-  IA_ERRORCODE err;
+  IA_ERRORCODE err = IA_MPEGH_DEC_NO_ERROR;
   WORD8 *requested_dwnmix_id = pstr_drc_sel_proc_params_struct->requested_dwnmix_id;
   WORD32 i, j, k, l, d, n, cnt;
   WORD32 omit_preselection_based_on_requested_group_id;
