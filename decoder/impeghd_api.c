@@ -902,10 +902,20 @@ IA_ERRORCODE ia_mpegh_dec_init(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOID p
       pstr_output_config->is_binaural_rendering = 0;
       if (p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx > 0)
       {
+        const WORD32 *speaker_table =
+          ia_cicp_idx_ls_set_map_tbl[p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx];
         pstr_output_config->cicp_index = p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx;
         pstr_output_config->num_speakers =
             impgehd_cicp_get_num_ls[pstr_output_config->cicp_index];
         pstr_output_config->spk_layout = 0;
+        for (spk = 0; spk < pstr_output_config->num_speakers; spk++)
+        {
+          spk_idx = speaker_table[spk];
+          pstr_output_config->azimuth[spk] = (WORD16)ia_cicp_ls_geo_tbls[spk_idx].ls_azimuth;
+          pstr_output_config->elevation[spk] =
+            (WORD16)ia_cicp_ls_geo_tbls[spk_idx].ls_elevation;
+          pstr_output_config->is_lfe[spk] = ia_cicp_ls_geo_tbls[spk_idx].lfe_flag;
+        }
       }
       else
       {
