@@ -568,22 +568,18 @@ impeghd_hoa_spatial_decode_frame_side_info(pVOID handle, ia_hoa_frame_struct *ia
     break;
     case ADD_HOA_CHANNEL:
     {
+      if (ia_hoa_frame_t->amb_coeff_idx[ch] < HOA_MIN_AMB_COEFF) {
+        return IA_MPEGH_HOA_INIT_FATAL_INVALID_AMB_COEF_IDX;
+      }
       if (1 != ia_hoa_frame_t->amb_coeff_transition_state[ch])
       {
-
         if (!ia_hoa_frame_t->hoa_independency_flag)
         {
           frame_param->amb_hoa_assign[ch] = old_amb_hoa_assignment_vec[ch];
         }
         else
         {
-          if (ia_hoa_frame_t->amb_coeff_idx[ch] < HOA_MIN_AMB_COEFF) {
-            return IA_MPEGH_HOA_INIT_FATAL_INVALID_AMB_COEF_IDX;
-          }
           frame_param->amb_hoa_assign[ch] = ia_hoa_frame_t->amb_coeff_idx[ch];
-        }
-        if (ia_hoa_frame_t->amb_coeff_idx[ch] < HOA_MIN_AMB_COEFF) {
-          return IA_MPEGH_HOA_INIT_FATAL_INVALID_AMB_COEF_IDX;
         }
         if (2 != ia_hoa_frame_t->amb_coeff_transition_state[ch])
         {
@@ -596,9 +592,6 @@ impeghd_hoa_spatial_decode_frame_side_info(pVOID handle, ia_hoa_frame_struct *ia
       }
       else
       {
-        if (ia_hoa_frame_t->amb_coeff_idx[ch] < HOA_MIN_AMB_COEFF) {
-          return IA_MPEGH_HOA_INIT_FATAL_INVALID_AMB_COEF_IDX;
-        }
         frame_param->amb_hoa_assign[ch] = ia_hoa_frame_t->amb_coeff_idx[ch];
         *enable_coeff++ = ia_hoa_frame_t->amb_coeff_idx[ch];
       }
@@ -628,30 +621,26 @@ impeghd_hoa_spatial_decode_frame_side_info(pVOID handle, ia_hoa_frame_struct *ia
   }
 
   pstr_spatial_dec->scratch = ptr_coeff;
-  num_coeffs = (UWORD32)(((size_t)enable_coeff - (size_t)ptr_coeff) / sizeof(enable_coeff[0]));
-  frame_param->num_enable_coeff = num_coeffs;
   impeghd_hoa_spatial_sort_array_ascending(ptr_coeff, frame_param->amb_coeff_indices_to_enable,
                                            HOA_MAXIMUM_SET_SIZE);
   while (frame_param->amb_coeff_indices_to_enable[count_enable] != -1) {
     count_enable = count_enable + 1;
   }
-  frame_param->num_enable_coeff = num_coeffs;
+  frame_param->num_enable_coeff = count_enable;
   ptr_coeff += HOA_MAXIMUM_SET_SIZE;
 
-  num_coeffs = (UWORD32)(((size_t)disable_coeff - (size_t)ptr_coeff) / sizeof(disable_coeff[0]));
-  frame_param->num_disable_coeff = num_coeffs;
   impeghd_hoa_spatial_sort_array_ascending(ptr_coeff, frame_param->amb_coeff_indices_to_disable,
                                            HOA_MAXIMUM_SET_SIZE);
   while (frame_param->amb_coeff_indices_to_disable[count_disable] != -1) {
     count_disable = count_disable + 1;
   }
-  frame_param->num_disable_coeff = num_coeffs;
+  frame_param->num_disable_coeff = count_disable;
   ptr_coeff += HOA_MAXIMUM_SET_SIZE;
 
   num_coeffs = (UWORD32)((en_dis_able_coeff - ptr_coeff) / sizeof(en_dis_able_coeff[0]));
   impeghd_hoa_spatial_sort_array_ascending(
       ptr_coeff, frame_param->non_en_dis_able_act_hoa_coeff_indices, HOA_MAXIMUM_SET_SIZE);
-
+  frame_param->num_en_dis_able_coeff = num_coeffs;
   return IA_MPEGH_DEC_NO_ERROR;
 }
 
