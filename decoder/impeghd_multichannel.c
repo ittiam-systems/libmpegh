@@ -901,8 +901,8 @@ VOID impeghd_mc_process(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_dmx, FLO
                         WORD32 total_sfb, WORD32 pair, const WORD16 *ptr_sfb_offset,
                         WORD32 num_samples)
 {
-  WORD32 band, start_line, stop_line, sfb = -1; /* note: ptr_sfb_offset does not start at zero */
-
+  /* note: ptr_sfb_offset does not start at zero */
+  WORD32 band, start_line, stop_line, sfb = -1;
   if (!ptr_mc_data->use_tool)
   {
     return;
@@ -946,7 +946,7 @@ VOID impeghd_mc_process(ia_multichannel_data *ptr_mc_data, FLOAT32 *ptr_dmx, FLO
       sfb += 2;
 
       /* break condition */
-      if (sfb >= total_sfb)
+      if (sfb >= total_sfb - 1)
       {
         break;
       }

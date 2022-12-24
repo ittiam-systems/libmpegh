@@ -1263,7 +1263,7 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
       {
         pstr_audio_specific_config->ref_spk_layout.cicp_spk_idx[i] =
             ia_core_coder_read_bits_buf(it_bit_buff, 7);
-        if (pstr_audio_specific_config->ref_spk_layout.cicp_spk_idx[i] > CICP_MAX_CH)
+        if (pstr_audio_specific_config->ref_spk_layout.cicp_spk_idx[i] >= CICP_MAX_CH)
         {
           return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_CICP_SPK_INDEX;
         }
@@ -1313,8 +1313,12 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
 
     switch (ia_signals_3da->group_type[i])
     {
-    case 3: /*Signal Group Type HOA */
+    case SIG_GROUP_TYPE_HOA: /*Signal Group Type HOA */
     {
+      if ((num_sig + 1) > MAX_NUM_CHANNELS)
+      {
+        return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
+      }
       pstr_usac_conf->str_usac_dec_config.str_hoa_config.core_coder_frame_length =
           AUDIO_CODEC_FRAME_SIZE_MAX; // Hardcoded in ref code.
       num_hoa_based_grps++;
@@ -1329,13 +1333,17 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
         ia_core_coder_skip_bits_buf(it_bit_buff, 2);
       break;
     }
-    case 1: /*Signal Group Type Objects */
+    case SIG_GROUP_TYPE_OBJ: /*Signal Group Type Objects */
     {
+      if ((num_sig + 1) > MAX_NUM_CHANNELS)
+      {
+        return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
+      }
       ia_signals_3da->num_audio_obj += (num_sig + 1);
       num_obj_based_grps++;
       break;
     }
-    case 0:
+    case SIG_GROUP_TYPE_CHN:
     {
       num_ch_based_grps++;
       ia_signals_3da->num_ch +=
@@ -1392,13 +1400,21 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
             return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_CICP_LAYOUT_INDEX;
           }
         }
+        if ((impgehd_cicp_get_num_ls[speaker_config_3d->cicp_spk_layout_idx] !=
+                ia_signals_3da->num_ch) &&
+                  (impgehd_cicp_get_num_ls[speaker_config_3d->cicp_spk_layout_idx] >
+                    impgehd_cicp_get_num_ls[pstr_audio_specific_config->ref_spk_layout
+                      .cicp_spk_layout_idx]))
+        {
+          return IA_MPEGH_DEC_INIT_FATAL_INVALID_CONFIG_FOR_NUM_CH;
+        }
       }
       audio_ch_layout_cntr++;
       break;
     }
     default:
       // Reserved value of Signal group type
-      break;
+      return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_SIG_GROUP_TYPE;
     }
   }
 
@@ -1468,6 +1484,7 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
     }
     break;
   case MPEGH_PROFILE_BP_LVL_3:
+  case MPEGH_PROFILE_LC_LVL_3:
     if (dec_proc_core_chans > MAX_NUM_CHANNELS || ref_layout_chans > MAX_NUM_CHANNELS ||
         (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3 &&
          (num_hoa_based_grps != 0 || num_ch_based_grps != 0)) ||
@@ -1478,6 +1495,10 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
     }
     break;
   default:
+    if (mpegh_profile_lvl < MPEGH_PROFILE_LC_LVL_1)
+    {
+      return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_MPEGH_PROFILE;
+    }
     if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3 || ref_layout_chans > MAX_NUM_CHANNELS_LVL3)
     {
       return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
@@ -1535,7 +1556,7 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
     {
       ui_cicp_layout_idx = pstr_audio_specific_config->ref_spk_layout.cicp_spk_layout_idx;
     }
-    if (ui_cicp_layout_idx <= 0 || ui_cicp_layout_idx > MAX_CICP_INDEX)
+    if (ui_cicp_layout_idx < 0 || ui_cicp_layout_idx > MAX_CICP_INDEX)
     {
       return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_CICP_LAYOUT_INDEX;
     }

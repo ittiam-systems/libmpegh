@@ -282,3 +282,11 @@ Please refer to the [guildelines](GUIDELINES.md) for the following processes
 - Reporting issues
 - Creating Pull Request
 - Commit message standards
+
+# Disclaimer
+
+* In no event shall Ittiam (or Dolby or any of their affiliates, successors, or contributors) be liable to any party for direct, indirect, special, incidental, or consequential damages, including lost profits, arising out of the use of this software and its documentation, even if ittiam has been advised of the possibility of such damage. 
+* Ittiam provides the information on an "As-is" basis and makes no warranties regarding any information or licenses provided on or through it and disclaims liability for damages resulting from using the license information. 
+* Redistributions of source code must retain the above copyright notice, the original license file and the disclaimer. 
+* One should have a valid third-party subscription/license, if any, required to use this software. 
+* Ittiam has no obligation to provide maintenance, support, updates, enhancements, or modifications.
