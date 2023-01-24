@@ -2163,7 +2163,7 @@ static IA_ERRORCODE impeghd_md_create_diffuse_part(
   FLOAT32 **ptr_diffuse_out_buf = NULL;
   FLOAT32 **ptr_diffuse_out_buf_decorr = NULL;
   FLOAT32 oam_and_diffuse_gain[MAX_NUM_ELEMENTS];
-  ia_cicp_ls_geo_str str_ls_geo[CICP2GEOMETRY_MAX_LOUDSPEAKERS] = {};
+  ia_cicp_ls_geo_str str_ls_geo[CICP2GEOMETRY_MAX_LOUDSPEAKERS] = {0};
   ia_mae_audio_scene_info *pstr_mae_asi = &pstr_asc->str_mae_asi;
   ia_oam_dec_state_struct *pstr_oam_dec_state =
       &pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state;

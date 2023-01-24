@@ -2376,7 +2376,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
   ia_audio_specific_config_struct *pstr_asc =
       (ia_audio_specific_config_struct *)mpegh_dec_handle->ia_audio_specific_config;
   ia_dec_data_struct *pstr_dec_data;
-  ia_mhas_pac_info pac_info = {};
+  ia_mhas_pac_info pac_info = {0};
   ia_signals_3d *ia_signals_3da = &pstr_asc->str_usac_config.signals_3d;
   ia_usac_decoder_config_struct *str_usac_dec_config =
       &pstr_asc->str_usac_config.str_usac_dec_config;
