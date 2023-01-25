@@ -1,0 +1,57 @@
+name: Push
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  SOLUTION_FILE_PATH: build/msvs/ia_mpeghd_testbench.sln
+  BUILD_CONFIGURATION: Release
+
+jobs:
+  Windows:
+    runs-on: windows-2019
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=CurrentDate::$(date +'%Y-%m-%d')"
+
+    - name: Get commit hash
+      id: vars
+      run: |
+        echo "::set-output name=CurrentShortHash::$(git rev-parse --short=7 HEAD)"
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Restore NuGet packages
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Build Win64
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Collect binaries
+      run: |
+        mkdir "build/Release"
+        copy "build/msvs/ia_mpeghd_testbench.exe" "build/Release/ia_mpeghd_testbench.exe"
+        copy "build/msvs/x64/Release/ia_mpeghd_lib.lib" "build/Release/ia_mpeghd_lib.lib"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: "MPEG-H 3D Audio Low Complexity Profile Decoder [${{steps.date.outputs.CurrentDate}}]-${{steps.vars.outputs.CurrentShortHash}}"
+        path: "build/Release/"
+
+    - name: Release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{secrets.GITHUB_TOKEN}}"
+        automatic_release_tag: "latest"
+        prerelease: false
+        title: "MPEG-H 3D Audio Low Complexity Profile Decoder [${{steps.date.outputs.CurrentDate}}]-${{steps.vars.outputs.CurrentShortHash}}"
+        files: "build/Release/*"
