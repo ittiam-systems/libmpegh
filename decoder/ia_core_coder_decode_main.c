@@ -1835,14 +1835,22 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
 
   if (pstr_asc->str_usac_config.signals_3d.format_converter_enable == 1)
   {
-    impeghd_format_conv_init(handle, pstr_asc, num_channel_out, 0,
+    WORD32 err = impeghd_format_conv_init(handle, pstr_asc, num_channel_out, 0,
                              mpegh_dec_handle->mpeghd_scratch_mem_v);
+    if (err)
+    {
+      return err;
+    }
   }
 
   if (pstr_asc->str_usac_config.signals_3d.domain_switcher_enable == 1)
   {
-    impeghd_format_conv_init(handle, pstr_asc, num_channel_out, 1,
+    WORD32 err = impeghd_format_conv_init(handle, pstr_asc, num_channel_out, 1,
                              mpegh_dec_handle->mpeghd_scratch_mem_v);
+    if (err)
+    {
+      return err;
+    }
   }
   if (suitable_tracks <= 0)
   {
@@ -1865,6 +1873,8 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
   if (pstr_asc->str_usac_config.signals_3d.format_converter_enable == 0 && hoa_present == 0 &&
       oam_present == 0)
     *num_channel_out = pstr_dec_data->str_frame_data.scal_out_num_channels; // check
+  else if (pstr_asc->str_usac_config.signals_3d.format_converter_enable == 1)
+    *num_channel_out = pstr_dec_data->str_frame_data.scal_out_num_channels;
   if (hoa_present == 1)
   {
     // pstr_dec_data->str_frame_data.scal_out_num_channels = *num_channel_out;
