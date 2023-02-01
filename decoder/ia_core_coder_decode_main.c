@@ -1870,8 +1870,8 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
     }
   }
   pstr_dec_data->dec_bit_buf.max_size = handle->p_mem_info_mpeghd[IA_MEMTYPE_INPUT].ui_size << 3;
-  if (pstr_asc->str_usac_config.signals_3d.format_converter_enable == 0 && hoa_present == 0 &&
-      oam_present == 0)
+  if ((hoa_present == 0 && oam_present == 0) ||
+      (pstr_asc->str_usac_config.signals_3d.format_converter_enable == 1))
     *num_channel_out = pstr_dec_data->str_frame_data.scal_out_num_channels; // check
   else if (pstr_asc->str_usac_config.signals_3d.format_converter_enable == 1)
     *num_channel_out = pstr_dec_data->str_frame_data.scal_out_num_channels;
