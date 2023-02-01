@@ -2083,6 +2083,15 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
       {
         pcm_sample =
             (WORD32)(pstr_dec_data->str_usac_data.time_sample_vector[channel][s] * 256.0f);
+        if (pcm_sample > MAX_24)
+        {
+          pcm_sample = MAX_24;
+        }
+        else if (pcm_sample < MIN_24)
+        {
+          pcm_sample = MIN_24;
+        }
+
         *ptr_ext_ren_pcm++ = (WORD32)pcm_sample & 0xff;
         *ptr_ext_ren_pcm++ = ((WORD32)pcm_sample >> 8) & 0xff;
         *ptr_ext_ren_pcm++ = ((WORD32)pcm_sample >> 16) & 0xff;
