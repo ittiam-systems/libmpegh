@@ -2122,6 +2122,7 @@ WORD32 impeghd_mp4_read_samples(pVOID fp, ia_mp4_sample_entry **n, ia_mp4_mem_no
   UWORD32 i;
   WORD32 tag_mhm1 = 0;
   WORD32 tag_maei = 0;
+  WORD32 tag_mhaC = 0;
 
   ret = impeghd_mp4_fread(charbuf, 1, 4, fp);
   if (ret < 4)
@@ -2373,6 +2374,7 @@ WORD32 impeghd_mp4_read_samples(pVOID fp, ia_mp4_sample_entry **n, ia_mp4_mem_no
     }
     return IT_OK;
   }
+search_mhaC:
   ret = impeghd_mp4_fread(charbuf, 1, 4, fp);
   if (ret < 4)
   {
@@ -2398,6 +2400,7 @@ WORD32 impeghd_mp4_read_samples(pVOID fp, ia_mp4_sample_entry **n, ia_mp4_mem_no
   {
     (*n)->mh.size = (*n)->es.size;
     (*n)->mh.type = (*n)->es.type;
+    tag_mhaC = 1;
   }
   if (!((*n)->es.type == IT_MHAC))
   {
@@ -2407,6 +2410,8 @@ WORD32 impeghd_mp4_read_samples(pVOID fp, ia_mp4_sample_entry **n, ia_mp4_mem_no
       if ((*n)->es.type == IT_BTRT)
       {
         impeghd_mp4_fseek(fp, (*n)->es.size - 8, SEEK_CUR);
+        if (tag_mhaC == 0)
+          goto search_mhaC;
         return IT_OK;
       }
       if ((*n)->sample.type == IT_MJPA)

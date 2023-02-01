@@ -118,7 +118,6 @@ static IA_ERRORCODE impeghd_flex_spk_2_ls_geometry(ia_cicp_ls_geo_str *array_cic
 {
   WORD32 i;
   WORD32 num_speakers;
-  WORD32 ch_idx;
   ia_flex_spk_data_str *ptr_flex_spk = &ptr_ref_spk_layout->str_flex_spk;
   num_speakers = ptr_ref_spk_layout->num_speakers;
 

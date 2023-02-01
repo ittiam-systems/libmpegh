@@ -187,7 +187,7 @@ static IA_ERRORCODE impeghd_hoa_ren_mtrx_init(pVOID handle, pVOID speaker_pos, W
   {
     return IA_MPEGH_HOA_INIT_NONFATAL_SPACE_POSITION_INIT_FAILED;
   }
-  c = ia_min_int(ren_handle->order - 1, 4);
+  c = ia_min_int(ia_max_int(ren_handle->order - 1, 0), 4);
   beta = ia_hoa_beta_value_table[c];
   err_code = ia_render_hoa_robust_pan_calculate_gains_pre(r_pan, virt_sorces_rtp, beta, 0,
                                                           (buf + scratch_idx));
