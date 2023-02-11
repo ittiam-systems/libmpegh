@@ -726,25 +726,11 @@ IA_ERRORCODE impeghd_main_process(WORD32 argc, pWORD8 argv[])
       {
         pb_inp_buf[i] = pb_inp_buf[i + pstr_out_cfg->i_bytes_consumed];
       }
+      g_pf_inp->is_execution = 1;
       err_code = impeghd_mp4_fw_read(
           g_pf_inp, (pUWORD8)(pb_inp_buf + i_buff_size - pstr_out_cfg->i_bytes_consumed),
           ((WORD32)ui_inp_size - (WORD32)(i_buff_size - pstr_out_cfg->i_bytes_consumed)),
           (pUWORD32)&i_bytes_read);
-      if (err_code == 2)
-      {
-        if (g_pf_inp->is_mp4_file)
-        {
-          err_code = impeghd_mp4_get_datamp4(
-              g_pf_inp->mp4_cntxt, &offset_dash,
-              (pUWORD8)(pb_inp_buf + i_buff_size - pstr_out_cfg->i_bytes_consumed),
-              (ui_inp_size - (i_buff_size - pstr_out_cfg->i_bytes_consumed)),
-              (pUWORD32)&i_bytes_read, &size_dash, &loc);
-          if (err_code)
-          {
-            return err_code;
-          }
-        }
-      }
       i_buff_size = i_buff_size - (pstr_out_cfg->i_bytes_consumed - i_bytes_read);
     }
     pstr_in_cfg->num_inp_bytes = i_buff_size;

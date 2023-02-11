@@ -46,7 +46,12 @@ typedef struct ia_file_wrapper
   WORD32 header_given;
   UWORD32 is_mp4_file;
   UWORD32 is_mp4_mhm1;
+  UWORD32 is_mp4_dash;
   FILE *input_file;
+  WORD32 size_dash;
+  WORD32 loc;
+  WORD32 offset_dash;
+  UWORD32 is_execution;
 
 } ia_file_wrapper;
 

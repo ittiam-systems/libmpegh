@@ -51,6 +51,7 @@
  */
 
 WORD32 g_mhm1_tag;
+WORD32 g_dash_tag;
 
 /**
 *  impeghd_mp4_fw_open
@@ -72,6 +73,7 @@ ia_file_wrapper *impeghd_mp4_fw_open(WORD8 file_name[])
   transport->is_mp4_mhm1 = 0;
   transport->input_file = NULL;
   g_mhm1_tag = 0;
+  g_dash_tag = 0;
 
   transport->header_given = 0;
   transport->file_cntxt = 0;
@@ -104,6 +106,7 @@ ia_file_wrapper *impeghd_mp4_fw_open(WORD8 file_name[])
   }
   transport->is_mp4_file = 1;
   transport->is_mp4_mhm1 = g_mhm1_tag;
+  transport->is_mp4_dash = g_dash_tag;
   transport->interim_buffer = impeghd_mp4_malloc_wrapper(IN_BUF_SIZE);
   if (transport->interim_buffer == NULL)
   {
@@ -152,6 +155,17 @@ WORD32 impeghd_mp4_fw_read(ia_file_wrapper *transport, pUWORD8 buffer, WORD32 bu
       if (err_test == 2)
       {
         *length = 0;
+        if (transport->is_mp4_file && transport->is_execution == 1)
+        {
+          err_test = impeghd_mp4_get_datamp4(
+            transport->mp4_cntxt, &(transport->offset_dash),
+            (pUWORD8)buffer, buf_size,
+            (pUWORD32)length, &(transport->size_dash), &(transport->loc));
+          if (err_test)
+          {
+            return err_test;
+          }
+        }
         return IT_DASH;
       }
 

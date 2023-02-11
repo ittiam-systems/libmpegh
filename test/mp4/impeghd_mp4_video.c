@@ -53,6 +53,8 @@
  * @{
  */
 
+extern WORD32 g_dash_tag;
+
 /**
 *  impeghd_mp4_clear_buffer
 *
@@ -232,7 +234,7 @@ static WORD32 impeghd_mp4_get_stsz(pVOID fp, trak_info *m)
   if (m->sample_size == 0)
   {
     toRead = m->stsz_count - m->stsz_index;
-    if (toRead == 0)
+    if (toRead == 0 && !g_dash_tag)
     {
       return IT_ERROR;
     }
