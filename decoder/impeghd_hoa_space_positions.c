@@ -179,7 +179,7 @@ impeghd_hoa_ren_space_positions_init_with_param(ia_render_hoa_space_positions_st
     loop = ref_spk_layout->num_speakers;
     for (WORD32 i = 0; i < loop; i++)
     {
-      if (!ref_spk_layout->cicp_spk_idx[i] || ref_spk_layout->cicp_spk_idx[i] > HOA_MAX_CICP_LS_IDX)
+      if (ref_spk_layout->cicp_spk_idx[i] > (CICP_MAX_CH - 1))
       {
         continue;
       }
@@ -187,11 +187,10 @@ impeghd_hoa_ren_space_positions_init_with_param(ia_render_hoa_space_positions_st
       {
         return IA_MPEGH_DEC_CONFIG_NONFATAL_INVALID_CICP_INDEX;
       }
-      speaker_table = ia_cicp_idx_ls_set_map_tbl[ref_spk_layout->cicp_spk_idx[i]];
-      if (force_lfe && ia_cicp_ls_geo_tbls[speaker_table[i]].lfe_flag == 1)
+      if (force_lfe && ia_cicp_ls_geo_tbls[ref_spk_layout->cicp_spk_idx[i]].lfe_flag == 1)
       {
-        s_t = (FLOAT32)ia_cicp_ls_geo_tbls[speaker_table[i]].ls_elevation;
-        s_f = (FLOAT32)ia_cicp_ls_geo_tbls[speaker_table[i]].ls_azimuth;
+        s_t = (FLOAT32)ia_cicp_ls_geo_tbls[ref_spk_layout->cicp_spk_idx[i]].ls_elevation;
+        s_f = (FLOAT32)ia_cicp_ls_geo_tbls[ref_spk_layout->cicp_spk_idx[i]].ls_azimuth;
         spc_handle->arr[spc_handle->num_pos * spc_handle->cols + 2] =
             ia_mul_flt((s_f), ((FLOAT32)PI) / 180.0f);
         spc_handle->arr[spc_handle->num_pos * spc_handle->cols + 1] =
@@ -199,10 +198,10 @@ impeghd_hoa_ren_space_positions_init_with_param(ia_render_hoa_space_positions_st
         spc_handle->arr[spc_handle->num_pos * spc_handle->cols] = 2.0f;
         spc_handle->num_pos++;
       }
-      else if (ia_cicp_ls_geo_tbls[speaker_table[i]].lfe_flag == 0 && !force_lfe)
+      else if (ia_cicp_ls_geo_tbls[ref_spk_layout->cicp_spk_idx[i]].lfe_flag == 0 && !force_lfe)
       {
-        s_t = (FLOAT32)ia_cicp_ls_geo_tbls[speaker_table[i]].ls_elevation;
-        s_f = (FLOAT32)ia_cicp_ls_geo_tbls[speaker_table[i]].ls_azimuth;
+        s_t = (FLOAT32)ia_cicp_ls_geo_tbls[ref_spk_layout->cicp_spk_idx[i]].ls_elevation;
+        s_f = (FLOAT32)ia_cicp_ls_geo_tbls[ref_spk_layout->cicp_spk_idx[i]].ls_azimuth;
         spc_handle->arr[spc_handle->num_pos * spc_handle->cols + 2] =
             ia_mul_flt((s_f), ((FLOAT32)PI) / 180.0f);
         spc_handle->arr[spc_handle->num_pos * spc_handle->cols + 1] =
