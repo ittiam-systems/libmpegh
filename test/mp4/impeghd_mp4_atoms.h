@@ -529,4 +529,138 @@ typedef struct ia_mp4_udta_atom
   ia_mp4_udta_info udta_info;
 } ia_mp4_udta_atom;
 
+/*FMP4 Support atoms*/
+typedef struct ia_mp4_mvex_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+} ia_mp4_mvex_atom;
+
+typedef struct ia_mp4_mehd_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+  UWORD32 duration;
+} ia_mp4_mehd_atom;
+
+typedef struct ia_mp4_trex_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+  UWORD32 track_ID;
+  UWORD8  is_initial_media_decode_time_added;
+  UWORD32 base_media_decode_time;
+  UWORD32 default_sample_description_index;
+  UWORD32 default_sample_duration;
+  UWORD32 default_sample_size;
+  UWORD32 default_sample_flags;
+} ia_mp4_trex_atom;
+
+typedef struct ia_mp4_pssh_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+} ia_mp4_pssh_atom;
+
+typedef struct ia_mp4_sidx_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+  UWORD32 Reference_ID;
+  UWORD32 time_scale;
+  UWORD32 earliest_presentation_time;
+  UWORD32 first_offset;
+  UWORD32 reserved;
+  UWORD32 reference_count;
+} ia_mp4_sidx_atom;
+
+typedef struct ia_mp4_moof_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+} ia_mp4_moof_atom;
+
+typedef struct ia_mp4_mfhd_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+  WORD32 sequence_number;
+} ia_mp4_mfhd_atom;
+
+typedef struct ia_mp4_tfhd_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+  UWORD32 track_ID;
+  UWORD64 base_data_offset;
+  UWORD32 sample_description_index;
+  UWORD32 default_sample_duration;
+  UWORD32 default_sample_size;
+  UWORD32 default_sample_flags;
+} ia_mp4_tfhd_atom;
+
+typedef struct ia_mp4_tfdt_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+  UWORD32 default_base_media_decode_time;
+} ia_mp4_tfdt_atom;
+
+typedef struct ia_mp4_trun_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+  UWORD32 samplecount;
+  WORD32 data_offset;
+  UWORD32 first_sample_flags;
+} ia_mp4_trun_atom;
+
+typedef struct ia_mp4_sbgp_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+  UWORD32 version;
+  UWORD32 flags;
+  UWORD32 grouping_type;
+  WORD32 grouping_type_parameter_set;
+  UWORD32 entry_count;
+} ia_mp4_sbgp_atom;
+
+typedef struct ia_mp4_mdat_atom
+{
+  UWORD32 size;
+  UWORD32 type;
+  UWORD32 large_size;
+} ia_mp4_mdat_atom;
 #endif /* IMPEGHD_MP4_ATOMS_H */

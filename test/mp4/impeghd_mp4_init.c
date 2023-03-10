@@ -54,6 +54,7 @@
  */
 
 extern WORD32 g_mhm1_tag;
+extern WORD32 g_dash_tag;
 
 /**
 *  impeghd_mp4_init_wrap
@@ -861,8 +862,8 @@ WORD32 impeghd_mp4_read_atom(mp4_info *m_info, VOID **fp, ia_mp4_node **n, ia_mp
         total_read += impeghd_mp4_fread(&atom_type[0], 1, 4, *fp);
         total_read += impeghd_mp4_fread(&atom_type[0], 1, 4, *fp);
         total_read += impeghd_mp4_fread(&atom_type[0], 1, 4, *fp);
-        total_read += impeghd_mp4_fread(&atom_type[0], 4, 1, *fp);
-        total_read += impeghd_mp4_fread(&atom_type[0], 4, 1, *fp);
+        total_read += impeghd_mp4_fread(&atom_type[0], 1, 4, *fp);
+        total_read += impeghd_mp4_fread(&atom_type[0], 1, 4, *fp);
       }
       impeghd_mp4_fseek(*fp, -total_read, SEEK_CUR);
       if (a->size == 1)
@@ -1742,6 +1743,7 @@ WORD32 impeghd_mp4_read_atom(mp4_info *m_info, VOID **fp, ia_mp4_node **n, ia_mp
       next_child->sibling->prev = next_child;
       next_child = next_child->sibling;
     }
+    next_child->prev->sibling = NULL;
     impeghd_mp4_free_mem_node(next_child, m);
     return IT_OK;
   }
@@ -2087,6 +2089,574 @@ WORD32 impeghd_mp4_read_atom(mp4_info *m_info, VOID **fp, ia_mp4_node **n, ia_mp
     impeghd_mp4_fseek(*fp, size, SEEK_CUR);
     return IT_OK;
   }
+  else if (a->type == IT_MVEX)
+  {
+    ia_mp4_mvex_atom *fa =
+      (ia_mp4_mvex_atom *)impeghd_mp4_mem_node_malloc(m, sizeof(*fa));
+    if (prev_state != IT_TRAK)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    (*n)->data = (pVOID)fa;
+    strcpy((*n)->descr, "mvex");
+    (*n)->child = (ia_mp4_node *)impeghd_mp4_mem_node_malloc(m, sizeof(*((*n)->child)));
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    next_child = (*n)->child;
+    next_child->parent = (*n);
+    while ((impeghd_mp4_read_atom(m_info, fp, &next_child, p, m, IT_MVEX)) == IT_OK)
+    {
+      next_child->sibling = (ia_mp4_node *)impeghd_mp4_mem_node_malloc(m, sizeof(ia_mp4_node));
+      next_child->sibling->parent = next_child->parent;
+      next_child->sibling->prev = next_child;
+      next_child = next_child->sibling;
+    }
+    next_child->prev->sibling = NULL;
+    impeghd_mp4_free_mem_node(next_child, m);
+    return IT_OK;
+  }
+  else if (a->type == IT_MEHD)
+  {
+    ia_mp4_mehd_atom *fa = (ia_mp4_mehd_atom *)impeghd_mp4_mem_node_malloc(
+      m, sizeof(*fa));
+    if (prev_state != IT_MVEX)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    ret = impeghd_mp4_fread(charbuf, 1, 8, *fp);
+    if (ret < 8)
+    {
+      return IT_ERROR;
+    }
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    fa->duration = impeghd_mp4_rev32(*data_size);
+    (*n)->data = (void *)fa;
+    strcpy((*n)->descr, "mehd");
+    (*n)->child = NULL;
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    return IT_OK;
+  }
+  else if (a->type == IT_TREX)
+  {
+    ia_mp4_trex_atom *fa = (ia_mp4_trex_atom *)impeghd_mp4_mem_node_malloc(
+      m, sizeof(*fa));
+    if (prev_state != IT_MVEX)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    ret = impeghd_mp4_fread(charbuf, 1, 8, *fp);
+    if (ret < 8)
+    {
+      return IT_ERROR;
+    }
+    fa->track_ID = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    fa->default_sample_description_index = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    fa->default_sample_duration = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    fa->default_sample_size = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    fa->default_sample_flags = impeghd_mp4_rev32(*data_size);
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    (*n)->data = (void *)fa;
+    strcpy((*n)->descr, "trex");
+    (*n)->child = NULL;
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    return IT_OK;
+  }
+  else if (a->type == IT_SIDX)
+  {
+    ia_mp4_sidx_atom *fa = (ia_mp4_sidx_atom *)impeghd_mp4_mem_node_malloc(
+      m, sizeof(*fa));
+    if (prev_state != IT_MVEX)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    ret = impeghd_mp4_fread(charbuf, 1, 8, *fp);
+    if (ret < 8)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->Reference_ID = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->time_scale = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 2, *fp);
+    if (ret < 2)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->earliest_presentation_time = impeghd_mp4_rev16(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 2, *fp);
+    if (ret < 2)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->first_offset = impeghd_mp4_rev16(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->reserved = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->reference_count = impeghd_mp4_rev32(*data_size);
+    impeghd_mp4_fseek(*fp, size, SEEK_CUR);
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    (*n)->data = (void *)fa;
+    strcpy((*n)->descr, "sidx");
+    (*n)->child = NULL;
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    return IT_OK;
+  }
+  else if (a->type == IT_MOOF)
+  {
+    g_dash_tag = 1;
+    if (prev_state != IT_MVEX)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      return IT_ERROR;
+    }
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    (*n)->data = (pVOID)a;
+    strcpy((*n)->descr, "moof");
+    (*n)->parent = NULL;
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    (*n)->child = (ia_mp4_node *)impeghd_mp4_mem_node_malloc(m, sizeof(*((*n)->child)));
+
+    next_child = (*n)->child;
+    next_child->parent = (*n);
+    while (impeghd_mp4_read_atom(m_info, fp, &next_child, p, m, IT_MOOF) == IT_OK)
+    {
+      next_child->sibling = (ia_mp4_node *)impeghd_mp4_mem_node_malloc(
+        m, sizeof(*(next_child->sibling)));
+      next_child->sibling->parent = next_child->parent;
+      next_child->sibling->prev = next_child;
+      next_child = next_child->sibling;
+    }
+    next_child->prev->sibling = NULL;
+    impeghd_mp4_free_mem_node(next_child, m);
+    return IT_OK;
+  }
+  else if (a->type == IT_MFHD)
+  {
+    ia_mp4_mfhd_atom *fa = (ia_mp4_mfhd_atom *)impeghd_mp4_mem_node_malloc(
+      m, sizeof(*fa));
+    if (prev_state != IT_MOOF)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    ret = impeghd_mp4_fread(charbuf, 1, 8, *fp);
+    if (ret < 8)
+    {
+      return IT_ERROR;
+    }
+    fa->sequence_number = impeghd_mp4_rev32(*data_size);
+    impeghd_mp4_free_mem_node(fa, m);
+    return IT_OK;
+  }
+  else if (a->type == IT_TRAF)
+  {
+    if (prev_state != IT_MOOF)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      return IT_ERROR;
+    }
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    (*n)->data = (pVOID)a;
+    strcpy((*n)->descr, "traf");
+    (*n)->parent = NULL;
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    (*n)->child = (ia_mp4_node *)impeghd_mp4_mem_node_malloc(m, sizeof(*((*n)->child)));
+
+    next_child = (*n)->child;
+    next_child->parent = (*n);
+    while (impeghd_mp4_read_atom(m_info, fp, &next_child, p, m, IT_TRAF) == IT_OK)
+    {
+      next_child->sibling = (ia_mp4_node *)impeghd_mp4_mem_node_malloc(
+        m, sizeof(*(next_child->sibling)));
+      next_child->sibling->parent = next_child->parent;
+      next_child->sibling->prev = next_child;
+      next_child = next_child->sibling;
+    }
+    next_child->prev->sibling = NULL;
+    impeghd_mp4_free_mem_node(next_child, m);
+    return IT_OK;
+  }
+  else if (a->type == IT_TFHD)
+  {
+    ia_mp4_tfhd_atom *fa = (ia_mp4_tfhd_atom *)impeghd_mp4_mem_node_malloc(
+      m, sizeof(*fa));
+    if (prev_state != IT_TRAF)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    fa->flags = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    fa->track_ID = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    fa->sample_description_index = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    fa->default_sample_duration = impeghd_mp4_rev32(*data_size);
+    return IT_OK;
+  }
+  else if (a->type == IT_TFDT)
+  {
+    ia_mp4_tfdt_atom *fa = (ia_mp4_tfdt_atom *)impeghd_mp4_mem_node_malloc(
+      m, sizeof(*fa));
+    if (prev_state != IT_TRAF)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    ret = impeghd_mp4_fread(charbuf, 1, 8, *fp);
+    if (ret < 8)
+    {
+      return IT_ERROR;
+    }
+    fa->default_base_media_decode_time = impeghd_mp4_rev32(*data_size);
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    (*n)->data = (void *)fa;
+    strcpy((*n)->descr, "tfhd");
+    (*n)->child = NULL;
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    return IT_OK;
+  }
+  else if (a->type == IT_TRUN)
+  {
+    ia_mp4_trun_atom *fa = (ia_mp4_trun_atom *)impeghd_mp4_mem_node_malloc(
+      m, sizeof(*fa));
+    if (prev_state != IT_MOOF)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->flags = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->samplecount = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->data_offset = impeghd_mp4_rev32(*data_size);
+    impeghd_mp4_fseek(*fp, size, SEEK_CUR);
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    (*n)->data = (void *)fa;
+    strcpy((*n)->descr, "trun");
+    (*n)->child = NULL;
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    return IT_OK;
+  }
+  else if (a->type == IT_SBGP)
+  {
+    ia_mp4_sbgp_atom *fa = (ia_mp4_sbgp_atom *)impeghd_mp4_mem_node_malloc(
+      m, sizeof(*fa));
+    if (prev_state != IT_MOOF)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->grouping_type = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    fa->entry_count = impeghd_mp4_rev32(*data_size);
+    impeghd_mp4_fseek(*fp, size, SEEK_CUR);
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    (*n)->data = (void *)fa;
+    strcpy((*n)->descr, "sbgp");
+    (*n)->child = NULL;
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    return IT_OK;
+  }
+  else if (a->type == IT_MDAT)
+  {
+    ia_mp4_mdat_atom *fa = (ia_mp4_mdat_atom *)impeghd_mp4_mem_node_malloc(
+      m, sizeof(*fa));
+    if (prev_state != IT_MOOF)
+    {
+      if (a->size == 1)
+      {
+        impeghd_mp4_fseek(*fp, -16, SEEK_CUR);
+      }
+      else
+      {
+        impeghd_mp4_fseek(*fp, -8, SEEK_CUR);
+      }
+      impeghd_mp4_free_mem_node(fa, m);
+      return IT_ERROR;
+    }
+    fa->size = a->size;
+    fa->type = a->type;
+    fa->large_size = a->large_size;
+    impeghd_mp4_free_mem_node(a, m);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, *fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    size -= ret;
+    impeghd_mp4_fseek(*fp, size, SEEK_CUR);
+    if ((*n) == NULL)
+    {
+      impeghd_mp4_error_hdl(NULL, (pWORD8) "Error: NULL pointer encountered %x", type);
+      return IT_ERROR;
+    }
+    (*n)->data = (void *)fa;
+    strcpy((*n)->descr, "mdat");
+    (*n)->child = NULL;
+    (*n)->sibling = NULL;
+    (*n)->prev = NULL;
+    return IT_OK;
+  }
   else
   {
     impeghd_mp4_fseek(*fp, size, SEEK_CUR);
@@ -2388,6 +2958,24 @@ search_mhaC:
     return IT_ERROR;
   }
   (*n)->es.type = impeghd_mp4_rev32(*data_size);
+  // BTRT Changes
+  if ((*n)->es.type == IT_BTRT)
+  {
+    impeghd_mp4_fseek(fp, (*n)->es.size - 8, SEEK_CUR);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    (*n)->es.size = impeghd_mp4_rev32(*data_size);
+    ret = impeghd_mp4_fread(charbuf, 1, 4, fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    (*n)->es.type = impeghd_mp4_rev32(*data_size);
+  }
+
   len -= 8;
   UWORD32 temp_len = 0;
   temp_len += 8;
