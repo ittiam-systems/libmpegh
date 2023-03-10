@@ -2132,7 +2132,7 @@ WORD32 impeghd_mp4_read_atom(mp4_info *m_info, VOID **fp, ia_mp4_node **n, ia_mp
     next_child->prev->sibling = NULL;
     impeghd_mp4_free_mem_node(next_child, m);
     return IT_OK;
-   }
+  }
   else if (a->type == IT_MEHD)
   {
     ia_mp4_mehd_atom *fa = (ia_mp4_mehd_atom *)impeghd_mp4_mem_node_malloc(

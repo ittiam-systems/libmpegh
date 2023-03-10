@@ -155,7 +155,7 @@ WORD32 impeghd_mp4_fw_read(ia_file_wrapper *transport, pUWORD8 buffer, WORD32 bu
       if (err_test == 2)
       {
         *length = 0;
-        if (transport->is_mp4_file && transport->is_execution == 1)
+        if (transport->is_execution == 1)
         {
           err_test = impeghd_mp4_get_datamp4(
             transport->mp4_cntxt, &(transport->offset_dash),
