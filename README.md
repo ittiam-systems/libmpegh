@@ -290,3 +290,6 @@ Please refer to the [guildelines](GUIDELINES.md) for the following processes
 * Redistributions of source code must retain the above copyright notice, the original license file and the disclaimer. 
 * One should have a valid third-party subscription/license, if any, required to use this software. 
 * Ittiam has no obligation to provide maintenance, support, updates, enhancements, or modifications.
+
+# License
+A BSD 3-Clause-Clear license is applicable. Refer to the [`LICENSE`](LICENSE) file together with the [`LICENSE2`](LICENSE2) file.
