@@ -821,6 +821,54 @@ static IA_ERRORCODE impeghd_parse_dmx_ext_config(ia_bit_buf_struct *it_bit_buff,
 }
 
 /**
+ *  impeghd_compatible_profile_level_set
+ *
+ *  \brief Parses compatible profile level set information.
+ *
+ *  \param [in]      it_bit_buff                   bit stream buffer
+ *  \param [in,out]  ptr_compatible_profile_config pointer to compatible profile config structure
+ *
+ *  \return IA_ERRORCODE
+ *
+ */
+static IA_ERRORCODE impeghd_compatible_profile_level_set(
+    ia_bit_buf_struct *it_bit_buff,
+    ia_struct_compatible_profile_config *ptr_compatible_profile_config)
+{
+  UWORD32 num_compatible_sets, idx;
+  UWORD32 compat_lc_lvl = MPEGH_PROFILE_LC_LVL_5;
+  UWORD32 compat_bp_lvl = MPEGH_PROFILE_BP_LVL_5;
+  ptr_compatible_profile_config->bsnum_compatible_sets = ia_core_coder_read_bits_buf(it_bit_buff, 4);
+  num_compatible_sets = ptr_compatible_profile_config->bsnum_compatible_sets + 1;
+  ptr_compatible_profile_config->reserved = ia_core_coder_read_bits_buf(it_bit_buff, 4);
+
+  for (idx = 0; idx < num_compatible_sets; idx++)
+  {
+    UWORD32 compatible_set_indication =
+		ia_core_coder_read_bits_buf(it_bit_buff, 8);
+    if ((compatible_set_indication >=
+         MPEGH_PROFILE_LC_LVL_1) &&
+        (compatible_set_indication <=
+         MPEGH_PROFILE_LC_LVL_5))
+    {
+      compat_lc_lvl = ia_min_int(compat_lc_lvl, compatible_set_indication);
+    }
+    if ((compatible_set_indication >=
+         MPEGH_PROFILE_BP_LVL_1) &&
+        (compatible_set_indication <=
+         MPEGH_PROFILE_BP_LVL_5))
+    {
+      compat_bp_lvl = ia_min_int(compat_bp_lvl, compatible_set_indication);
+    }
+    ptr_compatible_profile_config->compatible_set_indication[idx] =
+        compatible_set_indication;
+    ptr_compatible_profile_config->compat_lc_lvl = compat_lc_lvl;
+    ptr_compatible_profile_config->compat_bp_lvl = compat_bp_lvl;
+  }
+  return 0;
+}
+
+/**
  *  ia_core_coder_config_extension
  *
  *  \brief Configure extension element in USAC config structure
@@ -870,6 +918,12 @@ static IA_ERRORCODE ia_core_coder_config_extension(
 
     switch (usac_config_ext_type)
     {
+    case ID_CONFIG_EXT_COMPATIBLE_PROFILELVL_SET:
+    {
+      pstr_usac_decoder_config->compat_profile_cfg_present = 1;
+      impeghd_compatible_profile_level_set(it_bit_buff, &pstr_usac_decoder_config->str_compatible_profile_config);
+      break;
+    }
     case ID_CONFIG_EXT_HOA_MATRIX:
     {
       pstr_usac_decoder_config->str_hoa_config.matrix_spk_id = pstr_usac_decoder_config->cicp_idx;
@@ -1181,7 +1235,6 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
   mpeghd_state_struct->is_base_line_profile_3b = 0;
   mpegh_profile_lvl =
       ia_core_coder_read_bits_buf(it_bit_buff, 8); // mpegh_3da_profile_lvl_indication
-  pstr_usac_conf->str_usac_dec_config.mpegh_profile_lvl = mpegh_profile_lvl;
 
   pstr_usac_conf->usac_sampling_frequency_index = ia_core_coder_read_bits_buf(it_bit_buff, 5);
 
@@ -1296,7 +1349,7 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
   ia_signals_3da->num_ch = 0;
   audio_ch_layout_cntr = 0;
 
-  /*if(pstr_audio_specific_config->ref_spk_layout.spk_layout_type == 3),num_sig_group=0,
+  /*if(pstr_audio_specific_config->ref_spk_layout.spk_layout_type == 3),num_sig_group=1,
   group_type=0,
   differs_from_ref_layout=0*/
   if ((pstr_audio_specific_config->ref_spk_layout.spk_layout_type == 3) &&
@@ -1467,45 +1520,6 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
     ref_layout_chans = pstr_audio_specific_config->ref_spk_layout.num_speakers;
   }
 
-  switch (mpegh_profile_lvl)
-  {
-  case MPEGH_PROFILE_LC_LVL_1:
-  case MPEGH_PROFILE_BP_LVL_1:
-    if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL1 || ref_layout_chans > MAX_NUM_CHANNELS_LVL1)
-    {
-      return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
-    }
-    break;
-  case MPEGH_PROFILE_LC_LVL_2:
-  case MPEGH_PROFILE_BP_LVL_2:
-    if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL2 || ref_layout_chans > MAX_NUM_CHANNELS_LVL2)
-    {
-      return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
-    }
-    break;
-  case MPEGH_PROFILE_BP_LVL_3:
-  case MPEGH_PROFILE_LC_LVL_3:
-    if (dec_proc_core_chans > MAX_NUM_CHANNELS || ref_layout_chans > MAX_NUM_CHANNELS ||
-        (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3 &&
-         (num_hoa_based_grps != 0 || num_ch_based_grps != 0)) ||
-        (ref_layout_chans > MAX_NUM_CHANNELS_LVL3 &&
-         (num_hoa_based_grps != 0 || num_ch_based_grps != 0)))
-    {
-      return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
-    }
-    break;
-  default:
-    if (mpegh_profile_lvl < MPEGH_PROFILE_LC_LVL_1)
-    {
-      return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_MPEGH_PROFILE;
-    }
-    if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3 || ref_layout_chans > MAX_NUM_CHANNELS_LVL3)
-    {
-      return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
-    }
-    break;
-  }
-
   err = ia_core_coder_decoder_config(it_bit_buff, pstr_usac_conf);
   if (err != IA_MPEGH_DEC_NO_ERROR)
   {
@@ -1540,7 +1554,6 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
         break;
       }
     }
-    mpeghd_state_struct->is_base_line_profile_3b = 1;
   }
 
   tmp = ia_core_coder_read_bits_buf(it_bit_buff, 1);
@@ -1591,6 +1604,70 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
   {
     pstr_usac_conf->signals_3d.format_converter_enable = 1;
   }
+
+  if (mpegh_profile_lvl < MPEGH_PROFILE_LC_LVL_1)
+  {
+    return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_MPEGH_PROFILE;
+  }
+  if (pstr_usac_conf->str_usac_dec_config.compat_profile_cfg_present)
+  {
+    UWORD32 compat_lc_lvl = pstr_usac_conf->str_usac_dec_config.str_compatible_profile_config.compat_lc_lvl;
+    UWORD32 compat_bp_lvl = pstr_usac_conf->str_usac_dec_config.str_compatible_profile_config.compat_bp_lvl;
+    if (compat_bp_lvl <= MPEGH_PROFILE_BP_LVL_3 && compat_bp_lvl >= MPEGH_PROFILE_BP_LVL_1)
+    {
+      mpegh_profile_lvl = compat_bp_lvl;
+      if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3)
+      {
+        mpeghd_state_struct->is_base_line_profile_3b = 1;
+      }
+    }
+    else if (compat_lc_lvl <= MPEGH_PROFILE_LC_LVL_3 && compat_lc_lvl >= MPEGH_PROFILE_LC_LVL_1)
+    {
+      mpeghd_state_struct->is_base_line_profile_3b = 0;
+      mpegh_profile_lvl = compat_lc_lvl;
+    }
+  }
+  else if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3)
+  {
+    return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
+  }
+  switch (mpegh_profile_lvl)
+  {
+  case MPEGH_PROFILE_LC_LVL_1:
+  case MPEGH_PROFILE_BP_LVL_1:
+    if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL1 || ref_layout_chans > MAX_NUM_CHANNELS_LVL1)
+    {
+      return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
+    }
+    break;
+  case MPEGH_PROFILE_LC_LVL_2:
+  case MPEGH_PROFILE_BP_LVL_2:
+    if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL2 || ref_layout_chans > MAX_NUM_CHANNELS_LVL2)
+    {
+      return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
+    }
+    break;
+  case MPEGH_PROFILE_BP_LVL_3:
+  case MPEGH_PROFILE_LC_LVL_3:
+    if (dec_proc_core_chans > MAX_NUM_CHANNELS || ref_layout_chans > MAX_NUM_CHANNELS ||
+        (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3 &&
+         (num_hoa_based_grps != 0 || num_ch_based_grps != 0)) ||
+        (ref_layout_chans > MAX_NUM_CHANNELS_LVL3 &&
+         (num_hoa_based_grps != 0 || num_ch_based_grps != 0)))
+    {
+      return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
+    }
+    break;
+  default:
+    return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_MPEGH_PROFILE;
+    break;
+  }
+  if ((mpegh_profile_lvl >= MPEGH_PROFILE_BP_LVL_1 && mpegh_profile_lvl <= MPEGH_PROFILE_BP_LVL_3) &&
+      (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3))
+  {
+    mpeghd_state_struct->is_base_line_profile_3b = 0;
+  }
+  pstr_usac_conf->str_usac_dec_config.mpegh_profile_lvl = mpegh_profile_lvl;
   return err;
 }
 

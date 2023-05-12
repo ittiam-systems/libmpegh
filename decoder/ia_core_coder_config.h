@@ -113,6 +113,11 @@
 #define MPEGH_PROFILE_BP_LVL_4 (0x13)
 #define MPEGH_PROFILE_BP_LVL_5 (0x14)
 
+#define MINIMUM_SUPPORTED_LC_PROFILE (MPEGH_PROFILE_LC_LVL_1)
+#define MAXIMUM_SUPPORTED_LC_PROFILE (MPEGH_PROFILE_LC_LVL_3)
+#define MINIMUM_SUPPORTED_BP_PROFILE (MPEGH_PROFILE_BP_LVL_1)
+#define MAXIMUM_SUPPORTED_BP_PROFILE (MPEGH_PROFILE_BP_LVL_3)
+
 typedef UWORD8 UINT8;
 typedef UWORD32 UINT32;
 
@@ -468,6 +473,8 @@ typedef struct
   UWORD32 bsnum_compatible_sets;
   UWORD32 reserved;
   UWORD32 compatible_set_indication[16];
+  UWORD32 compat_lc_lvl;
+  UWORD32 compat_bp_lvl;
 
 } ia_struct_compatible_profile_config;
 typedef struct
@@ -508,6 +515,7 @@ typedef struct
   WORD32 preroll_flag;
   WORD32 hoa_matrix_ext_config_present;
   UWORD32 mpegh_profile_lvl;
+  WORD32 compat_profile_cfg_present;
 } ia_usac_decoder_config_struct;
 typedef struct
 {
