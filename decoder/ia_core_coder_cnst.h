@@ -36,8 +36,6 @@
 #define IA_CORE_CODER_CNST_H
 #define BITS_FOR_SD_DATA 27
 #define BITS_FOR_PSDI_DATA 45
-#define MINIMUM_SUPPORTED_COMPATIBLE_PROFILE (0x0B)
-#define MAXIMUM_SUPPORTED_COMPATIBLE_PROFILE (0x0F)
 
 /* Below values will be used for writing */
 /* 24-bit PCM data                       */
