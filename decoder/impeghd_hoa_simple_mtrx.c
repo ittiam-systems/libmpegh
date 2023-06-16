@@ -382,7 +382,8 @@ static IA_ERRORCODE impeghd_hoa_dsvd(pVOID handle_a, WORD32 rows, WORD32 cols, p
 {
   pFLOAT32 rv1 = (FLOAT32 *)scratch;
   FLOAT32 anorm = 0.0, g = 0.0, scale = 0.0;
-  FLOAT32 c, f, h, s, x, y, z;
+  FLOAT32 c, h, s, x, y, z;
+  FLOAT64 f;
   WORD32 flag, i, its, j, jj, k, nm = 0, l = 0;
   ia_render_hoa_simple_mtrx_str *sm_handle_v = (ia_render_hoa_simple_mtrx_str *)handle_v;
   ia_render_hoa_simple_mtrx_str *sm_handle_a = (ia_render_hoa_simple_mtrx_str *)handle_a;
