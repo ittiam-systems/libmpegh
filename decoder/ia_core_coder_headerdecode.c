@@ -186,6 +186,21 @@ IA_ERRORCODE ia_core_coder_headerdecode(ia_mpegh_dec_api_struct *p_obj_mpegh_dec
     }
     {
       bit_offset = handle_bit_buff->cnt_bits;
+      if (mpeghd_state_struct->prev_cfg_len == 0)
+      {
+        WORD32 i = 0;
+        WORD32 bit_pos = handle_bit_buff->bit_pos;
+        WORD32 cnt_bits = handle_bit_buff->cnt_bits;
+        WORD8 *ptr_read_next = handle_bit_buff->ptr_read_next;
+        mpeghd_state_struct->prev_cfg_len = info.packet_length;
+        for (i = 0; i < info.packet_length; i++)
+        {
+          mpeghd_state_struct->prev_cfg_data[i] = ia_core_coder_read_bits_buf(handle_bit_buff, 8);
+        }
+        handle_bit_buff->bit_pos = bit_pos;
+        handle_bit_buff->cnt_bits = cnt_bits;
+        handle_bit_buff->ptr_read_next = ptr_read_next;
+      }
       err = impegh_3daudio_config_dec(mpeghd_state_struct, bytes_consumed, handle_bit_buff);
       if (err != IA_MPEGH_DEC_NO_ERROR)
       {

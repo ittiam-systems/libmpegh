@@ -251,6 +251,7 @@ typedef struct
 #define DOWNMIX_COEFF_COUNT_MAX (32 * 32)
 #define MAX_AUDIO_PREROLLS 1
 #define MAX_EXT_ELE_PAYLOAD (1536)
+#define MAX_CFG_DATA_LENGTH (768)
 #define MEASUREMENT_COUNT_MAX 16
 #define MAX_INTERP_BUF_STRUCT_SIZE                                                               \
   (2 * sizeof(ia_drc_node_struct) +                                                              \
