@@ -1627,10 +1627,6 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
       mpegh_profile_lvl = compat_lc_lvl;
     }
   }
-  else if (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL3)
-  {
-    return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
-  }
   switch (mpegh_profile_lvl)
   {
   case MPEGH_PROFILE_LC_LVL_1:
