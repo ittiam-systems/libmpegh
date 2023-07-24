@@ -1367,6 +1367,8 @@ IA_ERRORCODE main(WORD32 argc, char *argv[])
       if (!strncmp((const char *)argv[i], "-ofile:", 7))
       {
         pWORD8 pb_arg_val = (pWORD8)argv[i] + 7;
+        size_t len = strlen((const char *)pb_arg_val);
+        memcpy(out_filename, pb_arg_val, len - 4);
         printf("%s ", argv[i]);
         g_pf_out = fopen((const char *)pb_arg_val, "wb");
         if (g_pf_out == NULL)
