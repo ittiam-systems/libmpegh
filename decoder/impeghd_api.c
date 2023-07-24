@@ -378,7 +378,6 @@ static IA_ERRORCODE impeghd_alloc_and_assign_mem(ia_mpegh_dec_api_struct *p_obj_
       p_obj_mpegh_dec->p_state_mpeghd->ia_audio_specific_config =
           &(((ia_dec_data_struct *)(p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data))
                 ->str_frame_data.str_audio_specific_config);
-      p_obj_mpegh_dec->p_state_mpeghd->header_ptr = p_temp + sizeof(ia_dec_data_struct);
     }
     if (i_idx == INPUT_IDX)
     {
@@ -603,243 +602,232 @@ IA_ERRORCODE ia_mpegh_dec_init(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOID p
   p_obj_mpegh_dec->p_state_mpeghd->ui_in_bytes = pstr_input_config->num_inp_bytes;
   p_obj_mpegh_dec->mpeghd_config.ui_raw_flag = pstr_input_config->ui_raw_flag;
   p_obj_mpegh_dec->mpeghd_config.ui_binaural_flag = pstr_input_config->binaural_flag;
-  if (p_obj_mpegh_dec->p_state_mpeghd->fatal_err_present)
+  if (pstr_input_config->ei_info_flag == 1 && pstr_input_config->ptr_ei_buf != NULL)
   {
-    err_code = IA_MPEGH_DEC_INIT_FATAL_ERROR;
+    /* Create local pointers */
+    jmp_buf ei_jmp_buf;
+    IA_ERRORCODE ei_file_read = setjmp(ei_jmp_buf);
+    if (ei_file_read != IA_MPEGH_DEC_NO_ERROR)
+    {
+      pstr_output_config->i_bytes_consumed = 1;
+      return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_EI_BYTES;
+    }
+    ia_dec_data_struct *pstr_dec_data =
+        (ia_dec_data_struct *)p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
+    ia_ele_intrctn *ptr_ele_interaction = &pstr_dec_data->str_element_interaction;
+    ia_bit_buf_struct bit_buf_str;
+    ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_ei_buf,
+                                      pstr_input_config->ei_info_size);
+    bit_buf_str.xmpeghd_jmp_buf = &ei_jmp_buf;
+    err_code = impeghd_ele_interaction(&bit_buf_str, ptr_ele_interaction,
+                                       &pstr_audio_specific_config->str_mae_asi);
+    if (err_code != IA_MPEGH_DEC_NO_ERROR)
+    {
+      return err_code;
+    }
+  }
+  if (pstr_input_config->lsi_info_flag == 1 && pstr_input_config->ptr_ls_buf != NULL)
+  {
+    /* Create local pointers */
+    jmp_buf lsi_jmp_buf;
+    IA_ERRORCODE lsi_file_read = setjmp(lsi_jmp_buf);
+    if (lsi_file_read != IA_MPEGH_DEC_NO_ERROR)
+    {
+      pstr_output_config->i_bytes_consumed = 1;
+      return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_LSI_BYTES;
+    }
+    ia_dec_data_struct *pstr_dec_data =
+        (ia_dec_data_struct *)p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
+    ia_local_setup_struct *ptr_ele_interface = &pstr_dec_data->str_local_setup_interaction;
+    ptr_ele_interface->pstr_binaural_renderer = &pstr_dec_data->str_binaural_rendering;
+    ptr_ele_interface->pstr_binaural_renderer->ptr_scratch =
+        p_obj_mpegh_dec->pp_mem_mpeghd[SCRATCH_IDX];
+    ia_bit_buf_struct bit_buf_str;
+    ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_ls_buf,
+                                      pstr_input_config->lsi_info_size);
+    bit_buf_str.xmpeghd_jmp_buf = &lsi_jmp_buf;
+    err_code = impeghd_3da_local_setup_information(
+        &bit_buf_str, ptr_ele_interface,
+        pstr_audio_specific_config->str_usac_config.signals_3d);
+    if (err_code)
+    {
+      pstr_output_config->i_bytes_consumed = 1;
+      return err_code;
+    }
+
+    if (1 == ptr_ele_interface->is_brir_rendering)
+    {
+      p_obj_mpegh_dec->mpeghd_config.ui_binaural_flag = 1;
+      memcpy(&ptr_ele_interface->spk_config,
+             &ptr_ele_interface->pstr_binaural_renderer->binaural_rep.setup_spk_config_3d,
+             sizeof(ia_interface_speaker_config_3d));
+    }
+
+    p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx =
+        ptr_ele_interface->spk_config.cicp_spk_layout_idx;
+  }
+  if (pstr_input_config->extrn_rend_flag == 1)
+  {
+    p_obj_mpegh_dec->mpeghd_config.extrn_rend_flag = 1;
+    p_obj_mpegh_dec->mpeghd_config.ptr_ch_md_bit_buf =
+        pstr_input_config->ptr_ext_ren_ch_data_buf;
+    p_obj_mpegh_dec->mpeghd_config.ptr_oam_md_bit_buf =
+        pstr_input_config->ptr_ext_ren_oam_data_buf;
+    p_obj_mpegh_dec->mpeghd_config.ptr_hoa_md_bit_buf =
+        pstr_input_config->ptr_ext_ren_hoa_data_buf;
+    p_obj_mpegh_dec->mpeghd_config.ptr_ext_ren_pcm_buf =
+        (WORD8 *)pstr_input_config->ptr_ext_ren_pcm_buf;
+  }
+  if (pstr_input_config->binaural_flag == 1 && pstr_input_config->ptr_brir_buf != NULL)
+  {
+    /* Create local pointers */
+    jmp_buf brir_jmp_buf;
+    IA_ERRORCODE brir_file_read = setjmp(brir_jmp_buf);
+    if (brir_file_read != IA_MPEGH_DEC_NO_ERROR)
+    {
+      pstr_output_config->i_bytes_consumed = 1;
+      return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_BRIR_BYTES;
+    }
+    ia_dec_data_struct *pstr_dec_data =
+        (ia_dec_data_struct *)p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
+    ia_binaural_renderer *pstr_binaural_rendering = &pstr_dec_data->str_binaural_rendering;
+    pstr_binaural_rendering->ptr_scratch = p_obj_mpegh_dec->pp_mem_mpeghd[SCRATCH_IDX];
+    ia_bit_buf_struct bit_buf_str;
+    ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_brir_buf,
+                                      pstr_input_config->binaural_data_len);
+    bit_buf_str.xmpeghd_jmp_buf = &brir_jmp_buf;
+    err_code = impeghd_read_brir_info(pstr_binaural_rendering, &bit_buf_str);
+    if (err_code != IA_MPEGH_DEC_NO_ERROR)
+    {
+      pstr_output_config->i_bytes_consumed = 1;
+      return err_code;
+    }
+  }
+  if (pstr_input_config->maeg_flag == 1 && pstr_input_config->ptr_maeg_buf != NULL)
+  {
+    /* Create local pointers */
+    jmp_buf mae_jmp_buf;
+    IA_ERRORCODE mae_file_read = setjmp(mae_jmp_buf);
+    if (mae_file_read != IA_MPEGH_DEC_NO_ERROR)
+    {
+      pstr_output_config->i_bytes_consumed = 1;
+      return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_MAE_BYTES;
+    }
+
+    ia_bit_buf_struct bit_buf_str;
+    ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_maeg_buf,
+                                      pstr_input_config->maeg_len);
+    bit_buf_str.xmpeghd_jmp_buf = &mae_jmp_buf;
+    impeghd_mp4_get_maeg(&bit_buf_str, ptr_mae_audio_scene_info);
+    ptr_mae_audio_scene_info->asi_present = 1;
+  }
+  if (pstr_input_config->maes_flag == 1 && pstr_input_config->ptr_maes_buf != NULL)
+  {
+    /* Create local pointers */
+    jmp_buf mae_jmp_buf;
+    IA_ERRORCODE mae_file_read = setjmp(mae_jmp_buf);
+    if (mae_file_read != IA_MPEGH_DEC_NO_ERROR)
+    {
+      pstr_output_config->i_bytes_consumed = 1;
+      return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_MAE_BYTES;
+    }
+
+    ia_bit_buf_struct bit_buf_str;
+    ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_maes_buf,
+                                      pstr_input_config->maes_len);
+    bit_buf_str.xmpeghd_jmp_buf = &mae_jmp_buf;
+    impeghd_mp4_get_maes(&bit_buf_str, ptr_mae_audio_scene_info);
+    ptr_mae_audio_scene_info->asi_present = 1;
+  }
+  if (pstr_input_config->maep_flag == 1 && pstr_input_config->ptr_maep_buf != NULL)
+  {
+    /* Create local pointers */
+    jmp_buf mae_jmp_buf;
+    IA_ERRORCODE mae_file_read = setjmp(mae_jmp_buf);
+    if (mae_file_read != IA_MPEGH_DEC_NO_ERROR)
+    {
+      pstr_output_config->i_bytes_consumed = 1;
+      return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_MAE_BYTES;
+    }
+
+    ia_bit_buf_struct bit_buf_str;
+    ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_maep_buf,
+                                      pstr_input_config->maep_len);
+    bit_buf_str.xmpeghd_jmp_buf = &mae_jmp_buf;
+    impeghd_mp4_get_maep(&bit_buf_str, ptr_mae_audio_scene_info);
+    ptr_mae_audio_scene_info->asi_present = 1;
+  }
+
+  if (pstr_input_config->maei_flag == 1 && pstr_input_config->ptr_maei_buf != NULL)
+  {
+    /* Create local pointers */
+    jmp_buf mae_jmp_buf;
+    IA_ERRORCODE mae_file_read = setjmp(mae_jmp_buf);
+    if (mae_file_read != IA_MPEGH_DEC_NO_ERROR)
+    {
+      pstr_output_config->i_bytes_consumed = 1;
+      return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_MAE_BYTES;
+    }
+
+    ia_bit_buf_struct bit_buf_str;
+    ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_maei_buf,
+                                      pstr_input_config->maei_len);
+    bit_buf_str.xmpeghd_jmp_buf = &mae_jmp_buf;
+    impeghd_mp4_get_mael(&bit_buf_str, ptr_mae_audio_scene_info);
+    ptr_mae_audio_scene_info->asi_present = 1;
+  }
+
+  err_code = ia_core_coder_dec_init(p_obj_mpegh_dec);
+  if (pstr_input_config->enable_resamp == 1)
+  {
+    IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
+    if (p_obj_mpegh_dec->mpeghd_config.ui_samp_freq != pstr_input_config->out_samp_freq)
+    {
+      p_obj_mpegh_dec->mpeghd_config.out_samp_freq = pstr_input_config->out_samp_freq;
+      p_obj_mpegh_dec->mpeghd_config.stream_samp_freq =
+          p_obj_mpegh_dec->mpeghd_config.ui_samp_freq;
+      err_code = impeghd_resampler_get_sampling_ratio(&p_obj_mpegh_dec->mpeghd_config);
+      if (err_code)
+      {
+        pstr_input_config->enable_resamp = 0;
+      }
+    }
   }
   else
   {
-    if (pstr_input_config->ei_info_flag == 1 && pstr_input_config->ptr_ei_buf != NULL)
+    p_obj_mpegh_dec->mpeghd_config.out_samp_freq = p_obj_mpegh_dec->mpeghd_config.ui_samp_freq;
+    p_obj_mpegh_dec->mpeghd_config.stream_samp_freq =
+        p_obj_mpegh_dec->mpeghd_config.ui_samp_freq;
+  }
+  if (p_obj_mpegh_dec->mpeghd_config.ui_binaural_flag)
+  {
+    ia_binaural_in_stream_cfg_str wav_info;
+    ia_dec_data_struct *pstr_dec_data =
+        (ia_dec_data_struct *)p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
+    ia_binaural_renderer *pstr_binaural_rendering = &pstr_dec_data->str_binaural_rendering;
+    wav_info.fs_input = p_obj_mpegh_dec->mpeghd_config.ui_samp_freq;
+    wav_info.num_speaker_expected = (p_obj_mpegh_dec->mpeghd_config.ui_n_channels);
+    wav_info.num_channel_is_input = (p_obj_mpegh_dec->mpeghd_config.ui_n_channels);
+    if (p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx == 0)
     {
-      /* Create local pointers */
-      jmp_buf ei_jmp_buf;
-      IA_ERRORCODE ei_file_read = setjmp(ei_jmp_buf);
-      if (ei_file_read != IA_MPEGH_DEC_NO_ERROR)
-      {
-        pstr_output_config->i_bytes_consumed = 1;
-        return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_EI_BYTES;
-      }
-      ia_dec_data_struct *pstr_dec_data =
-          (ia_dec_data_struct *)p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
-      ia_ele_intrctn *ptr_ele_interaction = &pstr_dec_data->str_element_interaction;
-      ia_bit_buf_struct bit_buf_str;
-      ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_ei_buf,
-                                        pstr_input_config->ei_info_size);
-      bit_buf_str.xmpeghd_jmp_buf = &ei_jmp_buf;
-      err_code = impeghd_ele_interaction(&bit_buf_str, ptr_ele_interaction,
-                                         &pstr_audio_specific_config->str_mae_asi);
-      if (err_code != IA_MPEGH_DEC_NO_ERROR)
-      {
-        return err_code;
-      }
-    }
-    if (pstr_input_config->lsi_info_flag == 1 && pstr_input_config->ptr_ls_buf != NULL)
-    {
-      /* Create local pointers */
-      jmp_buf lsi_jmp_buf;
-      IA_ERRORCODE lsi_file_read = setjmp(lsi_jmp_buf);
-      if (lsi_file_read != IA_MPEGH_DEC_NO_ERROR)
-      {
-        pstr_output_config->i_bytes_consumed = 1;
-        return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_LSI_BYTES;
-      }
-      ia_dec_data_struct *pstr_dec_data =
-          (ia_dec_data_struct *)p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
-      ia_local_setup_struct *ptr_ele_interface = &pstr_dec_data->str_local_setup_interaction;
-      ptr_ele_interface->pstr_binaural_renderer = &pstr_dec_data->str_binaural_rendering;
-      ptr_ele_interface->pstr_binaural_renderer->ptr_scratch =
-          p_obj_mpegh_dec->pp_mem_mpeghd[SCRATCH_IDX];
-      ia_bit_buf_struct bit_buf_str;
-      ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_ls_buf,
-                                        pstr_input_config->lsi_info_size);
-      bit_buf_str.xmpeghd_jmp_buf = &lsi_jmp_buf;
-      err_code = impeghd_3da_local_setup_information(
-          &bit_buf_str, ptr_ele_interface,
-          pstr_audio_specific_config->str_usac_config.signals_3d);
-      if (err_code)
-      {
-        pstr_output_config->i_bytes_consumed = 1;
-        return err_code;
-      }
-
-      if (1 == ptr_ele_interface->is_brir_rendering)
-      {
-        p_obj_mpegh_dec->mpeghd_config.ui_binaural_flag = 1;
-        memcpy(&ptr_ele_interface->spk_config,
-               &ptr_ele_interface->pstr_binaural_renderer->binaural_rep.setup_spk_config_3d,
-               sizeof(ia_interface_speaker_config_3d));
-      }
-
-      p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx =
-          ptr_ele_interface->spk_config.cicp_spk_layout_idx;
-    }
-    if (pstr_input_config->extrn_rend_flag == 1)
-    {
-      p_obj_mpegh_dec->mpeghd_config.extrn_rend_flag = 1;
-      p_obj_mpegh_dec->mpeghd_config.ptr_ch_md_bit_buf =
-          pstr_input_config->ptr_ext_ren_ch_data_buf;
-      p_obj_mpegh_dec->mpeghd_config.ptr_oam_md_bit_buf =
-          pstr_input_config->ptr_ext_ren_oam_data_buf;
-      p_obj_mpegh_dec->mpeghd_config.ptr_hoa_md_bit_buf =
-          pstr_input_config->ptr_ext_ren_hoa_data_buf;
-      p_obj_mpegh_dec->mpeghd_config.ptr_ext_ren_pcm_buf =
-          (WORD8 *)pstr_input_config->ptr_ext_ren_pcm_buf;
-    }
-    if (pstr_input_config->binaural_flag == 1 && pstr_input_config->ptr_brir_buf != NULL)
-    {
-      /* Create local pointers */
-      jmp_buf brir_jmp_buf;
-      IA_ERRORCODE brir_file_read = setjmp(brir_jmp_buf);
-      if (brir_file_read != IA_MPEGH_DEC_NO_ERROR)
-      {
-        pstr_output_config->i_bytes_consumed = 1;
-        return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_BRIR_BYTES;
-      }
-      ia_dec_data_struct *pstr_dec_data =
-          (ia_dec_data_struct *)p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
-      ia_binaural_renderer *pstr_binaural_rendering = &pstr_dec_data->str_binaural_rendering;
-      pstr_binaural_rendering->ptr_scratch = p_obj_mpegh_dec->pp_mem_mpeghd[SCRATCH_IDX];
-      ia_bit_buf_struct bit_buf_str;
-      ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_brir_buf,
-                                        pstr_input_config->binaural_data_len);
-      bit_buf_str.xmpeghd_jmp_buf = &brir_jmp_buf;
-      err_code = impeghd_read_brir_info(pstr_binaural_rendering, &bit_buf_str);
-      if (err_code != IA_MPEGH_DEC_NO_ERROR)
-      {
-        pstr_output_config->i_bytes_consumed = 1;
-        return err_code;
-      }
-    }
-    if (pstr_input_config->maeg_flag == 1 && pstr_input_config->ptr_maeg_buf != NULL)
-    {
-      /* Create local pointers */
-      jmp_buf mae_jmp_buf;
-      IA_ERRORCODE mae_file_read = setjmp(mae_jmp_buf);
-      if (mae_file_read != IA_MPEGH_DEC_NO_ERROR)
-      {
-        pstr_output_config->i_bytes_consumed = 1;
-        return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_MAE_BYTES;
-      }
-
-      ia_bit_buf_struct bit_buf_str;
-      ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_maeg_buf,
-                                        pstr_input_config->maeg_len);
-      bit_buf_str.xmpeghd_jmp_buf = &mae_jmp_buf;
-      impeghd_mp4_get_maeg(&bit_buf_str, ptr_mae_audio_scene_info);
-      ptr_mae_audio_scene_info->asi_present = 1;
-    }
-    if (pstr_input_config->maes_flag == 1 && pstr_input_config->ptr_maes_buf != NULL)
-    {
-      /* Create local pointers */
-      jmp_buf mae_jmp_buf;
-      IA_ERRORCODE mae_file_read = setjmp(mae_jmp_buf);
-      if (mae_file_read != IA_MPEGH_DEC_NO_ERROR)
-      {
-        pstr_output_config->i_bytes_consumed = 1;
-        return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_MAE_BYTES;
-      }
-
-      ia_bit_buf_struct bit_buf_str;
-      ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_maes_buf,
-                                        pstr_input_config->maes_len);
-      bit_buf_str.xmpeghd_jmp_buf = &mae_jmp_buf;
-      impeghd_mp4_get_maes(&bit_buf_str, ptr_mae_audio_scene_info);
-      ptr_mae_audio_scene_info->asi_present = 1;
-    }
-    if (pstr_input_config->maep_flag == 1 && pstr_input_config->ptr_maep_buf != NULL)
-    {
-      /* Create local pointers */
-      jmp_buf mae_jmp_buf;
-      IA_ERRORCODE mae_file_read = setjmp(mae_jmp_buf);
-      if (mae_file_read != IA_MPEGH_DEC_NO_ERROR)
-      {
-        pstr_output_config->i_bytes_consumed = 1;
-        return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_MAE_BYTES;
-      }
-
-      ia_bit_buf_struct bit_buf_str;
-      ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_maep_buf,
-                                        pstr_input_config->maep_len);
-      bit_buf_str.xmpeghd_jmp_buf = &mae_jmp_buf;
-      impeghd_mp4_get_maep(&bit_buf_str, ptr_mae_audio_scene_info);
-      ptr_mae_audio_scene_info->asi_present = 1;
-    }
-
-    if (pstr_input_config->maei_flag == 1 && pstr_input_config->ptr_maei_buf != NULL)
-    {
-      /* Create local pointers */
-      jmp_buf mae_jmp_buf;
-      IA_ERRORCODE mae_file_read = setjmp(mae_jmp_buf);
-      if (mae_file_read != IA_MPEGH_DEC_NO_ERROR)
-      {
-        pstr_output_config->i_bytes_consumed = 1;
-        return IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_MAE_BYTES;
-      }
-
-      ia_bit_buf_struct bit_buf_str;
-      ia_core_coder_create_init_bit_buf(&bit_buf_str, pstr_input_config->ptr_maei_buf,
-                                        pstr_input_config->maei_len);
-      bit_buf_str.xmpeghd_jmp_buf = &mae_jmp_buf;
-      impeghd_mp4_get_mael(&bit_buf_str, ptr_mae_audio_scene_info);
-      ptr_mae_audio_scene_info->asi_present = 1;
-    }
-
-    err_code = ia_core_coder_dec_init(p_obj_mpegh_dec);
-    if (pstr_input_config->enable_resamp == 1)
-    {
-      IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
-      if (p_obj_mpegh_dec->mpeghd_config.ui_samp_freq != pstr_input_config->out_samp_freq)
-      {
-        p_obj_mpegh_dec->mpeghd_config.out_samp_freq = pstr_input_config->out_samp_freq;
-        p_obj_mpegh_dec->mpeghd_config.stream_samp_freq =
-            p_obj_mpegh_dec->mpeghd_config.ui_samp_freq;
-        err_code = impeghd_resampler_get_sampling_ratio(&p_obj_mpegh_dec->mpeghd_config);
-        if (err_code)
-        {
-          pstr_input_config->enable_resamp = 0;
-        }
-      }
+      wav_info.cicp_spk_idx = pstr_audio_specific_config->ref_spk_layout.cicp_spk_layout_idx;
     }
     else
     {
-      p_obj_mpegh_dec->mpeghd_config.out_samp_freq = p_obj_mpegh_dec->mpeghd_config.ui_samp_freq;
-      p_obj_mpegh_dec->mpeghd_config.stream_samp_freq =
-          p_obj_mpegh_dec->mpeghd_config.ui_samp_freq;
+      wav_info.cicp_spk_idx = p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx;
     }
-    if (p_obj_mpegh_dec->mpeghd_config.ui_binaural_flag)
+
+    pstr_binaural_rendering->ptr_scratch =
+        p_obj_mpegh_dec->p_state_mpeghd->mpeghd_scratch_mem_v;
+    err_code = impeghd_binaural_renderer_init(pstr_binaural_rendering, &wav_info,
+                                              &pstr_dec_data->binaural_handle);
+    if (err_code != IA_MPEGH_DEC_NO_ERROR)
     {
-      ia_binaural_in_stream_cfg_str wav_info;
-      ia_dec_data_struct *pstr_dec_data =
-          (ia_dec_data_struct *)p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
-      ia_binaural_renderer *pstr_binaural_rendering = &pstr_dec_data->str_binaural_rendering;
-      wav_info.fs_input = p_obj_mpegh_dec->mpeghd_config.ui_samp_freq;
-      wav_info.num_speaker_expected = (p_obj_mpegh_dec->mpeghd_config.ui_n_channels);
-      wav_info.num_channel_is_input = (p_obj_mpegh_dec->mpeghd_config.ui_n_channels);
-      if (p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx == 0)
-      {
-        wav_info.cicp_spk_idx = pstr_audio_specific_config->ref_spk_layout.cicp_spk_layout_idx;
-      }
-      else
-      {
-        wav_info.cicp_spk_idx = p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx;
-      }
-
-      pstr_binaural_rendering->ptr_scratch =
-          p_obj_mpegh_dec->p_state_mpeghd->mpeghd_scratch_mem_v;
-      err_code = impeghd_binaural_renderer_init(pstr_binaural_rendering, &wav_info,
-                                                &pstr_dec_data->binaural_handle);
-      if (err_code != IA_MPEGH_DEC_NO_ERROR)
-      {
-        return err_code;
-      }
-
-      pstr_dec_data->binaural_handle.str_binaural.memory_index +=
-          2048; // TODO: Replace 2048, with variable
+      return err_code;
     }
-  }
-  if (err_code < 0)
-  {
-    p_obj_mpegh_dec->p_state_mpeghd->fatal_err_present = 1;
+
+    pstr_dec_data->binaural_handle.str_binaural.memory_index +=
+        2048; // TODO: Replace 2048, with variable
   }
 
   pstr_output_config->i_bytes_consumed = p_obj_mpegh_dec->p_state_mpeghd->i_bytes_consumed;
@@ -1055,10 +1043,6 @@ IA_ERRORCODE ia_mpegh_dec_execute(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOI
 
   if (err_code != IA_MPEGH_DEC_NO_ERROR)
   {
-    if (err_code < 0)
-    {
-      p_obj_mpegh_dec->p_state_mpeghd->fatal_err_present = 1;
-    }
     if (p_obj_mpegh_dec->p_state_mpeghd->i_bytes_consumed == 0)
     {
       p_obj_mpegh_dec->p_state_mpeghd->i_bytes_consumed = 1;
@@ -1163,72 +1147,35 @@ IA_ERRORCODE ia_mpegh_dec_delete(pVOID pv_output)
 IA_ERRORCODE
 ia_core_coder_decoder_flush_api(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
 {
-  UWORD8 *header_temp_ptr;
-  WORD32 header_length;
   IA_ERRORCODE err;
-  WORD32 ui_pcm_wd_sz;
-  WORD32 ui_target_loudness, ui_loud_norm_flag, ui_drc_effect;
-  WORD32 resample_output;
-  UWORD32 out_samp_freq;
-  if (p_obj_mpegh_dec->mpeghd_config.ui_flush_cmd == 0)
-  {
-    header_temp_ptr = p_obj_mpegh_dec->p_state_mpeghd->header_ptr;
-    header_length = p_obj_mpegh_dec->p_state_mpeghd->header_length;
-    memset(p_obj_mpegh_dec->p_state_mpeghd, 0, sizeof(ia_mpegh_dec_state_struct));
-    {
-      pUWORD8 p_temp = (pUWORD8)p_obj_mpegh_dec->p_state_mpeghd;
-      UWORD32 *meminfo = (UWORD32 *)p_obj_mpegh_dec->p_mem_info_mpeghd;
-      UWORD32 pers_size = meminfo[0];
-      p_temp = p_temp + pers_size - (sizeof(ia_dec_data_struct) + (IN_BUF_SIZE));
+  WORD8 *ptr_scratch = (WORD8 *)p_obj_mpegh_dec->p_state_mpeghd->mpeghd_scratch_mem_v;
+  ia_dec_data_struct *pstr_dec_data = p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
 
-      p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data = p_temp;
-      p_obj_mpegh_dec->p_state_mpeghd->ia_audio_specific_config =
-          &(((ia_dec_data_struct *)(p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data))
-                ->str_frame_data.str_audio_specific_config);
-      p_obj_mpegh_dec->p_state_mpeghd->header_ptr = p_temp + sizeof(ia_dec_data_struct);
-    }
+  memset(&pstr_dec_data->str_frame_data, 0, sizeof(pstr_dec_data->str_frame_data));
+  memset(&pstr_dec_data->str_usac_data, 0, sizeof(pstr_dec_data->str_usac_data));
+  memset(&pstr_dec_data->str_hoa_dec_handle, 0, sizeof(pstr_dec_data->str_hoa_dec_handle));
+  memset(&pstr_dec_data->str_hoa_frame_data, 0, sizeof(pstr_dec_data->str_hoa_frame_data));
+  memset(&pstr_dec_data->str_obj_ren_dec_state, 0, sizeof(pstr_dec_data->str_obj_ren_dec_state));
+  memset(&pstr_dec_data->str_drc_payload, 0, sizeof(pstr_dec_data->str_drc_payload));
+  memset(&pstr_dec_data->drc_persistent_buf[0], 0, sizeof(pstr_dec_data->drc_persistent_buf));
+  memset(&pstr_dec_data->str_peak_limiter, 0, sizeof(pstr_dec_data->str_peak_limiter));
+  memset(&pstr_dec_data->str_interaction_config, 0,
+         sizeof(pstr_dec_data->str_interaction_config));
+  memset(&pstr_dec_data->str_enh_obj_md_frame, 0, sizeof(pstr_dec_data->str_enh_obj_md_frame));
+  memset(&pstr_dec_data->str_domain_switcher, 0, sizeof(pstr_dec_data->str_domain_switcher));
+  memset(&pstr_dec_data->binaural_handle, 0, sizeof(pstr_dec_data->binaural_handle));
+  memset(&pstr_dec_data->str_format_converter, 0, sizeof(pstr_dec_data->str_format_converter));
+  memset(&pstr_dec_data->str_earcon_format_converter, 0,
+         sizeof(pstr_dec_data->str_earcon_format_converter));
+  memset(&pstr_dec_data->str_resampler, 0, sizeof(pstr_dec_data->str_resampler));
+  memset(&pstr_dec_data->str_earcon_resampler, 0, sizeof(pstr_dec_data->str_earcon_resampler));
+  p_obj_mpegh_dec->mpeghd_config.ui_samp_freq = 0;
+  p_obj_mpegh_dec->p_state_mpeghd->frame_counter = 0;
+  p_obj_mpegh_dec->p_state_mpeghd->decode_create_done = 0;
 
-    ui_pcm_wd_sz = p_obj_mpegh_dec->mpeghd_config.ui_pcm_wdsz;
-    ui_target_loudness = p_obj_mpegh_dec->mpeghd_config.ui_target_loudness;
-    ui_loud_norm_flag = p_obj_mpegh_dec->mpeghd_config.ui_loud_norm_flag;
-    ui_drc_effect = p_obj_mpegh_dec->mpeghd_config.ui_effect_type;
-    resample_output = p_obj_mpegh_dec->mpeghd_config.resample_output;
-    out_samp_freq = p_obj_mpegh_dec->mpeghd_config.out_samp_freq;
-    memset(&(p_obj_mpegh_dec->mpeghd_config), 0, sizeof(ia_mpegh_dec_config_struct));
-
-    p_obj_mpegh_dec->mpeghd_config.ui_pcm_wdsz = 16;
-    p_obj_mpegh_dec->mpeghd_config.ui_samp_freq = 48000;
-    p_obj_mpegh_dec->mpeghd_config.ui_channel_mode = 3;
-    p_obj_mpegh_dec->mpeghd_config.ui_flush_cmd = 1;
-
-    p_obj_mpegh_dec->mpeghd_config.ui_max_channels = 24;
-    p_obj_mpegh_dec->mpeghd_config.ui_pcm_wdsz = ui_pcm_wd_sz;
-    p_obj_mpegh_dec->mpeghd_config.ui_target_loudness = ui_target_loudness;
-    p_obj_mpegh_dec->mpeghd_config.ui_loud_norm_flag = ui_loud_norm_flag;
-    p_obj_mpegh_dec->mpeghd_config.ui_effect_type = ui_drc_effect;
-    p_obj_mpegh_dec->mpeghd_config.resample_output = resample_output;
-    p_obj_mpegh_dec->mpeghd_config.out_samp_freq = out_samp_freq;
-
-    {
-      ia_mpegh_dec_tables_struct *pstr_mpeghd_tables = &p_obj_mpegh_dec->mpeghd_tables;
-      pstr_mpeghd_tables->pstr_huffmann_tables =
-          (ia_mpegh_dec_huffman_tables_struct *)&ia_core_coder_mpeghd_huffmann_tables;
-      pstr_mpeghd_tables->pstr_block_tables =
-          (ia_mpegh_dec_block_tables_struct *)&ia_core_coder_mpeghd_block_tables;
-    }
-    p_obj_mpegh_dec->p_state_mpeghd->header_ptr = header_temp_ptr;
-    p_obj_mpegh_dec->p_state_mpeghd->ui_in_bytes = header_length;
-    p_obj_mpegh_dec->p_state_mpeghd->header_length = header_length;
-
-    err = ia_core_coder_dec_init(p_obj_mpegh_dec);
-    return err;
-  }
-  else
-  {
-    p_obj_mpegh_dec->mpeghd_config.ui_flush_cmd = 0;
-    err = ia_core_coder_dec_init(p_obj_mpegh_dec);
-    return err;
-  }
+  err = ia_core_coder_dec_init(p_obj_mpegh_dec);
+  p_obj_mpegh_dec->p_state_mpeghd->flush = 1;
+  return err;
 }
 
 /**
@@ -1271,14 +1218,7 @@ ia_core_coder_dec_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
     }
   }
 
-  if (p_obj_mpegh_dec->mpeghd_config.ui_flush_cmd == 0)
-  {
-    in_buffer = p_obj_mpegh_dec->pp_mem_mpeghd[INPUT_IDX];
-  }
-  else
-  {
-    in_buffer = p_obj_mpegh_dec->p_state_mpeghd->header_ptr;
-  }
+  in_buffer = p_obj_mpegh_dec->pp_mem_mpeghd[INPUT_IDX];
 
   p_state_mpegh_dec = p_obj_mpegh_dec->p_state_mpeghd;
   p_state_mpegh_dec->xmpeghd_jmp_buf = &ifile_init_jmp_buf;
@@ -1345,7 +1285,7 @@ ia_core_coder_dec_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
           WORD8 *outbuffer = p_obj_mpegh_dec->pp_mem_mpeghd[OUTPUT_IDX];
           WORD32 out_bytes = 0;
           WORD32 frames_done = p_obj_mpegh_dec->p_state_mpeghd->frame_counter;
-
+          p_obj_mpegh_dec->p_state_mpeghd->flush = 0;
           error_code = ia_core_coder_dec_main(p_obj_mpegh_dec, inbuffer, outbuffer, &out_bytes,
                                               frames_done, pcm_size,
                                               &p_obj_mpegh_dec->p_state_mpeghd->num_of_output_ch);
@@ -1480,17 +1420,20 @@ ia_core_coder_dec_execute(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
       }
       return error_code;
     }
-    p_obj_mpegh_dec->p_state_mpeghd->frame_counter++;
   }
 
-  if (pstr_dec_data->dec_bit_buf.size != 0 && pstr_dec_data->dec_bit_buf.cnt_bits >= 0)
+  if (p_obj_mpegh_dec->p_state_mpeghd->flush == 0)
   {
-    p_obj_mpegh_dec->p_state_mpeghd->i_bytes_consumed =
-        (pstr_dec_data->dec_bit_buf.size - pstr_dec_data->dec_bit_buf.cnt_bits + 7) >> 3;
-  }
-  else
-  {
-    p_obj_mpegh_dec->p_state_mpeghd->i_bytes_consumed = 1;
+    p_obj_mpegh_dec->p_state_mpeghd->frame_counter++;
+    if (pstr_dec_data->dec_bit_buf.size != 0 && pstr_dec_data->dec_bit_buf.cnt_bits >= 0)
+    {
+      p_obj_mpegh_dec->p_state_mpeghd->i_bytes_consumed =
+          (pstr_dec_data->dec_bit_buf.size - pstr_dec_data->dec_bit_buf.cnt_bits + 7) >> 3;
+    }
+    else
+    {
+      p_obj_mpegh_dec->p_state_mpeghd->i_bytes_consumed = 1;
+    }
   }
 
   p_obj_mpegh_dec->p_state_mpeghd->ui_out_bytes = out_bytes;
