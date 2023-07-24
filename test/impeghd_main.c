@@ -173,7 +173,6 @@ FILE *g_pf_ext_ren_ch_md = NULL;
 FILE *g_pf_ext_ren_hoa_md = NULL;
 FILE *g_pf_ext_ren_pcm = NULL;
 WORD8 out_filename[IA_MAX_CMD_LINE_LENGTH] = "";
-WORD32 raw_testing = 0;
 
 #ifdef WAV_HEADER
 /**
@@ -571,37 +570,12 @@ IA_ERRORCODE impeghd_main_process(WORD32 argc, pWORD8 argv[])
   pstr_out_cfg->i_bytes_consumed = pstr_out_cfg->ui_inp_buf_size;
   i_bytes_read = 0;
   {
-    for (i = 0; i < (i_buff_size - pstr_out_cfg->i_bytes_consumed); i++)
-    {
-      pb_inp_buf[i] = pb_inp_buf[i + pstr_out_cfg->i_bytes_consumed];
-    }
-
-    impeghd_mp4_fw_read(
-        g_pf_inp, (pUWORD8)(pb_inp_buf + i_buff_size - pstr_out_cfg->i_bytes_consumed),
-        (ui_inp_size - (i_buff_size - pstr_out_cfg->i_bytes_consumed)), (pUWORD32)&i_bytes_read);
-
-    if (!raw_testing && i_bytes_read == 0)
-    {
-      impeghd_mp4_fw_read(g_pf_inp,
-                          (pUWORD8)(pb_inp_buf + i_buff_size - pstr_out_cfg->i_bytes_consumed),
-                          (ui_inp_size - (i_buff_size - pstr_out_cfg->i_bytes_consumed)),
-                          (pUWORD32)&i_bytes_read);
-    }
-
-    i_buff_size = i_buff_size - (pstr_out_cfg->i_bytes_consumed - i_bytes_read);
-
-    if (i_buff_size <= 0)
-    {
-      err_code = IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_INPUT_BYTES;
-      _IA_HANDLE_ERROR(p_proc_err_info, (pWORD8) "", err_code);
-      goto exit_path;
-    }
-    pstr_in_cfg->num_inp_bytes = i_buff_size;
-    if (raw_testing)
+    if (g_pf_inp->is_mp4_file && !g_pf_inp->is_mp4_mhm1)
     {
       pstr_in_cfg->ui_raw_flag = 1;
     }
     pstr_out_cfg->i_bytes_consumed = 0;
+    i_buff_size = 0;
     do
     {
       if (((WORD32)ui_inp_size - (WORD32)(i_buff_size - pstr_out_cfg->i_bytes_consumed)) > 0)
@@ -623,6 +597,7 @@ IA_ERRORCODE impeghd_main_process(WORD32 argc, pWORD8 argv[])
           goto exit_path;
         }
       }
+      pstr_in_cfg->num_inp_bytes = i_buff_size;
       err_code =
           ia_mpegh_dec_init(pv_ia_process_api_obj, (pVOID)pstr_in_cfg, (pVOID)pstr_out_cfg);
       if (err_code == IA_MPEGH_DEC_INIT_NONFATAL_INSUFFICIENT_EI_BYTES ||
@@ -726,7 +701,6 @@ IA_ERRORCODE impeghd_main_process(WORD32 argc, pWORD8 argv[])
       {
         pb_inp_buf[i] = pb_inp_buf[i + pstr_out_cfg->i_bytes_consumed];
       }
-      g_pf_inp->is_execution = 1;
       err_code = impeghd_mp4_fw_read(
           g_pf_inp, (pUWORD8)(pb_inp_buf + i_buff_size - pstr_out_cfg->i_bytes_consumed),
           ((WORD32)ui_inp_size - (WORD32)(i_buff_size - pstr_out_cfg->i_bytes_consumed)),
@@ -1102,7 +1076,6 @@ IA_ERRORCODE main(WORD32 argc, char *argv[])
           {
             pWORD8 pb_arg_val = fargv[i] + 7;
             WORD8 pb_input_file_name[IA_MAX_CMD_LINE_LENGTH] = "";
-            raw_testing = 0;
             strcat((char *)pb_input_file_name, (const char *)pb_input_file_path);
             strcat((char *)pb_input_file_name, (const char *)pb_arg_val);
             g_pf_inp = impeghd_mp4_fw_open((pWORD8)pb_input_file_name);
@@ -1114,17 +1087,6 @@ IA_ERRORCODE main(WORD32 argc, char *argv[])
               exit(1);
             }
             file_count++;
-            if (g_pf_inp->is_mp4_file)
-            {
-              if (g_pf_inp->is_mp4_mhm1)
-              {
-                raw_testing = 0;
-              }
-              else
-              {
-                raw_testing = 1;
-              }
-            }
           }
 
           if (!strncmp((const char *)fargv[i], "-ofile:", 7))
@@ -1286,19 +1248,7 @@ IA_ERRORCODE main(WORD32 argc, char *argv[])
                                 err_code);
           exit(1);
         }
-        raw_testing = 0;
         g_binaural_flag = 0;
-        if (g_pf_inp->is_mp4_file)
-        {
-          if (g_pf_inp->is_mp4_mhm1)
-          {
-            raw_testing = 0;
-          }
-          else
-          {
-            raw_testing = 1;
-          }
-        }
       }
       if (!strncmp((const char *)argv[i], "-ibrir:", 7))
       {
