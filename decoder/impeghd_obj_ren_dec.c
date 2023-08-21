@@ -372,11 +372,11 @@ static WORD32 impeghd_ls_subset_empty(ia_renderer_ls_params *ptr_ls_vertex, WORD
       point[0] = ptr_ls_vertex[j].ls_azimuth;
 
       flag_poly = 1;
-      FLOAT32 front = 180 - (FLOAT32)fmod(360 - point[0], 360);
+      FLOAT32 front = 180 - (FLOAT32)fmod(180 - point[0], 360);
       for (index = 0; index < num_sub_ls; index++)
       {
         vertices[2 * index + 0] =
-            ia_sub_flt(180 - (FLOAT32)fmod(360 - polygon[2 * index], 360), front);
+            ia_sub_flt(180 - (FLOAT32)fmod(180 - polygon[2 * index], 360), front);
         vertices[2 * index + 1] = ia_sub_flt(polygon[2 * index + 1], point[1]);
       }
 
