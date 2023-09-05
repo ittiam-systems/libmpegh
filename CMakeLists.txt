@@ -126,9 +126,11 @@ add_executable (ia_mpeghd_testbench
 	)
 
 if(MSVC)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:5242880")
 	target_compile_options(
 		ia_mpeghd_lib	
 		PRIVATE
+        -DLC_LEVEL_4
 		-D_CRT_SECURE_NO_WARNINGS
 		-D_X86_
 		)
@@ -144,6 +146,7 @@ else()
 			ia_mpeghd_lib	
 			PRIVATE
 			-D_X86_
+            -DLC_LEVEL_4
 			-c -O3 -Wall -Wsequence-point
 			-Wunused-function 
 			)
@@ -158,6 +161,7 @@ else()
 			ia_mpeghd_lib
 			PRIVATE
 			-D_X86_
+            -DLC_LEVEL_4
 			-c -m32 -O3 -Wall -Wsequence-point
 			-Wunused-function 
 			)
@@ -175,6 +179,7 @@ else()
 			ia_mpeghd_lib
 			PRIVATE
 			-D_ARM_
+            -DLC_LEVEL_4
 			-c -O3 -mcpu=cortex-a8 -mfloat-abi=hard -Wall 
 			-Wsequence-point -Wunused-function --std=gnu99
 			)
@@ -189,6 +194,7 @@ else()
 			ia_mpeghd_lib
 			PRIVATE
 			-D_ARM_
+            -DLC_LEVEL_4
 			-c -O3 -march=armv8-a -Wall -Wsequence-point 
 			-Wunused-function --std=gnu99
 			)

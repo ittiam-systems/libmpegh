@@ -38,6 +38,23 @@
 #include <impeghd_type_def.h>
 
 #define MAX_ELEMENTS_USAC (50)
+#ifdef LC_LEVEL_4
+// The bit stream extracted value can be 32.
+// Currently this is limited to 3 considering:
+// Audio Channels, Objects and HOA Transport channels.
+#define MAX_NUM_SIGNALGROUPS (28)
+/*The multi‐channel coding tool (MCT) shall not employ
+ * more stereo boxes than 16 for LC profile lvl 3*/
+#define MAX_NUM_MC_BOXES (28)
+#define MAX_NUM_MC_BANDS (64)
+#define MAX_TIME_CHANNELS (MAX_NUM_CHANNELS)
+#define DEFAULT_BETA (48) /*equals 45 degrees */
+#define DEFAULT_ALPHA (0)
+#define MAX_NUM_OUT_CHANNELS (MAX_NUM_CHANNELS)
+#define MAX_AUDIO_GROUPS (32)
+#define MAX_AUDIO_CHANNEL_LAYOUTS (32)
+#define MAX_NUM_SPEAKERS (24)
+#else
 // The bit stream extracted value can be 32.
 // Currently this is limited to 3 considering:
 // Audio Channels, Objects and HOA Transport channels.
@@ -53,6 +70,7 @@
 #define MAX_AUDIO_GROUPS (32)
 #define MAX_AUDIO_CHANNEL_LAYOUTS (32)
 #define MAX_NUM_SPEAKERS (24)
+#endif
 #define MAX_CICP_INDEX (20)
 #define MAX_CICP_SPK_INDEX (42)
 #define MAX_CONFIG_EXTENSIONS (5)
@@ -114,9 +132,17 @@
 #define MPEGH_PROFILE_BP_LVL_5 (0x14)
 
 #define MINIMUM_SUPPORTED_LC_PROFILE (MPEGH_PROFILE_LC_LVL_1)
+#ifdef LC_LEVEL_4
+#define MAXIMUM_SUPPORTED_LC_PROFILE (MPEGH_PROFILE_LC_LVL_4)
+#else
 #define MAXIMUM_SUPPORTED_LC_PROFILE (MPEGH_PROFILE_LC_LVL_3)
+#endif
 #define MINIMUM_SUPPORTED_BP_PROFILE (MPEGH_PROFILE_BP_LVL_1)
+#ifdef LC_LEVLE_4
+#define MAXIMUM_SUPPORTED_BP_PROFILE (MPEGH_PROFILE_BP_LVL_4)
+#else
 #define MAXIMUM_SUPPORTED_BP_PROFILE (MPEGH_PROFILE_BP_LVL_3)
+#endif
 
 typedef UWORD8 UINT8;
 typedef UWORD32 UINT32;
@@ -217,8 +243,15 @@ typedef struct
 
 #define BS_MAX_NUM_OUT_CHANNELS (255)
 
+#ifdef LC_LEVEL_4
+#define MAX_CHANNEL_COUNT (28)
+
+#define SEQUENCE_COUNT_MAX (48)
+#else
 #define MAX_CHANNEL_COUNT (16)
+
 #define SEQUENCE_COUNT_MAX (24)
+#endif
 #define PARAM_DRC_TYPE_FF_NODE_COUNT_MAX (9)
 #define PARAM_DRC_INSTRUCTIONS_COUNT_MAX (8)
 #define DOWNMIX_ID_COUNT_MAX (8)

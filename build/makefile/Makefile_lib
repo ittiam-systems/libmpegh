@@ -1,7 +1,7 @@
 #This is for including values like architecture, compiler command amd assembler commands etc.
 include ./Make.defs
 
-CFLAGS += -c -O3 -Wall -Wsequence-point -Wunused-function 
+CFLAGS += -c -O3 -Wall -Wsequence-point -Wunused-function -DLC_LEVEL_4
 
 LIBS		= ../lib/ia_mpegh_dec_app_$(ARCH).a
 PATH_DEC      = ../../decoder
