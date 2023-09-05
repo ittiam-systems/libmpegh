@@ -1633,12 +1633,14 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
         mpeghd_state_struct->is_base_line_profile_3b = 1;
       }
     }
-    else if (compat_lc_lvl <= MPEGH_PROFILE_LC_LVL_3 && compat_lc_lvl >= MPEGH_PROFILE_LC_LVL_1)
+    else if ((compat_lc_lvl <= MAXIMUM_SUPPORTED_LC_PROFILE) &&
+              (compat_lc_lvl >= MINIMUM_SUPPORTED_LC_PROFILE))
     {
       mpeghd_state_struct->is_base_line_profile_3b = 0;
       mpegh_profile_lvl = compat_lc_lvl;
     }
   }
+
   switch (mpegh_profile_lvl)
   {
   case MPEGH_PROFILE_LC_LVL_1:
@@ -1666,6 +1668,19 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
       return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
     }
     break;
+#ifdef LC_LEVEL_4
+  case MPEGH_PROFILE_BP_LVL_4:
+  case MPEGH_PROFILE_LC_LVL_4:
+    if (dec_proc_core_chans > MAX_NUM_CHANNELS || ref_layout_chans > MAX_NUM_CHANNELS ||
+        (dec_proc_core_chans > MAX_NUM_CHANNELS_LVL4 &&
+            (num_hoa_based_grps != 0 || num_ch_based_grps != 0)) ||
+          (ref_layout_chans > MAX_NUM_CHANNELS_LVL4 &&
+            (num_hoa_based_grps != 0 || num_ch_based_grps != 0)))
+    {
+      return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
+    }
+    break;
+#endif
   default:
     return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_MPEGH_PROFILE;
     break;
