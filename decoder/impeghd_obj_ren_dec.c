@@ -85,7 +85,7 @@ const WORD32 ia_loud_speaker_subset_B[LS_SUBSET_B_LEN] = {CH_M_L045, CH_M_R045, 
 const WORD32 ia_loud_speaker_subset_C[LS_SUBSET_C_LEN] = {CH_M_L110, CH_U_L110, CH_U_R110,
                                                           CH_M_R110};
 
-const WORD32 ia_loud_speaker_subset_D[LS_SUBSET_D_LEN] = {CH_M_L135, CH_U_R135, CH_U_L135,
+const WORD32 ia_loud_speaker_subset_D[LS_SUBSET_D_LEN] = {CH_M_L135, CH_U_L135, CH_U_R135,
                                                           CH_M_R135};
 
 /**
@@ -350,6 +350,7 @@ static WORD32 impeghd_ls_subset_empty(ia_renderer_ls_params *ptr_ls_vertex, WORD
   WORD32 flag_poly;
   FLOAT32 polygon[OBJ_REN_MAX_VERTICES];
   FLOAT32 vertices[OBJ_REN_MAX_VERTICES];
+  FLOAT32 offset = ptr_ls_vertex->offset;
 
   for (i = 0; i < num_sub_ls; i++)
   {
@@ -372,11 +373,11 @@ static WORD32 impeghd_ls_subset_empty(ia_renderer_ls_params *ptr_ls_vertex, WORD
       point[0] = ptr_ls_vertex[j].ls_azimuth;
 
       flag_poly = 1;
-      FLOAT32 front = 180 - (FLOAT32)fmod(180 - point[0], 360);
+      FLOAT32 front = 180 - (FLOAT32)fmod((180 + offset) - point[0], 360);
       for (index = 0; index < num_sub_ls; index++)
       {
         vertices[2 * index + 0] =
-            ia_sub_flt(180 - (FLOAT32)fmod(180 - polygon[2 * index], 360), front);
+            ia_sub_flt(180 - (FLOAT32)fmod((180 + offset) - polygon[2 * index], 360), front);
         vertices[2 * index + 1] = ia_sub_flt(polygon[2 * index + 1], point[1]);
       }
 
@@ -591,6 +592,7 @@ impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, pVO
   i = impeghd_adjust_ele_azi_ind(ptr_obj_ren_dec_state, &num_imag_ls, &max_ele_spk_idx,
                                  &min_ele_spk_idx);
   /* Step 3 Check if subset A speaker set is present in the speaker layout */
+  ptr_obj_ren_dec_state->non_lfe_ls_str[0].offset = 0.0f;
   flag = impeghd_ls_subset_exist(&ptr_obj_ren_dec_state->non_lfe_ls_str[0],
                                  (WORD32 *)&ia_loud_speaker_subset_A[0], LS_SUBSET_A_LEN,
                                  (num_ls + num_imag_ls),
@@ -614,6 +616,7 @@ impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, pVO
   else
   {
     /* Step 3 Check if subset B speaker set is present in the speaker layout */
+    ptr_obj_ren_dec_state->non_lfe_ls_str[0].offset = 0.0f;
     flag = impeghd_ls_subset_exist(&ptr_obj_ren_dec_state->non_lfe_ls_str[0],
                                    (WORD32 *)&ia_loud_speaker_subset_B[0], LS_SUBSET_B_LEN,
                                    (num_ls + num_imag_ls),
@@ -638,6 +641,7 @@ impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, pVO
   }
 
   /* Step 4 Check if subset C speaker set is present in the speaker layout */
+  ptr_obj_ren_dec_state->non_lfe_ls_str[0].offset = 180.0f;
   flag = impeghd_ls_subset_exist(&ptr_obj_ren_dec_state->non_lfe_ls_str[0],
                                  (WORD32 *)&ia_loud_speaker_subset_C[0], LS_SUBSET_C_LEN,
                                  (num_ls + num_imag_ls),
@@ -663,6 +667,7 @@ impeghd_add_imaginary_ls(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, pVO
   else
   {
     /* Step 4 Check if subset D speaker set is present in the speaker layout */
+    ptr_obj_ren_dec_state->non_lfe_ls_str[0].offset = 180.0f;
     flag = impeghd_ls_subset_exist(&ptr_obj_ren_dec_state->non_lfe_ls_str[0],
                                    (WORD32 *)&ia_loud_speaker_subset_D[0], LS_SUBSET_D_LEN,
                                    (num_ls + num_imag_ls),

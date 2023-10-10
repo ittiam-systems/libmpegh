@@ -58,6 +58,7 @@ typedef struct
   WORD32 ls_index;
   WORD32 ls_order;
   ia_cart_coord_str ls_cart_coord;
+  FLOAT32 offset;
 } ia_renderer_ls_params;
 
 typedef struct
