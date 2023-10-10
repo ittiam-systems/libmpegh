@@ -2961,19 +2961,26 @@ search_mhaC:
   // BTRT Changes
   if ((*n)->es.type == IT_BTRT)
   {
-    impeghd_mp4_fseek(fp, (*n)->es.size - 8, SEEK_CUR);
-    ret = impeghd_mp4_fread(charbuf, 1, 4, fp);
+    //bufferSizeDB
+    impeghd_mp4_fread(charbuf, 1, 4, fp);
     if (ret < 4)
     {
       return IT_ERROR;
     }
-    (*n)->es.size = impeghd_mp4_rev32(*data_size);
-    ret = impeghd_mp4_fread(charbuf, 1, 4, fp);
+    //maxBitrate
+    impeghd_mp4_fread(charbuf, 1, 4, fp);
     if (ret < 4)
     {
       return IT_ERROR;
     }
-    (*n)->es.type = impeghd_mp4_rev32(*data_size);
+    // avgBitrate
+    impeghd_mp4_fread(charbuf, 1, 4, fp);
+    if (ret < 4)
+    {
+      return IT_ERROR;
+    }
+    if (tag_mhm1)
+      return IT_OK;
   }
 
   len -= 8;
@@ -2997,7 +3004,6 @@ search_mhaC:
     {
       if ((*n)->es.type == IT_BTRT)
       {
-        impeghd_mp4_fseek(fp, (*n)->es.size - 8, SEEK_CUR);
         if (tag_mhaC == 0)
           goto search_mhaC;
         return IT_OK;
@@ -3452,7 +3458,7 @@ WORD32 impeghd_mp4_get_es(pVOID fp, ia_mp4_es_desc **n, ia_mp4_mem_node **m, tra
   (*n)->ipmp_desc_ptr = ptr2;
   ptr2->next = NULL;
 
-  while ((*n)->length - count)
+  while ((*n)->length > count)
   {
     switch (tag)
     {
