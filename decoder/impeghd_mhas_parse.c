@@ -1364,7 +1364,7 @@ IA_ERRORCODE impeghd_mhas_parse(ia_mhas_pac_info *pstr_pac_info,
     {
       ia_drc_payload_struct str_drc_payload;
       err_code = impd_drc_mpegh3da_parse_loudness_info_set(&str_drc_payload.str_loud_info,
-                                                           pstr_bit_buf, pstr_mae_asi);
+                                                           pstr_bit_buf);
     }
     break;
     default:
