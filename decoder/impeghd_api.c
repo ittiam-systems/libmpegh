@@ -222,6 +222,7 @@ static VOID impeghd_set_default_config(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
   p_obj_mpegh_dec->mpeghd_config.ui_pcm_wdsz = IMPEGHD_CONFIG_PARAM_PCM_WD_SZ_DFLT_VAL;
   p_obj_mpegh_dec->mpeghd_config.ui_effect_type = IMPEGHD_CONFIG_PARAM_EFFECT_TYPE_DFLT_VAL;
   p_obj_mpegh_dec->mpeghd_config.ui_target_loudness = IMPEGHD_CONFIG_PARAM_TGT_LOUDNESS_DFLT_VAL;
+  p_obj_mpegh_dec->mpeghd_config.drc_apply = 0;
   p_obj_mpegh_dec->mpeghd_config.ui_loud_norm_flag = IMPEGHD_CONFIG_PARAM_LOUD_NORM_FLG_DFLT_VAL;
   p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx = IMPEGHD_CONFIG_PARAM_CICP_IDX_DFLT_VAL;
   p_obj_mpegh_dec->mpeghd_config.i_preset_id = IMPEGHD_CONFIG_PARAM_PRESET_ID_DFLT_VAL;
@@ -289,24 +290,30 @@ static IA_ERRORCODE impeghd_set_config_params(ia_mpegh_dec_api_struct *p_obj_mpe
     p_obj_mpegh_dec->mpeghd_config.resample_output = 1;
     p_obj_mpegh_dec->mpeghd_config.out_samp_freq = ptr_input_config->out_samp_freq;
   }
-  if ((ptr_input_config->ui_effect > 8) || (ptr_input_config->ui_effect < 0))
+  if (ptr_input_config->ui_effect != IMPEGHD_CONFIG_PARAM_EFFECT_TYPE_DFLT_VAL)
   {
-    p_obj_mpegh_dec->mpeghd_config.ui_effect_type = 0;
-    return (IA_MPEGH_DEC_CONFIG_NONFATAL_INVALID_EFFECT_TYPE);
+    if ((ptr_input_config->ui_effect > 8) || (ptr_input_config->ui_effect < 0))
+    {
+      p_obj_mpegh_dec->mpeghd_config.ui_effect_type = 0;
+      p_obj_mpegh_dec->mpeghd_config.drc_apply = 1;
+      return (IA_MPEGH_DEC_CONFIG_NONFATAL_INVALID_EFFECT_TYPE);
+    }
+    p_obj_mpegh_dec->mpeghd_config.ui_effect_type = ptr_input_config->ui_effect;
   }
-  p_obj_mpegh_dec->mpeghd_config.ui_effect_type = ptr_input_config->ui_effect;
 
   if (ptr_input_config->ui_target_loudness[0] == 1)
   {
     if (ptr_input_config->ui_target_loudness[1] >= 0)
     {
       p_obj_mpegh_dec->mpeghd_config.ui_loud_norm_flag = 1;
+      p_obj_mpegh_dec->mpeghd_config.drc_apply = 1;
     }
     ptr_input_config->ui_target_loudness[1] = -(ptr_input_config->ui_target_loudness[1] >> 2);
     if (((ptr_input_config->ui_target_loudness[1]) > 0) ||
         ((ptr_input_config->ui_target_loudness[1]) < -63))
     {
       p_obj_mpegh_dec->mpeghd_config.ui_target_loudness = 0;
+      p_obj_mpegh_dec->mpeghd_config.drc_apply = 0;
       return (IA_MPEGH_DEC_CONFIG_NONFATAL_INVALID_TARGET_LOUDNESS);
     }
     p_obj_mpegh_dec->mpeghd_config.ui_target_loudness = ptr_input_config->ui_target_loudness[1];

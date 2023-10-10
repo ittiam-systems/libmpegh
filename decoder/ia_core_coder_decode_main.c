@@ -1743,15 +1743,19 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
       {
       case ID_EXT_ELE_UNI_DRC:
       {
-        pstr_dec_data->str_drc_payload.pstr_drc_config =
-            &pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.uni_drc_cfg;
-        err_code =
-            impeghd_uni_drc_dec_init(pstr_asc, pstr_dec_data, target_loudness, loudness_norm_flag,
-                                     drc_effect_type, mpegh_dec_handle->p_config->i_preset_id,
-                                     mpegh_dec_handle->p_config->ui_cicp_layout_idx, ele_idx);
-        if (err_code)
+        if (handle->mpeghd_config.drc_apply == 1)
         {
-          return err_code;
+          pstr_dec_data->str_drc_payload.pstr_drc_config =
+              &pstr_asc->str_usac_config.uni_drc_cfg;
+          err_code =
+              impeghd_uni_drc_dec_init(pstr_asc, pstr_dec_data, target_loudness,
+                                       loudness_norm_flag, drc_effect_type,
+                                       mpegh_dec_handle->p_config->i_preset_id,
+                                       mpegh_dec_handle->p_config->ui_cicp_layout_idx, ele_idx);
+          if (err_code)
+          {
+            return err_code;
+          }
         }
       }
       break;
@@ -2109,7 +2113,8 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
   for (ele = 0; ele < num_elements; ele++)
   {
     if ((ID_EXT_ELE_UNI_DRC == pstr_usac_dec_cfg->ia_ext_ele_payload_type[ele]) &&
-        (pstr_usac_dec_cfg->usac_ext_ele_payload_present[ele]))
+        (pstr_usac_dec_cfg->usac_ext_ele_payload_present[ele]) &&
+        (handle->mpeghd_config.drc_apply == 1))
     {
       // domain switcher
       UWORD32 dom_swi_flag = pstr_asc->str_usac_config.signals_3d.domain_switcher_enable;
@@ -2468,6 +2473,16 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
         ((handle->mpeghd_config.ui_target_loudness_set) ||
          (pstr_dec_data->str_drc_payload.pstr_drc_config != NULL)))
     {
+      WORD32 index = 0;
+      for (WORD32 i = 0; i < MAX_ELEMENTS_USAC; i++)
+      {
+        if (ID_EXT_ELE_UNI_DRC ==
+             pstr_asc->str_usac_config.str_usac_dec_config.ia_ext_ele_payload_type[i])
+        {
+          index = i;
+          break;
+        }
+      }
       memset(&pstr_dec_data->str_drc_payload.str_select_proc, 0,
              sizeof(pstr_dec_data->str_drc_payload.str_select_proc));
       pstr_dec_data->str_drc_payload.pstr_drc_config =
@@ -2475,7 +2490,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
       err_code =
           impeghd_uni_drc_dec_init(pstr_asc, pstr_dec_data, target_loudness, loudness_norm_flag,
                                    drc_effect_type, mpegh_dec_handle->p_config->i_preset_id,
-                                   mpegh_dec_handle->p_config->ui_cicp_layout_idx, 0);
+                                   mpegh_dec_handle->p_config->ui_cicp_layout_idx, index);
       if (err_code)
       {
         return err_code;
@@ -3305,7 +3320,7 @@ IA_ERRORCODE impeghd_uni_drc_dec_init(ia_audio_specific_config_struct *pstr_audi
         pstr_dec_data->str_drc_payload.str_bitstream_dec.ia_drc_params_struct;
     err_code = impd_drc_parse_config(pstr_dec_data->str_drc_payload.pstr_drc_config,
                                      &pstr_usac_cfg->str_loudness_info, &it_bit_buff,
-                                     &pstr_usac_cfg->uni_drc_bs_params, pstr_mae_asi);
+                                     &pstr_usac_cfg->uni_drc_bs_params);
     if (err_code != IA_MPEGH_DEC_NO_ERROR)
     {
       return err_code;
@@ -3321,7 +3336,7 @@ IA_ERRORCODE impeghd_uni_drc_dec_init(ia_audio_specific_config_struct *pstr_audi
         pstr_dec_data->str_drc_payload.str_bitstream_dec.ia_drc_params_struct;
     err_code = impd_drc_parse_config(pstr_dec_data->str_drc_payload.pstr_drc_config,
                                      &pstr_usac_cfg->str_loudness_info, &it_bit_buff,
-                                     &pstr_usac_cfg->uni_drc_bs_params, pstr_mae_asi);
+                                     &pstr_usac_cfg->uni_drc_bs_params);
 
     if (err_code != IA_MPEGH_DEC_NO_ERROR)
     {
@@ -3338,7 +3353,7 @@ IA_ERRORCODE impeghd_uni_drc_dec_init(ia_audio_specific_config_struct *pstr_audi
     it_bit_buff.xmpeghd_jmp_buf = pstr_dec_data->dec_bit_buf.xmpeghd_jmp_buf;
 
     err_code = impd_drc_mpegh3da_parse_loudness_info_set(&pstr_drc_payload->str_loud_info,
-                                                         &it_bit_buff, pstr_mae_asi);
+                                                         &it_bit_buff);
     if (err_code != IA_MPEGH_DEC_NO_ERROR)
     {
       return err_code;
