@@ -75,6 +75,7 @@ typedef struct
   WORD32 ui_effect_type;
   WORD32 ui_target_loudness;
   WORD32 ui_target_loudness_set;
+  WORD32 drc_apply;
   WORD32 ui_loud_norm_flag;
   WORD32 ui_cicp_layout_idx;
   UWORD32 header_dec_done;

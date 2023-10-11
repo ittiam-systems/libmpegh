@@ -515,6 +515,7 @@ IA_ERRORCODE impeghd_main_process(WORD32 argc, pWORD8 argv[])
   str_dec_api.input_config.ui_mhas_flag = IMPEGHD_CONFIG_PARAM_MHAS_FLAG_DFLT_VAL;
   str_dec_api.input_config.ui_pcm_wd_sz = IMPEGHD_CONFIG_PARAM_PCM_WD_SZ_DFLT_VAL;
   str_dec_api.input_config.ui_cicp_layout_idx = IMPEGHD_CONFIG_PARAM_CICP_IDX_DFLT_VAL;
+  str_dec_api.input_config.ui_effect = IMPEGHD_CONFIG_PARAM_EFFECT_TYPE_DFLT_VAL;
   str_dec_api.input_config.i_preset_id = IMPEGHD_CONFIG_PARAM_PRESET_ID_DFLT_VAL;
   str_dec_api.input_config.ei_info_flag = IMPEGHD_CONFIG_PARAM_EI_FLAG_DFLT_VAL;
   str_dec_api.input_config.lsi_info_flag = IMPEGHD_CONFIG_PARAM_EI_FLAG_DFLT_VAL;

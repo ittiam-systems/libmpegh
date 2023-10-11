@@ -477,8 +477,7 @@ impd_drc_parse_loudness_info_set_ext(ia_drc_loudness_info_set_struct *pstr_loudn
  */
 IA_ERRORCODE
 impd_drc_mpegh3da_parse_loudness_info_set(ia_drc_loudness_info_set_struct *pstr_loudness_info_set,
-                                          ia_bit_buf_struct *pstr_it_bit_buff,
-                                          ia_mae_audio_scene_info *pstr_mae_asi)
+                                          ia_bit_buf_struct *pstr_it_bit_buff)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 cnt;
@@ -1548,8 +1547,7 @@ IA_ERRORCODE
 impd_drc_parse_config(ia_drc_config *pstr_drc_config,
                       ia_drc_loudness_info_set_struct *pstr_loudness_info_set,
                       ia_bit_buf_struct *pstr_it_bit_buff,
-                      ia_drc_params_bs_dec_struct *pstr_ia_drc_params,
-                      ia_mae_audio_scene_info *pstr_mae_asi)
+                      ia_drc_params_bs_dec_struct *pstr_ia_drc_params)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 cnt, version = 0;
@@ -1634,8 +1632,8 @@ impd_drc_parse_config(ia_drc_config *pstr_drc_config,
 
   if (1 == pstr_drc_config->loudness_infoset_present)
   {
-    err_code = impd_drc_mpegh3da_parse_loudness_info_set(pstr_loudness_info_set, pstr_it_bit_buff,
-                                                         pstr_mae_asi);
+    err_code = impd_drc_mpegh3da_parse_loudness_info_set(pstr_loudness_info_set,
+                                                         pstr_it_bit_buff);
     if (err_code)
       return (err_code);
   }
