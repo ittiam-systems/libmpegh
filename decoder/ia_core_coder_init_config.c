@@ -1433,10 +1433,11 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
           }
           case 1:
           {
-            for (i = 0; i < speaker_config_3d->num_speakers; i++)
+            WORD16 s;
+            for (s = 0; s < speaker_config_3d->num_speakers; s++)
             {
-              speaker_config_3d->cicp_spk_idx[i] = ia_core_coder_read_bits_buf(it_bit_buff, 7);
-              if (speaker_config_3d->cicp_spk_idx[i] > MAX_CICP_SPK_INDEX)
+              speaker_config_3d->cicp_spk_idx[s] = ia_core_coder_read_bits_buf(it_bit_buff, 7);
+              if (speaker_config_3d->cicp_spk_idx[s] > MAX_CICP_SPK_INDEX)
               {
                 return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_CICP_SPK_INDEX;
               }

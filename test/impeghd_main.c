@@ -768,8 +768,11 @@ IA_ERRORCODE impeghd_main_process(WORD32 argc, pWORD8 argv[])
 #endif
     }
 
-    frame_counter++;
-    fprintf(stderr, "Frames Processed : [%5d] \r", frame_counter);
+    if (pstr_out_cfg->num_out_bytes)
+    {
+        frame_counter++;
+        fprintf(stderr, "Frames Processed : [%5d] \r", frame_counter);
+    }
 
     ARM_PROFILE_HW_CALC_CYCLES(pstr_out_cfg->num_out_bytes, pstr_in_cfg->ui_pcm_wd_sz,
                                pstr_out_cfg->i_samp_freq, pstr_out_cfg->i_num_chan);
