@@ -991,6 +991,7 @@ WORD32 impeghd_mp4_read_media_sample(UWORD8 **buf, WORD32 to_write, trak_info *m
       current_stco_index = m->stco_cntxt.index - (m->stco_cntxt.total - m->stco_cntxt.read);
     }
     m->read_stsc_entries++;
+    m->samples_last_stsc_entry = m->stsc_entries[m->read_stsc_entries - 1].samples_per_chunk;
   }
   return read_bytes;
 }

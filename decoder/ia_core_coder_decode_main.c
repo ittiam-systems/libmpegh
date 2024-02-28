@@ -573,10 +573,6 @@ IA_ERRORCODE impeghd_format_conv_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
 
         if (pstr_signals_3d->differs_from_ref_layout[i] == 1)
         {
-          if (cicp_idx == 0 || cicp_idx == 8 || cicp_idx > NUM_LS_CFGS)
-          {
-            return IA_MPEGH_DEC_INIT_FATAL_INVALID_CICP_SPKR_INDEX;
-          }
           num_chnl_in = impgehd_cicp_get_num_ls[cicp_idx];
           ptr_chn_in_name = ia_cicp_idx_ls_set_map_tbl[cicp_idx];
         }
