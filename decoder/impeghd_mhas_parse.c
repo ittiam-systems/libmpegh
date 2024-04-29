@@ -82,7 +82,7 @@ static IA_ERRORCODE impeghd_mae_parse_description_data(ia_description_data *pstr
     pstr_description_data->num_descr_languages[blk] =
         (WORD8)ia_core_coder_read_bits_buf(pstr_bit_buf, 4) + 1;
 
-    if (pstr_description_data->num_descr_languages[blk] >= MAX_NUM_DESCR_LANGUAGES)
+    if (pstr_description_data->num_descr_languages[blk] > MAX_NUM_DESCR_LANGUAGES)
     {
       pstr_description_data->num_descr_languages[blk] = 0;
       return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_ASI_NUM_DESCRIPTION_LANGUAGES;
