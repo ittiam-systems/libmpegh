@@ -38,7 +38,7 @@
 IA_ERRORCODE impeghd_write_oam_meta_data_for_ext_ren(
     ia_write_bit_buf_struct *pstr_bit_buf, ia_usac_config_struct *pstr_usac_cfg,
     ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state, ia_signals_3d *pstr_signals_3d,
-    ia_enh_obj_md_frame_str *pstr_enh_oam_frm);
+    ia_enh_obj_md_frame_str *pstr_enh_oam_frm, ia_mae_audio_scene_info *pstr_mae_asi);
 
 IA_ERRORCODE impeghd_write_ch_meta_data_for_ext_ren(ia_write_bit_buf_struct *pstr_bit_buf,
                                                     ia_usac_config_struct *pstr_usac_cfg,
