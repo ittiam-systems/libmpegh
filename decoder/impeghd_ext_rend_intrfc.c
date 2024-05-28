@@ -304,6 +304,32 @@ impeghd_write_gha_prod_meta_data_for_ext_ren(ia_write_bit_buf_struct *pstr_bit_b
 }
 
 /**
+*  impeghd_get_goa_ele_id
+*
+*  \brief Returns the appropriate element id for a particular object.
+*
+*  \param [in]  pstr_mae_asi   pointer to ASI structure
+*  \param [in]  grp            group number
+*  \param [in]  obj            object number
+*  \param [in]  ele_id_offset  element id offset
+*
+*
+*
+*/
+static WORD16
+impeghd_get_goa_ele_id(ia_mae_audio_scene_info *pstr_mae_asi, WORD32 grp, WORD32 obj, WORD32 ele_id_offset)
+{
+  if (pstr_mae_asi->asi_present)
+  {
+    pstr_mae_asi->group_definition[grp].metadata_ele_id[obj];
+  }
+  else
+  {
+    return (ele_id_offset + obj);
+  }
+}
+
+/**
 *  impeghd_write_downmix_cfg
 *
 *  \brief Write downmix config data to bitbuffer
@@ -511,6 +537,7 @@ IA_ERRORCODE impeghd_write_ch_meta_data_for_ext_ren(ia_write_bit_buf_struct *pst
 *  \param [in]  pstr_obj_ren_dec_state  Pointer to object renderer state struct
 *  \param [in]  pstr_3d_signals			Pointer to 3d signals struct
 *  \param [in]  pstr_enh_oam_frm        Pointer to oam frame struct
+*  \param [in]  pstr_mae_asi            Pointer to ASI structure
 *
 *  \return IA_ERRORCODE              Error code
 *
@@ -518,7 +545,7 @@ IA_ERRORCODE impeghd_write_ch_meta_data_for_ext_ren(ia_write_bit_buf_struct *pst
 IA_ERRORCODE impeghd_write_oam_meta_data_for_ext_ren(
     ia_write_bit_buf_struct *pstr_bit_buf, ia_usac_config_struct *pstr_usac_config,
     ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state, ia_signals_3d *pstr_3d_signals,
-    ia_enh_obj_md_frame_str *pstr_enh_oam_frm)
+    ia_enh_obj_md_frame_str *pstr_enh_oam_frm, ia_mae_audio_scene_info *pstr_mae_asi)
 {
   ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_config->obj_md_cfg;
   ia_oam_dec_state_struct *pstr_oam_dec_state = &pstr_obj_ren_dec_state->str_obj_md_dec_state;
@@ -526,7 +553,7 @@ IA_ERRORCODE impeghd_write_oam_meta_data_for_ext_ren(
   WORD32 audio_truncation_goa = 0, goa_num_samples = 0;
   WORD32 num_frames_goa = (pstr_oam_cfg->cc_frame_length / pstr_oam_cfg->frame_length);
   WORD32 num_objects = pstr_oam_dec_state->num_objects;
-  WORD32 num_ext_elements;
+  WORD32 num_ext_elements, grp, mae_ele_id_offset = 0;
   /* FRAME CONFIGURATION */
   impeghd_write_bits_buf(pstr_bit_buf, (pstr_oam_cfg->frame_length >> 6), 6);
   impeghd_write_bits_buf(pstr_bit_buf, audio_truncation_goa, 2);
@@ -535,11 +562,23 @@ IA_ERRORCODE impeghd_write_oam_meta_data_for_ext_ren(
     impeghd_write_bits_buf(pstr_bit_buf, goa_num_samples, 13);
   }
 
+  for (grp = 0; grp < pstr_3d_signals->num_sig_group; grp++)
+  {
+    if (SIG_GROUP_TYPE_OBJ == pstr_3d_signals->group_type[grp])
+    {
+      break;
+    }
+    else
+    {
+      mae_ele_id_offset += pstr_3d_signals->num_sig[grp];
+    }
+  }
+
   /* OBJECT METADATA */
   impeghd_write_bits_buf(pstr_bit_buf, pstr_oam_dec_state->num_objects, 9);
   for (WORD32 obj = 0; obj < pstr_oam_dec_state->num_objects; obj++)
   {
-    impeghd_write_bits_buf(pstr_bit_buf, 0, 9); /*goa_element_id[obj]*/
+    impeghd_write_bits_buf(pstr_bit_buf, impeghd_get_goa_ele_id(pstr_mae_asi, grp, obj, mae_ele_id_offset), 9); /*goa_element_id[obj]*/
     impeghd_write_bits_buf(pstr_bit_buf, pstr_oam_cfg->dyn_obj_priority_present, 1);
     impeghd_write_bits_buf(pstr_bit_buf, pstr_oam_cfg->uniform_spread_present, 1);
 

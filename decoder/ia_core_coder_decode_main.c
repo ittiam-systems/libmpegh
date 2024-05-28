@@ -2179,7 +2179,7 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
                                           mpegh_dec_handle->p_config->ptr_oam_md_bit_buf, 768, 1);
           impeghd_write_oam_meta_data_for_ext_ren(
               &str_bit_buf, pstr_usac_config, &pstr_dec_data->str_obj_ren_dec_state,
-              ia_signals_3da, &pstr_dec_data->str_enh_obj_md_frame);
+              ia_signals_3da, &pstr_dec_data->str_enh_obj_md_frame, &pstr_asc->str_mae_asi);
           mpegh_dec_handle->p_config->oam_md_payload_length = (str_bit_buf.cnt_bits + 7) >> 3;
         }
         if (pstr_usac_config->signals_3d.num_ch != 0)
