@@ -236,10 +236,21 @@ IA_ERRORCODE ia_core_coder_ext_element_config(
   {
   case ID_EXT_ELE_PROD_METADATA:
   {
+    cnt_bits = it_bit_buff->cnt_bits;
     err_code = impeghd_prod_metadata_config(it_bit_buff, pstr_usac_conf);
     if (err_code)
     {
       return err_code;
+    }
+    cnt_bits = (cnt_bits - it_bit_buff->cnt_bits);
+    if (cnt_bits > (WORD32)(usac_ext_element_config_length << 3))
+    {
+      return IA_MPEGH_DEC_EXE_FATAL_DECODE_FRAME_ERROR;
+    }
+    else if (cnt_bits < (WORD32)(usac_ext_element_config_length << 3))
+    {
+      skip_bits = (usac_ext_element_config_length << 3) - cnt_bits;
+      ia_core_coder_skip_bits_buf(it_bit_buff, skip_bits);
     }
     break;
   }
