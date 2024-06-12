@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.8)
 
-project (MPEG-H_Decoder VERSION 1.3)
+project (MPEG-H_Decoder VERSION 1.6)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
