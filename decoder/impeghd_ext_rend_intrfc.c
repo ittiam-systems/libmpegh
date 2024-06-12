@@ -321,7 +321,7 @@ impeghd_get_goa_ele_id(ia_mae_audio_scene_info *pstr_mae_asi, WORD32 grp, WORD32
 {
   if (pstr_mae_asi->asi_present)
   {
-    pstr_mae_asi->group_definition[grp].metadata_ele_id[obj];
+    return pstr_mae_asi->group_definition[grp].metadata_ele_id[obj];
   }
   else
   {
@@ -562,7 +562,7 @@ IA_ERRORCODE impeghd_write_oam_meta_data_for_ext_ren(
     impeghd_write_bits_buf(pstr_bit_buf, goa_num_samples, 13);
   }
 
-  for (grp = 0; grp < pstr_3d_signals->num_sig_group; grp++)
+  for (grp = 0; grp < (WORD32)pstr_3d_signals->num_sig_group; grp++)
   {
     if (SIG_GROUP_TYPE_OBJ == pstr_3d_signals->group_type[grp])
     {

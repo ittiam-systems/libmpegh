@@ -1155,7 +1155,6 @@ IA_ERRORCODE
 ia_core_coder_decoder_flush_api(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
 {
   IA_ERRORCODE err;
-  WORD8 *ptr_scratch = (WORD8 *)p_obj_mpegh_dec->p_state_mpeghd->mpeghd_scratch_mem_v;
   ia_dec_data_struct *pstr_dec_data = p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
 
   memset(&pstr_dec_data->str_frame_data, 0, sizeof(pstr_dec_data->str_frame_data));

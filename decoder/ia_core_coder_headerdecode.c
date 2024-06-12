@@ -191,7 +191,7 @@ IA_ERRORCODE ia_core_coder_headerdecode(ia_mpegh_dec_api_struct *p_obj_mpegh_dec
         WORD32 i = 0;
         WORD32 bit_pos = handle_bit_buff->bit_pos;
         WORD32 cnt_bits = handle_bit_buff->cnt_bits;
-        WORD8 *ptr_read_next = handle_bit_buff->ptr_read_next;
+        UWORD8 *ptr_read_next = handle_bit_buff->ptr_read_next;
         mpeghd_state_struct->prev_cfg_len = info.packet_length;
         for (i = 0; i < info.packet_length; i++)
         {
