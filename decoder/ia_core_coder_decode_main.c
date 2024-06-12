@@ -2510,7 +2510,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
           WORD32 i = 0;
           WORD32 bit_pos = pstr_dec_data->dec_bit_buf.bit_pos;
           WORD32 cnt_bits = pstr_dec_data->dec_bit_buf.cnt_bits;
-          WORD8 *ptr_read_next = pstr_dec_data->dec_bit_buf.ptr_read_next;
+          UWORD8 *ptr_read_next = pstr_dec_data->dec_bit_buf.ptr_read_next;
           WORD32 cmp_len = pac_info.packet_length;
           for (i = 0; i < pac_info.packet_length; i++)
           {
@@ -2538,7 +2538,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
           WORD32 i = 0;
           WORD32 bit_pos = pstr_dec_data->dec_bit_buf.bit_pos;
           WORD32 cnt_bits = pstr_dec_data->dec_bit_buf.cnt_bits;
-          WORD8 *ptr_read_next = pstr_dec_data->dec_bit_buf.ptr_read_next;
+          UWORD8 *ptr_read_next = pstr_dec_data->dec_bit_buf.ptr_read_next;
           mpegh_dec_handle->prev_cfg_len = pac_info.packet_length;
           for (i = 0; i < pac_info.packet_length; i++)
           {

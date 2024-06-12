@@ -487,7 +487,6 @@ IA_ERRORCODE impeghd_main_process(WORD32 argc, pWORD8 argv[])
 
   UWORD32 ui_inp_size = 0;
   WORD32 i_total_bytes = 0;
-  WORD32 offset_dash = 0, size_dash = 0, loc = 0;
   ARM_PROFILE_HW_VARDEC;
 
   /* The error init function */
