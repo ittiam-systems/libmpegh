@@ -113,6 +113,10 @@ ifneq ($(ARCH), armv7)
 INCLUDES += -I$(PATH_PLAT)
 endif
 
+ifeq ($(LC_LEVEL_4), 1)
+CFLAGS += -DLC_LEVEL_4
+endif
+
 INCLUDES += -I$(PATH_DEC) -I$(PATH_TEST)
 
 OBJS_LIBS		= $(SRCS_LIBS:.c=.o)
