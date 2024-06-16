@@ -57,9 +57,16 @@ Profile does not support scene-based audio/HOA.
 * These makefiles are common for Unix/MacOS builds.
 * If compiling for non-native platforms, ensure that the compiler and sysroot are updated.   
 * Supported `arch` values are `x86`, `x86_64`, `armv7` and `armv8`.
-* Build the library followed by the application using the below commands:
+* Build the library with support upto low complexity profile level 3 using the below command:
 ```
 $ make -f Makefile_lib clean all ARCH=<arch>
+```
+* Build the library with support upto low complexity profile level 4 using the below command:
+```
+$ make -f Makefile_lib clean all ARCH=<arch> LC_LEVEL_4=1
+```
+* Build the application using the below command:
+```
 $ make -f Makefile clean all	ARCH=<arch>
 ```
 
@@ -72,36 +79,64 @@ Users can also use cmake to build for `x86`, `x86_64`, `armv7`, `armv8` and Wind
 
 ### Building for native platforms
 Run the following commands to build the MPEG-H 3D Audio Low Complexity Profile Decoder for native platform:
-```
+
 Go to the root directory(libmpegh/) of the MPEG-H 3D Audio Low Complexity Profile Decoder.
 Create a new folder in the project root directory and move to the newly created folder.
-
+```
 $ cd <path to libmpegh>
 $ mkdir bin
 $ cd bin
+```
+
+Run the below command to configure the project for default build. The default build has support upto low complextiy profile level 3.
+```
 $ cmake ..
+```
+
+The build option LC_LEVEL_4 can be used to configure the project to support low complexity profile level 4.
+Run the below command to configure the project to create a build that supports low complexity profile level 4.
+```
+$ cmake .. -DLC_LEVEL_4=ON
+```
+
+To build the project run the below command.
+```
 $ cmake --build .
 ```
 
 ### Cross-compiling
 Run the following commands to cross compile for `x86`, `ARMv7` or `ARMv8`:
-```
 Go to the root directory(libmpegh/) of the MPEG-H 3D Audio Low Complexity Profile Decoder.
 Create a new folder in the project root directory and move to the newly created folder.
 
+```
 $ cd <path to libmpegh>
 $ mkdir bin
 $ cd bin
+```
+
+Run the below command to configure the project for default build. The default build has support upto low complextiy profile level 3.
+```
 $ cmake .. -DCMAKE_TOOLCHAIN_FILE=../toolchain_<arch>.cmake
+```
+
+The build option LC_LEVEL_4 can be used to configure the project to support low complexity profile level 4.
+Run the below command to configure the project to create a build that supports low complexity profile level 4.
+```
+$ cmake .. -DCMAKE_TOOLCHAIN_FILE=../toolchain_<arch>.cmake -DLC_LEVEL_4=ON
+```
+
+To build the project run the below command.
+```
 $ cmake --build .
 ```
 
 ### Creating MSVS project files
 To create MSVS project files for the MPEG-H 3D Audio Low Complexity Profile decoder from cmake, run the following commands:
-```
 Go to the root directory(libmpegh/) of the MPEG-H 3D Audio Low Complexity Profile Decoder.
 Create a new folder in the project root directory and move to the newly created folder.
 
+```
 $ cd <path to libmpegh>
 $ mkdir bin
 $ cd bin
@@ -267,7 +302,7 @@ Brief description about documents present in  `docs` folder
 
 * [`IA-MPEG-H-3D-Audio-Dec-API.doc`](docs/IA-MPEG-H-3D-Audio-Dec-API.doc) - Describes Application Program Interface for the MPEG-H 3D Audio Low Complexity Profile Decoder.
 * [`IA-MPEG-H-3D-Audio-Dec-BP.doc`](docs/IA-MPEG-H-3D-Audio-Dec-BP.doc) - Describes the build procedure for the MPEG-H 3D Audio Low Complexity Profile Decoder on Unix/MacOS platforms. 
-* [`IA-MPEG-H-3D-Audio-Dec-DS.doc`](docs/IA-MPEG-H-3D-Audio-Dec-DS.doc) - Describes features supported by the MPEG-H 3D Audio Low Complexity Profile Decoder, memory requirements and computational complexity on `x86`, `x86_64`, `armv7` and `armv8` platforms.
+* [`IA-MPEG-H-3D-Audio-Dec-DS.doc`](docs/IA-MPEG-H-3D-Audio-Dec-DS.doc) - Describes features supported by the MPEG-H 3D Audio Low Complexity Profile Decoder, memory requirements and computational complexity on `x86`, `x86_64`, `armv7` and `armv8` platforms. The details presented in the data sheet document are for low complexity profile level 3 decoder. The memory requirements and complexity are slightly higher for low complexity profile level 4 decoder.
 * [`IA-MPEG-H-3D-Audio-Dec-GSG.doc`](docs/IA-MPEG-H-3D-Audio-Dec-GSG.doc) - Getting Started Guide for the MPEG-H 3D Audio Low Complexity Profile Decoder.
 * [`IA-MPEG-H-3D-Audio-Dec-TR.doc`](docs/IA-MPEG-H-3D-Audio-Dec-TR.doc) - Documents the conformance test report for the MPEG-H 3D Audio Low Complexity Profile decoder on `x86`, `x86_64`, `armv7` and `armv8` platforms.
 
