@@ -7,6 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_SUPPRESS_REGENERATION true)
 
+option(LC_LEVEL_4 "Enables low complexity level 4 decoder" OFF)
+
+IF(LC_LEVEL_4)
+	ADD_DEFINITIONS(-DLC_LEVEL_4)
+ENDIF()
+
 # Add Library Target
 add_library (
         ia_mpeghd_lib 
