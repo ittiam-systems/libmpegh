@@ -438,7 +438,6 @@ IA_ERRORCODE impd_drc_read_uni_drc_gain(ia_drc_gain_struct *pstr_uni_drc_gain,
   WORD32 band_cnt;
   WORD32 cnt;
   WORD32 gain_set_cnt = pstr_drc_config->str_p_loc_drc_coefficients_uni_drc[0].gain_set_count;
-  static WORD32 pkt_loss_frm_cnt = 0;
 
   for (cnt = 0; cnt < gain_set_cnt; cnt++)
   {
@@ -467,30 +466,16 @@ IA_ERRORCODE impd_drc_read_uni_drc_gain(ia_drc_gain_struct *pstr_uni_drc_gain,
     }
   }
 
-  if (pstr_it_bit_buff->ptr_bit_buf_base != NULL)
+  pstr_uni_drc_gain->uni_drc_gain_ext_flag = ia_core_coder_read_bits_buf(pstr_it_bit_buff, 1);
+  if (pstr_uni_drc_gain->uni_drc_gain_ext_flag == 1)
   {
-    pstr_uni_drc_gain->uni_drc_gain_ext_flag = ia_core_coder_read_bits_buf(pstr_it_bit_buff, 1);
-    if (pstr_uni_drc_gain->uni_drc_gain_ext_flag == 1)
-    {
-      err_code = impd_drc_read_uni_drc_gain_ext(&(pstr_uni_drc_gain->uni_drc_gain_ext),
-                                                pstr_it_bit_buff);
-      if (err_code)
-        return (err_code);
-    }
-    pstr_drc_config->apply_drc = 1;
-    pkt_loss_frm_cnt = 0;
+    err_code = impd_drc_read_uni_drc_gain_ext(&(pstr_uni_drc_gain->uni_drc_gain_ext),
+                                              pstr_it_bit_buff);
+    if (err_code)
+      return (err_code);
   }
-  else
-  {
-    pkt_loss_frm_cnt++;
+  pstr_drc_config->apply_drc = 1;
 
-    if (pkt_loss_frm_cnt * (FLOAT32)pstr_drc_uni_bs_dec->ia_drc_params_struct.drc_frame_size /
-            pstr_drc_config->sampling_rate >
-        MAXPACKETLOSSTIME)
-    {
-      pstr_drc_config->apply_drc = 0;
-    }
-  }
   return IA_MPEGH_DEC_NO_ERROR;
 }
 
