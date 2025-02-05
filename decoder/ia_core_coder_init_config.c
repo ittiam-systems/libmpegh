@@ -187,6 +187,8 @@ VOID ia_core_coder_read_escape_value(ia_bit_buf_struct *it_bit_buff, UWORD32 *ex
  *  \param [in,out]  ia_ext_ele_payload_type      Extension payload type
  *  \param [in]    pstr_usac_conf          USAC config structure
  *  \param [in]    ccfl              Frame Length
+ *  \param [in]    elem_idx          Syntactic element index
+ *  \param [in,out] obj_grp_idx      Pointer to object group index value
  *
  *  \return IA_ERRORCODE
  *
@@ -195,16 +197,16 @@ IA_ERRORCODE ia_core_coder_ext_element_config(
     ia_bit_buf_struct *it_bit_buff, ia_usac_dec_element_config_struct *pstr_usac_element_config,
     UWORD8 *ptr_usac_ext_ele_payload, WORD32 *ptr_usac_ext_ele_payload_len, WORD32 *preroll_flag,
     WORD32 *ia_ext_ele_payload_type, ia_usac_config_struct *pstr_usac_conf, WORD32 ccfl,
-    WORD32 elem_idx)
+    WORD32 elem_idx, WORD32 *obj_grp_idx)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 cnt_bits, skip_bits;
   UWORD32 usac_ext_element_type, usac_ext_element_config_length, flag;
   UWORD32 i;
   UWORD32 num_aud_preroll = 0, num_uni_drc = 0;
-  ia_oam_dec_config_struct *p_obj_md_cfg = &pstr_usac_conf->obj_md_cfg;
+  ia_oam_dec_config_struct *p_obj_md_cfg = &pstr_usac_conf->obj_md_cfg[*obj_grp_idx];
   ia_hoa_config_struct *pstr_hoa_config = &pstr_usac_conf->str_usac_dec_config.str_hoa_config;
-  WORD32 num_objects = pstr_usac_conf->signals_3d.num_audio_obj;
+  WORD32 num_objects = pstr_usac_conf->signals_3d.num_grp_objs[*obj_grp_idx];
 
   ia_core_coder_read_escape_value(it_bit_buff, &(usac_ext_element_type), 4, 8, 16);
   *ia_ext_ele_payload_type = usac_ext_element_type;
@@ -305,6 +307,7 @@ IA_ERRORCODE ia_core_coder_ext_element_config(
   {
     *ptr_usac_ext_ele_payload_len = usac_ext_element_config_length;
     cnt_bits = it_bit_buff->cnt_bits;
+    p_obj_md_cfg->num_objects = num_objects;
     impeghd_obj_md_cfg(p_obj_md_cfg, it_bit_buff, ccfl, num_objects);
     cnt_bits = cnt_bits - it_bit_buff->cnt_bits;
     if (cnt_bits > (WORD32)(usac_ext_element_config_length << 3))
@@ -316,6 +319,7 @@ IA_ERRORCODE ia_core_coder_ext_element_config(
       skip_bits = (usac_ext_element_config_length << 3) - cnt_bits;
       ia_core_coder_skip_bits_buf(it_bit_buff, skip_bits);
     }
+    *obj_grp_idx = *obj_grp_idx + 1;
     break;
   }
   case ID_EXT_ELE_UNI_DRC:
@@ -560,6 +564,7 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
   IA_ERRORCODE err = IA_MPEGH_DEC_NO_ERROR;
   UWORD32 elem_idx = 0, sbr_ratio_index = 0;
   WORD32 index = 0;
+  WORD32 obj_grp_idx = 0;
   ia_usac_decoder_config_struct *pstr_usac_decoder_config;
   ia_usac_dec_element_config_struct *pstr_usac_element_config;
   pstr_usac_decoder_config = &pstr_usac_conf->str_usac_dec_config;
@@ -597,7 +602,7 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
           &pstr_usac_decoder_config->usac_ext_ele_payload_len[elem_idx],
           &(pstr_usac_decoder_config->preroll_flag),
           &pstr_usac_decoder_config->ia_ext_ele_payload_type[elem_idx], pstr_usac_conf, 1024,
-          elem_idx);
+          elem_idx, &obj_grp_idx);
 
       if (err != IA_MPEGH_DEC_NO_ERROR)
       {
@@ -1404,6 +1409,7 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
         return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
       }
       ia_signals_3da->num_audio_obj += (num_sig + 1);
+      ia_signals_3da->num_grp_objs[num_obj_based_grps] = (num_sig + 1);
       num_obj_based_grps++;
       break;
     }
@@ -1552,17 +1558,17 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
         if (pstr_usac_element_config->noise_filling != 0 ||
             pstr_usac_element_config->enhanced_noise_filling != 0)
         {
-          return IA_MPEGH_DEC_INIT_FATAL_INVALID_PROFILE_CONFIG;
+          //return IA_MPEGH_DEC_INIT_FATAL_INVALID_PROFILE_CONFIG;
         }
         break;
       case ID_USAC_EXT:
         if (pstr_usac_decoder_config->ia_ext_ele_payload_type[elem_idx] == ID_MPEGH_EXT_ELE_MCT)
         {
-          return IA_MPEGH_DEC_INIT_FATAL_INVALID_PROFILE_CONFIG;
+          //return IA_MPEGH_DEC_INIT_FATAL_INVALID_PROFILE_CONFIG;
         }
         break;
       default:
-        return IA_MPEGH_DEC_INIT_FATAL_INVALID_PROFILE_CONFIG;
+        //return IA_MPEGH_DEC_INIT_FATAL_INVALID_PROFILE_CONFIG;
         break;
       }
     }

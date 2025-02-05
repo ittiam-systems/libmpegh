@@ -3560,6 +3560,7 @@ static IA_ERRORCODE impeghd_screen_rel_zooming(FLOAT32 *azimuth, FLOAT32 *elevat
  *  \param [in]  pstr_signals_3d          Pointer to sd signal configuration structure
  *  \param [in,out] ptr_scratch_mem         Pointer to scratch memory
  *  \param [in]  sel_preset              Selection preset
+ *  \param [in]  oam_grp_idx             Index of OAM group that is to be processed.
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
@@ -3567,7 +3568,7 @@ static IA_ERRORCODE impeghd_screen_rel_zooming(FLOAT32 *azimuth, FLOAT32 *elevat
 static IA_ERRORCODE impeghd_md_proc_apply_scrn_rel_remapping_zooming(
     ia_interaction_data_struct *pstr_interaction_config,
     ia_audio_specific_config_struct *pstr_asc, ia_dec_data_struct *pstr_dec_data,
-    ia_signals_3d *pstr_signals_3d, pWORD8 ptr_scratch_mem, WORD32 sel_preset)
+    ia_signals_3d *pstr_signals_3d, pWORD8 ptr_scratch_mem, WORD32 sel_preset, WORD32 oam_grp_idx)
 {
   IA_ERRORCODE error = 0;
   WORD32 i, k, j;
@@ -3641,7 +3642,7 @@ static IA_ERRORCODE impeghd_md_proc_apply_scrn_rel_remapping_zooming(
     for (i = 0; i < pstr_interaction_config->oam_count; i++)
     {
       pstr_interaction_config->scrn_rel_objs[i] = -1;
-      if (pstr_asc->str_usac_config.obj_md_cfg.is_screen_rel_obj[i] == 1)
+      if (pstr_asc->str_usac_config.obj_md_cfg[oam_grp_idx].is_screen_rel_obj[i] == 1)
       {
         pstr_interaction_config->scrn_rel_objs[pstr_interaction_config->list_oam[i]] = 1;
       }
@@ -3909,7 +3910,8 @@ static IA_ERRORCODE impeghd_md_proc_apply_div_proc(ia_interaction_data_struct *p
                                                    ia_enh_oam_config_struct *pstr_enh_obj_md_cfg,
                                                    ia_enh_obj_md_frame_str *pstr_enh_obj_md_frame,
                                                    ia_signals_3d *pstr_signals_3d,
-                                                   ia_dec_data_struct *pstr_dec_data)
+                                                   ia_dec_data_struct *pstr_dec_data,
+                                                   WORD32 obj_grp_idx)
 {
   WORD32 i, k, m;
   WORD32 n;
@@ -3917,7 +3919,7 @@ static IA_ERRORCODE impeghd_md_proc_apply_div_proc(ia_interaction_data_struct *p
   ia_mae_audio_scene_info *pstr_mae_asi = &pstr_asc->str_mae_asi;
   ia_oam_dec_state_struct *pstr_oam_dec_state =
       &pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state;
-  ia_oam_dec_config_struct *pstr_oam_dec_cfg = &pstr_asc->str_usac_config.obj_md_cfg;
+  ia_oam_dec_config_struct *pstr_oam_dec_cfg = &pstr_asc->str_usac_config.obj_md_cfg[obj_grp_idx];
 
   if (pstr_interact_cfg->num_objs_out > pstr_interact_cfg->num_objs_in)
   {
@@ -4155,11 +4157,12 @@ static IA_ERRORCODE impeghd_md_proc_apply_div_proc(ia_interaction_data_struct *p
  *
  */
 static WORD32 impeghd_md_proc_local_scrn_cfg(ia_audio_specific_config_struct *pstr_asc,
-                                             ia_local_setup_struct *pstr_local_interaction)
+                                             ia_local_setup_struct *pstr_local_interaction,
+                                             WORD32 obj_grp_idx)
 {
   WORD32 i;
   WORD32 has_screen_relative_objects = 0;
-  ia_oam_dec_config_struct *pstr_oam_dec_config = &pstr_asc->str_usac_config.obj_md_cfg;
+  ia_oam_dec_config_struct *pstr_oam_dec_config = &pstr_asc->str_usac_config.obj_md_cfg[obj_grp_idx];
   for (i = 0; i < MAX_NUM_OAM_OBJS; i++)
   {
     if (pstr_oam_dec_config->is_screen_rel_obj[i] == 1)
@@ -4395,6 +4398,7 @@ static IA_ERRORCODE impeghd_mp_process_frame(ia_audio_specific_config_struct *ps
   WORD32 overall_num_div_objs_added = 0;
   pWORD8 ptr_scratch = ptr_scratch_mem;
   WORD32 add_objects;
+  WORD32 obj_grp_idx = 0;
   ia_oam_dec_state_struct *pstr_oam_dec_state =
       &pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state;
   ia_enh_oam_config_struct *pstr_enh_oam_cfg = &pstr_asc->str_usac_config.enh_obj_md_cfg;
@@ -4405,6 +4409,8 @@ static IA_ERRORCODE impeghd_mp_process_frame(ia_audio_specific_config_struct *ps
   pstr_interact_cfg->ptr_ele_interaction_data = pstr_ei_data;
   ia_signals_3d *pstr_signals_3d = &pstr_asc->str_usac_config.signals_3d;
   ia_scene_disp_data *pstr_scene_displacement = &pstr_dec_data->str_scene_displacement;
+  ia_oam_dec_config_struct *pstr_oam_cfg = 
+      &pstr_asc->str_usac_config.obj_md_cfg[obj_grp_idx];
   add_objects = (pstr_enh_oam_cfg->num_obj_with_divergence << 1);
   (void)num_out_channels;
 
@@ -4487,9 +4493,9 @@ static IA_ERRORCODE impeghd_mp_process_frame(ia_audio_specific_config_struct *ps
   pstr_interact_cfg->num_decoded_groups = pstr_mae_asi->num_groups;
   pstr_interact_cfg->num_switch_groups = pstr_mae_asi->num_switch_groups;
   pstr_interact_cfg->num_ele_in = 0;
-  if (pstr_oam_dec_state->num_objects > 0)
+  if (pstr_oam_cfg->num_objects > 0)
   {
-    pstr_interact_cfg->num_objs_out = pstr_oam_dec_state->num_objects + add_objects;
+    pstr_interact_cfg->num_objs_out = pstr_oam_cfg->num_objects + add_objects;
   }
 
   for (i = 0; i < pstr_interact_cfg->num_decoded_groups; i++)
@@ -4511,7 +4517,7 @@ static IA_ERRORCODE impeghd_mp_process_frame(ia_audio_specific_config_struct *ps
   }
 
   pstr_interact_cfg->en_scrn_rel_processing =
-      impeghd_md_proc_local_scrn_cfg(pstr_asc, &pstr_dec_data->str_local_setup_interaction);
+      impeghd_md_proc_local_scrn_cfg(pstr_asc, &pstr_dec_data->str_local_setup_interaction, obj_grp_idx);
 
   if (pstr_interact_cfg->apply_intrct_data != 0)
   {
@@ -4681,7 +4687,8 @@ static IA_ERRORCODE impeghd_mp_process_frame(ia_audio_specific_config_struct *ps
   {
     error = impeghd_md_proc_apply_div_proc(pstr_interact_cfg, pstr_asc,
                                            &overall_num_div_objs_added, pstr_enh_oam_cfg,
-                                           pstr_enh_oam_frame, pstr_signals_3d, pstr_dec_data);
+                                           pstr_enh_oam_frame, pstr_signals_3d, pstr_dec_data,
+                                           obj_grp_idx);
     if (error)
     {
       return error;
@@ -4692,7 +4699,7 @@ static IA_ERRORCODE impeghd_mp_process_frame(ia_audio_specific_config_struct *ps
   {
     error = impeghd_apply_scene_displacement(
         pstr_dec_data, pstr_asc, pstr_interact_cfg, ptr_scratch,
-        (pstr_oam_dec_state->num_objects > 0 ? 1 : 0), pstr_scene_displacement);
+        (pstr_oam_cfg->num_objects > 0 ? 1 : 0), pstr_scene_displacement);
     if (error)
     {
       return error;
@@ -4701,8 +4708,11 @@ static IA_ERRORCODE impeghd_mp_process_frame(ia_audio_specific_config_struct *ps
 
   if (pstr_enh_oam_frame->oam_has_been_decoded == 1)
   {
+    // TODO: Support to be extended for all active OAM groups
+    WORD32 oam_grp_idx = 0;
     error = impeghd_md_proc_apply_scrn_rel_remapping_zooming(
-        pstr_interact_cfg, pstr_asc, pstr_dec_data, pstr_signals_3d, ptr_scratch, sel_preset);
+        pstr_interact_cfg, pstr_asc, pstr_dec_data, pstr_signals_3d, ptr_scratch, sel_preset,
+        oam_grp_idx);
     if (error)
     {
       return error;

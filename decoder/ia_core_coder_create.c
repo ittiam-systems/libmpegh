@@ -570,11 +570,6 @@ WORD32 ia_core_coder_frm_data_init(ia_audio_specific_config_struct *pstr_audio_c
         pstr_dec_data->str_frame_data.str_audio_specific_config.cicp_spk_layout_idx;
   }
 
-  pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state.num_objects =
-      pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.signals_3d
-          .num_audio_obj;
-  pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state.p_obj_md_cfg =
-      &pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.obj_md_cfg;
 
   memset(&pstr_dec_data->str_frame_data.str_layer, 0,
          sizeof(pstr_dec_data->str_frame_data.str_layer));

@@ -68,10 +68,10 @@ typedef struct
 
 typedef struct
 {
-  ia_oam_dec_config_struct *p_obj_md_cfg;
   WORD32 has_obj_md[MAX_OAM_FRAMES * MAX_NUM_OAM_OBJS];
   WORD32 sub_frame_obj_md_present[MAX_OAM_FRAMES];
-  WORD32 num_objects;
+  WORD32 obj_sub_frm_off;
+  WORD32 obj_start;
   WORD32 sub_frame_number;
   WORD32 intra_frame_period;
   WORD32 sample[MAX_OAM_FRAMES * MAX_NUM_OAM_OBJS];

@@ -405,6 +405,8 @@ typedef struct
 {
   WORD32 frame_length;
   WORD32 cc_frame_length;
+  WORD32 num_objects;
+  WORD32 sig_start_id;
   FLAG ld_md_coding_present;
   FLAG dyn_obj_priority_present;
   FLAG uniform_spread_present;
@@ -432,6 +434,7 @@ typedef struct
   UWORD32 group_type[MAX_AUDIO_GROUPS];
   UWORD32 num_sig[MAX_AUDIO_GROUPS];
   UWORD32 differs_from_ref_layout[MAX_AUDIO_GROUPS];
+  UWORD32 num_grp_objs[MAX_AUDIO_GROUPS];
   UWORD32 num_ch;
   UWORD32 num_audio_obj;
   UWORD32 num_saoc_transport_ch;
@@ -577,7 +580,7 @@ typedef struct
   UINT32 receiver_delay_compensation;
   ia_usac_decoder_config_struct str_usac_dec_config;
   ia_signals_3d signals_3d;
-  ia_oam_dec_config_struct obj_md_cfg;
+  ia_oam_dec_config_struct obj_md_cfg[MAX_AUDIO_GROUPS];
   ia_enh_oam_config_struct enh_obj_md_cfg;
   ia_drc_config uni_drc_cfg;
   ia_drc_params_bs_dec_struct uni_drc_bs_params;

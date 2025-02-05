@@ -665,8 +665,6 @@ IA_ERRORCODE impeghd_format_conv_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
 
       memset(&pstr_obj_renderer->str_obj_md_dec_state, 0, sizeof(*p_obj_md_cfg));
 
-      pstr_obj_renderer->str_obj_md_dec_state.p_obj_md_cfg = p_obj_md_cfg;
-      pstr_obj_renderer->str_obj_md_dec_state.num_objects = num_out_chn;
       pstr_obj_renderer->pstr_local_setup = &pstr_decoder->str_local_setup_interaction;
       pstr_obj_renderer->cicp_out_idx = cicp_idx;
 
@@ -1308,16 +1306,18 @@ static IA_ERRORCODE impeghd_earcon_obj_md_dec_ren_process(ia_dec_data_struct *ps
   ia_earcon_info *pstr_earcon_info = &pstr_asc->str_mae_asi.earcon_info;
   ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state = &pstr_dec_data->str_obj_ren_dec_state;
   ia_oam_dec_state_struct *pstr_obj_md_dec_state = &pstr_obj_ren_dec_state->str_obj_md_dec_state;
+  ia_oam_dec_config_struct str_oam_md_cfg = { 0 };
 
-  num_objects = pstr_obj_md_dec_state->num_objects;
   ccfl = ia_pcm_frame_size_tbl[pstr_pcm_data_config->pcm_frame_size_idx];
   ptr_in_buf = &pstr_pcm_data_config->pcm_sample[0][0];
 
   ia_core_coder_memset(ptr_out_buf, (ccfl * pstr_obj_ren_dec_state->num_cicp_speakers));
 
   pstr_obj_md_dec_state->sub_frame_number = 1;
-  pstr_obj_md_dec_state->num_objects = (pstr_pcm_data_config->bs_num_pcm_signals + 1);
-  for (obj = 0; obj < pstr_obj_md_dec_state->num_objects; obj++)
+  num_objects = (pstr_pcm_data_config->bs_num_pcm_signals + 1);
+  str_oam_md_cfg.num_objects = num_objects;
+  str_oam_md_cfg.cc_frame_length = str_oam_md_cfg.frame_length = ccfl;
+  for (obj = 0; obj < num_objects; obj++)
   {
     pstr_obj_md_dec_state->radius[obj] = pstr_earcon_info->earcon_distance[0];
     pstr_obj_md_dec_state->elevation[obj] = pstr_earcon_info->earcon_elevation[0];
@@ -1336,12 +1336,12 @@ static IA_ERRORCODE impeghd_earcon_obj_md_dec_ren_process(ia_dec_data_struct *ps
     pstr_obj_md_dec_state->gain_descaled[obj] =
         (FLOAT32)pow(10.0f, (pstr_obj_md_dec_state->gain[obj] - 32.0f) / 40.0f);
   }
-  err_code = impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, ptr_in_buf, ptr_out_buf, ccfl);
+  err_code = impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, &str_oam_md_cfg, ptr_in_buf,
+                                      ptr_out_buf, ccfl);
   if (err_code)
   {
     return err_code;
   }
-  pstr_obj_md_dec_state->num_objects = num_objects;
   return err_code;
 }
 
@@ -1351,6 +1351,7 @@ static IA_ERRORCODE impeghd_earcon_obj_md_dec_ren_process(ia_dec_data_struct *ps
  *  \brief Object metadata renderer main process function.
  *
  *  \param [in,out] pstr_dec_data     Pointer to decoder data structure.
+ *  \param [in]  p_obj_md_cfg      Pointer to object metadata configuration buffer.
  *  \param [out] ptr_out_buf       Pointer to output buffer.
  *  \param [in,out] num_out_channels  Pointer to number of output channels parameter.
  *  \param [in]  ch_offset         Offest for audio object output.
@@ -1359,14 +1360,14 @@ static IA_ERRORCODE impeghd_earcon_obj_md_dec_ren_process(ia_dec_data_struct *ps
  *
  */
 IA_ERRORCODE
-impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data, FLOAT32 *ptr_out_buf,
+impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data,
+                               ia_oam_dec_config_struct *p_obj_md_cfg, FLOAT32 *ptr_out_buf,
                                WORD32 *num_out_channels, WORD32 ch_offset)
 {
   ia_audio_specific_config_struct *pstr_audio_specific_cfg =
       &pstr_dec_data->str_frame_data.str_audio_specific_config;
   ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state = &pstr_dec_data->str_obj_ren_dec_state;
   ia_oam_dec_state_struct *pstr_obj_md_dec_state = &pstr_obj_ren_dec_state->str_obj_md_dec_state;
-  ia_oam_dec_config_struct *p_obj_md_cfg = &pstr_audio_specific_cfg->str_usac_config.obj_md_cfg;
   FLOAT32 *ptr_in_buf = &pstr_dec_data->str_usac_data.time_sample_vector[ch_offset][0];
   WORD32 ccfl = pstr_dec_data->str_usac_data.output_samples;
   WORD32 i;
@@ -1382,7 +1383,8 @@ impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data, FLOAT32 *ptr_o
   if (p_obj_md_cfg->frame_length >= ccfl)
   {
     pstr_obj_md_dec_state->sub_frame_number = 1;
-    impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, ptr_in_buf, ptr_out_buf, ccfl);
+    impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, p_obj_md_cfg,
+                             ptr_in_buf, ptr_out_buf, ccfl);
   }
   else
   {
@@ -1404,7 +1406,7 @@ impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data, FLOAT32 *ptr_o
         pstr_obj_md_dec_state->sub_frame_number = num_iter;
       }
 
-      impeghd_obj_renderer_dec(pstr_obj_ren_dec_state,
+      impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, p_obj_md_cfg,
                                ptr_in_buf + i * (p_obj_md_cfg->frame_length),
                                ptr_out_buf + i * (p_obj_md_cfg->frame_length), ccfl);
     }
@@ -1663,6 +1665,7 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
   WORD32 suitable_tracks = 1, delay, grp, channel, ele_idx, num_signals, drc_effect_type,
          num_elements;
   WORD32 ch_cnt = 0, sig_grp = 0, target_loudness, loudness_norm_flag, mct_cnt = 0;
+  WORD32 obj_grp_idx = 0;
 
   ia_mpegh_dec_api_struct *handle = (ia_mpegh_dec_api_struct *)temp_handle;
   ia_mpegh_dec_state_struct *mpegh_dec_handle = handle->p_state_mpeghd;
@@ -1760,16 +1763,11 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
       {
         memset(&pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state, 0,
                sizeof(pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state));
-        memset(&pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.obj_md_cfg
+        memset(&pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.obj_md_cfg[obj_grp_idx]
                     .is_screen_rel_obj[0],
                0, sizeof(pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config
-                             .obj_md_cfg.is_screen_rel_obj));
+                             .obj_md_cfg[obj_grp_idx].is_screen_rel_obj));
 
-        pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state.p_obj_md_cfg =
-            &pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.obj_md_cfg;
-        pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state.num_objects =
-            pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.signals_3d
-                .num_audio_obj;
         pstr_dec_data->str_obj_ren_dec_state.pstr_local_setup =
             &pstr_dec_data->str_local_setup_interaction;
         err_code = impeghd_obj_renderer_dec_init(
@@ -1785,6 +1783,7 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
           oam_present = 1;
           *num_channel_out = pstr_dec_data->str_obj_ren_dec_state.num_cicp_speakers;
         }
+        obj_grp_idx++;
       }
       break;
       case ID_MPEGH_EXT_ELE_HOA:
@@ -1950,6 +1949,8 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 channel, ele, s, num_elements, ch_offset, num_samples_out;
+  WORD32 obj_grp_idx = 0;
+  WORD32 obj_sub_frm_off = 0, obj_start = 0;
 
   ia_mpegh_dec_api_struct *handle = (ia_mpegh_dec_api_struct *)temp_handle;
   ia_mpegh_dec_state_struct *mpegh_dec_handle = handle->p_state_mpeghd;
@@ -1988,12 +1989,13 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
         ia_oam_dec_state_struct *pstr_obj_md_dec_state =
             &pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state;
         ia_bit_buf_struct bit_buf_str;
+        ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_config->obj_md_cfg[obj_grp_idx];
         ia_core_coder_create_init_bit_buf(&bit_buf_str, ptr_bit_buf_base, bit_buf_size);
         bit_buf_str.xmpeghd_jmp_buf = pstr_dec_data->dec_bit_buf.xmpeghd_jmp_buf;
         pstr_dec_data->str_enh_obj_md_frame.p_enh_obj_md_cfg =
             &pstr_audio_specific_cfg->str_usac_config.enh_obj_md_cfg;
         err_code = impeghd_enh_obj_md_frame(&pstr_dec_data->str_enh_obj_md_frame, &bit_buf_str,
-                                            pstr_obj_md_dec_state->num_objects,
+                                            pstr_oam_cfg->num_objects,
                                             pstr_dec_data->str_usac_data.usac_independency_flg);
         if (err_code != IA_MPEGH_DEC_NO_ERROR)
         {
@@ -2006,6 +2008,7 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
       {
         WORD32 ccfl = pstr_dec_data->str_usac_data.output_samples;
         ia_bit_buf_struct bit_buf_str;
+        ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_config->obj_md_cfg[obj_grp_idx];
         ia_core_coder_create_init_bit_buf(&bit_buf_str, ptr_bit_buf_base, bit_buf_size);
         bit_buf_str.xmpeghd_jmp_buf = pstr_dec_data->dec_bit_buf.xmpeghd_jmp_buf;
         if (bit_buf_size > 0)
@@ -2013,7 +2016,7 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
           ia_audio_specific_config_struct *pstr_audio_specific_cfg =
               &pstr_dec_data->str_frame_data.str_audio_specific_config;
           ia_oam_dec_config_struct *p_obj_md_cfg =
-              &pstr_audio_specific_cfg->str_usac_config.obj_md_cfg;
+              &pstr_audio_specific_cfg->str_usac_config.obj_md_cfg[obj_grp_idx];
           ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state =
               &pstr_dec_data->str_obj_ren_dec_state;
           ia_oam_dec_state_struct *pstr_obj_md_dec_state =
@@ -2025,6 +2028,8 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
             return IA_MPEGH_OAM_EXE_FATAL_UNSUPPORTED_FRAMELENGTH;
           }
 
+          pstr_obj_md_dec_state->obj_sub_frm_off = obj_sub_frm_off;
+          pstr_obj_md_dec_state->obj_start = obj_start;
           if (p_obj_md_cfg->frame_length < ccfl)
           {
             WORD32 sub_frm;
@@ -2037,7 +2042,7 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
               if (pstr_obj_md_dec_state->sub_frame_obj_md_present[sub_frm])
               {
                 pstr_obj_md_dec_state->sub_frame_number++;
-                err_code = impeghd_obj_md_dec(pstr_obj_md_dec_state, &bit_buf_str);
+                err_code = impeghd_obj_md_dec(pstr_obj_md_dec_state, pstr_oam_cfg, &bit_buf_str);
                 if (err_code != IA_MPEGH_DEC_NO_ERROR)
                 {
                   return err_code;
@@ -2048,13 +2053,16 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
           else
           {
             pstr_obj_md_dec_state->sub_frame_number = 1;
-            err_code = impeghd_obj_md_dec(pstr_obj_md_dec_state, &bit_buf_str);
+            err_code = impeghd_obj_md_dec(pstr_obj_md_dec_state, p_obj_md_cfg, &bit_buf_str);
             if (err_code != IA_MPEGH_DEC_NO_ERROR)
             {
               return err_code;
             }
           }
+          obj_sub_frm_off += p_obj_md_cfg->num_objects * pstr_obj_md_dec_state->sub_frame_number;
+          obj_start += p_obj_md_cfg->num_objects;
         }
+        obj_grp_idx = obj_grp_idx + 1;
         break;
       }
       }
@@ -2152,6 +2160,9 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
     }
   }
 
+  obj_grp_idx = 0;
+  obj_sub_frm_off = 0;
+  obj_start = 0;
   for (ele = 0; ele < num_elements; ele++)
   {
     if (pstr_usac_dec_cfg->usac_ext_ele_payload_present[ele])
@@ -2160,12 +2171,18 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
       {
       case ID_MPEGH_EXT_ELE_OAM:
       {
+        ia_oam_dec_config_struct *p_obj_md_cfg = &pstr_usac_config->obj_md_cfg[obj_grp_idx];
+        ia_oam_dec_state_struct *p_str_obj_ren_dec_state = &pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state;
         if (ptr_out_buf == NULL)
         {
           ptr_out_buf = (FLOAT32 *)mpegh_dec_handle->mpeghd_scratch_mem_v;
         }
-        err_code = impeghd_obj_md_dec_ren_process(pstr_dec_data, ptr_out_buf, num_channel_out,
+        p_str_obj_ren_dec_state->obj_sub_frm_off = obj_sub_frm_off;
+        p_str_obj_ren_dec_state->obj_start = obj_start;
+        err_code = impeghd_obj_md_dec_ren_process(pstr_dec_data, p_obj_md_cfg, ptr_out_buf, num_channel_out,
                                                   ch_offset);
+        obj_sub_frm_off += p_obj_md_cfg->num_objects * p_str_obj_ren_dec_state->sub_frame_number;
+        obj_start += p_obj_md_cfg->num_objects;
         if (err_code != IA_MPEGH_DEC_NO_ERROR)
         {
           return err_code;

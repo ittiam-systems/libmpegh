@@ -41,7 +41,8 @@ IA_ERRORCODE impeghd_obj_renderer_dec_init(ia_obj_ren_dec_state_struct *ptr_obj_
 IA_ERRORCODE
 impegh_obj_ren_vbap_process(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, WORD32 obj_idx);
 IA_ERRORCODE
-impeghd_obj_renderer_dec(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, FLOAT32 *p_in_buf,
+impeghd_obj_renderer_dec(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state,
+                         ia_oam_dec_config_struct *p_oam_md_cfg, FLOAT32 *p_in_buf,
                          FLOAT32 *p_out_buf, WORD32 cc_frame_len);
 
 #endif /* IMPEGHD_OBJ_REN_DEC_H */

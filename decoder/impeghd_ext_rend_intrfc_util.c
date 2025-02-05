@@ -565,11 +565,11 @@ IA_ERRORCODE impeghd_read_oam_meta_data_for_ext_ren(
 {
   WORD32 goa_audio_truncation = 0, goa_num_samples = 0, goa_num_frames, num_objects;
   WORD32 num_ext_elements;
-  ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_cfg->obj_md_cfg;
+  ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_cfg->obj_md_cfg[0];
   ia_oam_dec_state_struct *pstr_oam_dec_state = &pstr_obj_ren_dec_state->str_obj_md_dec_state;
   ia_enh_oam_config_struct *pstr_enh_oam_cfg = &pstr_usac_cfg->enh_obj_md_cfg;
   goa_num_frames = (pstr_oam_cfg->cc_frame_length / pstr_oam_cfg->frame_length);
-  num_objects = pstr_oam_dec_state->num_objects;
+  num_objects = pstr_oam_cfg->num_objects;
 
   /* FRAME CONFIGURATION */
   impeghd_read_bits_buf_util(pstr_bit_buf, (pstr_oam_cfg->frame_length >> 6), 6);
@@ -580,8 +580,8 @@ IA_ERRORCODE impeghd_read_oam_meta_data_for_ext_ren(
   }
 
   /* OBJECT METADATA */
-  impeghd_read_bits_buf_util(pstr_bit_buf, pstr_oam_dec_state->num_objects, 9);
-  for (WORD32 obj = 0; obj < pstr_oam_dec_state->num_objects; obj++)
+  impeghd_read_bits_buf_util(pstr_bit_buf, pstr_oam_cfg->num_objects, 9);
+  for (WORD32 obj = 0; obj < pstr_oam_cfg->num_objects; obj++)
   {
     impeghd_read_bits_buf_util(pstr_bit_buf, 0, 9); /*goa_element_id[obj]*/
     impeghd_read_bits_buf_util(pstr_bit_buf, pstr_oam_cfg->dyn_obj_priority_present, 1);
@@ -683,7 +683,7 @@ IA_ERRORCODE impeghd_read_oam_meta_data_for_ext_ren(
       {
       case ID_EXT_ELE_PROD_METADATA:
         impeghd_read_goa_prod_meta_data_for_ext_ren(
-            pstr_bit_buf, &pstr_usac_cfg->str_prod_metat_data, pstr_oam_dec_state->num_objects);
+            pstr_bit_buf, &pstr_usac_cfg->str_prod_metat_data, pstr_oam_cfg->num_objects);
       }
     }
   }
