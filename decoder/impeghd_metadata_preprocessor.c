@@ -4399,8 +4399,6 @@ static IA_ERRORCODE impeghd_mp_process_frame(ia_audio_specific_config_struct *ps
   pWORD8 ptr_scratch = ptr_scratch_mem;
   WORD32 add_objects;
   WORD32 obj_grp_idx = 0;
-  ia_oam_dec_state_struct *pstr_oam_dec_state =
-      &pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state;
   ia_enh_oam_config_struct *pstr_enh_oam_cfg = &pstr_asc->str_usac_config.enh_obj_md_cfg;
   ia_enh_obj_md_frame_str *pstr_enh_oam_frame = &pstr_dec_data->str_enh_obj_md_frame;
   ia_mae_audio_scene_info *pstr_mae_asi = &pstr_asc->str_mae_asi;

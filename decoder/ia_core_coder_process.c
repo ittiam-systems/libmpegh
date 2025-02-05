@@ -788,7 +788,7 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
   ia_usac_config_struct *pstr_usac_config = &(fd->str_audio_specific_config.str_usac_config);
   ia_usac_decoder_config_struct *pstr_usac_dec_config =
       &(fd->str_audio_specific_config.str_usac_config.str_usac_dec_config);
-  WORD32 *ptr_inactive_signal = &pstr_usac_config->signals_3d.inactive_signals[0];
+  UWORD32 *ptr_inactive_signal = &pstr_usac_config->signals_3d.inactive_signals[0];
 
   WORD16 nr_core_coder_channels = 0;
   WORD32 ch_offset = 0;

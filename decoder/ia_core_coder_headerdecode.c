@@ -227,14 +227,14 @@ IA_ERRORCODE ia_core_coder_headerdecode(ia_mpegh_dec_api_struct *p_obj_mpegh_dec
  *
  *  \brief Search for ASI packet in the input stream.
  *
- *  \param [in] Shandle     Decoder api handle
+ *  \param [in] handle      Decoder api handle
  *  \param [in] buffer      Input bit buffer stream
  *  \param [in] buffer_len  Length of input buffer in bytes
  *
  *  \return IA_ERRORCODE
  *
  */
-IA_ERRORCODE ia_core_coder_search_asi(ia_mpegh_dec_api_struct *handle, UWORD8 *buffer,
+IA_ERRORCODE ia_core_coder_search_asi(VOID *handle, UWORD8 *buffer,
                                         WORD32 buffer_len)
 {
   ia_mpegh_dec_api_struct *p_obj_mpegh_dec = (ia_mpegh_dec_api_struct *)handle;

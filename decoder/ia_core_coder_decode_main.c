@@ -915,7 +915,6 @@ static IA_ERRORCODE ia_core_coder_audio_preroll_parsing(ia_dec_data_struct *pstr
 WORD32 ia_asi_get_group_idx(WORD32 group_id, ia_mae_audio_scene_info *ptr_mae_asi)
 {
   WORD32 g = 0;
-  WORD32 idx = 0;
   for (g = 0; g < ptr_mae_asi->num_groups; g++)
   {
     if (ptr_mae_asi->group_definition[g].group_id == group_id)
@@ -940,7 +939,6 @@ WORD32 ia_asi_get_group_idx(WORD32 group_id, ia_mae_audio_scene_info *ptr_mae_as
 WORD32 ia_asi_get_sw_grp_idx(WORD32 sw_grp_id, ia_mae_audio_scene_info *ptr_mae_asi)
 {
   WORD32 sg = 0;
-  WORD32 idx = 0;
   for (sg = 0; sg < ptr_mae_asi->num_switch_groups; sg++)
   {
     if (ptr_mae_asi->switch_group_definition[sg].group_id == sw_grp_id)
@@ -965,7 +963,6 @@ WORD32 ia_asi_get_sw_grp_idx(WORD32 sw_grp_id, ia_mae_audio_scene_info *ptr_mae_
 WORD32 ia_asi_get_preset_idx(WORD32 pr_id, ia_mae_audio_scene_info *ptr_mae_asi)
 {
   WORD32 pr = 0;
-  WORD32 idx = 0;
   for (pr = 0; pr < ptr_mae_asi->num_group_presets; pr++)
   {
     if (ptr_mae_asi->group_presets_definition[pr].group_id == pr_id)
@@ -990,13 +987,9 @@ WORD32 ia_asi_get_preset_idx(WORD32 pr_id, ia_mae_audio_scene_info *ptr_mae_asi)
 IA_ERRORCODE ia_core_code_mdp(VOID *handle, WORD32 preset_id)
 {
   ia_mpegh_dec_api_struct *p_obj_mpegh_dec = (ia_mpegh_dec_api_struct *)handle;
-  ia_dec_data_struct *pstr_dec_data =
-      (ia_dec_data_struct *)p_obj_mpegh_dec->p_state_mpeghd->pstr_dec_data;
   ia_audio_specific_config_struct *pstr_asc =
       (ia_audio_specific_config_struct *)p_obj_mpegh_dec->p_state_mpeghd->ia_audio_specific_config;
-  FLOAT32 *scratch_mem = (FLOAT32 *)p_obj_mpegh_dec->p_state_mpeghd->mpeghd_scratch_mem_v;
   WORD32 grp, mbr, cond, num_groups, num_elements = 0;
-  IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
 
   ia_mae_audio_scene_info *ptr_mae_asi = &pstr_asc->str_mae_asi;
   if (!ptr_mae_asi->asi_present || ptr_mae_asi->num_groups == 0)
@@ -1038,8 +1031,6 @@ IA_ERRORCODE ia_core_code_mdp(VOID *handle, WORD32 preset_id)
     for (grp = 0; grp < num_groups; grp++)
     {
       WORD32 grp_id = ptr_mae_asi->group_definition[grp].group_id;
-      WORD32 member_id = 0;
-      WORD32 num_members = ptr_mae_asi->group_definition[grp].group_num_members;
       WORD32 has_conjuct_mbrs;
       grp_idx = -1;
       for (cond = 0; cond < ptr_mae_asi->group_presets_definition[pr_grp_idx].num_conditions;
@@ -1084,18 +1075,16 @@ IA_ERRORCODE ia_core_code_mdp(VOID *handle, WORD32 preset_id)
       for (grp = 0; grp < ptr_mae_asi->num_switch_groups; grp++)
       {
         WORD32 grp_id = ptr_mae_asi->switch_group_definition[grp].group_id;
-        WORD32 member_id = 0;
-        WORD32 num_members = ptr_mae_asi->switch_group_definition[grp].group_num_members;
         grp_idx = -1;
         for (cond = 0; cond < ptr_mae_asi->group_presets_definition[pr_grp_idx].num_conditions;
              cond++)
-      {
+        {
           if (ptr_mae_asi->group_presets_definition[pr_grp_idx].reference_id[cond] == grp_id &&
               ptr_mae_asi->group_presets_ext_definition.is_switch_group_condition[pr_grp_idx][cond])
-        {
+          {
             grp_idx = cond;
             break;
-        }
+          }
         }
         if (grp_idx == -1)
         {
@@ -1511,8 +1500,6 @@ impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data,
                                ia_oam_dec_config_struct *p_obj_md_cfg, FLOAT32 *ptr_out_buf,
                                WORD32 *num_out_channels, WORD32 ch_offset)
 {
-  ia_audio_specific_config_struct *pstr_audio_specific_cfg =
-      &pstr_dec_data->str_frame_data.str_audio_specific_config;
   ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state = &pstr_dec_data->str_obj_ren_dec_state;
   ia_oam_dec_state_struct *pstr_obj_md_dec_state = &pstr_obj_ren_dec_state->str_obj_md_dec_state;
   FLOAT32 *ptr_in_buf = &pstr_dec_data->str_usac_data.time_sample_vector[ch_offset][0];
@@ -2136,8 +2123,6 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
       {
         ia_audio_specific_config_struct *pstr_audio_specific_cfg =
             &pstr_dec_data->str_frame_data.str_audio_specific_config;
-        ia_oam_dec_state_struct *pstr_obj_md_dec_state =
-            &pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state;
         ia_bit_buf_struct bit_buf_str;
         ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_config->obj_md_cfg[obj_grp_idx];
         ia_core_coder_create_init_bit_buf(&bit_buf_str, ptr_bit_buf_base, bit_buf_size);

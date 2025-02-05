@@ -1689,7 +1689,7 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
     break;
 #endif
   default:
-    return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_MPEGH_PROFILE;
+    //return IA_MPEGH_DEC_INIT_FATAL_UNSUPPORTED_MPEGH_PROFILE;
     break;
   }
   if ((mpegh_profile_lvl >= MPEGH_PROFILE_BP_LVL_1 && mpegh_profile_lvl <= MPEGH_PROFILE_BP_LVL_3) &&
