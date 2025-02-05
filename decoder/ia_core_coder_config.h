@@ -514,29 +514,29 @@ typedef struct
 {
   UWORD32 num_elements;
   UWORD32 num_config_extensions;
-  UWORD32 usac_element_type[MAX_EXT_ELEMENTS];
-  WORD32 ia_ext_ele_payload_type[MAX_EXT_ELEMENTS];
+  UWORD32 usac_element_type[MAX_NUM_ELEMENTS];
+  WORD32 ia_ext_ele_payload_type[MAX_NUM_ELEMENTS];
   ia_multichannel_data ia_mcdata[MAX_NUM_SIGNALGROUPS];
   UWORD32 ia_ext_element_start;
   UWORD32 ia_ext_element_stop;
   ia_sfb_info *ia_sfb_info[MAX_TIME_CHANNELS];
-  WORD32 num_output_chns[MAX_EXT_ELEMENTS];
+  WORD32 num_output_chns[MAX_NUM_ELEMENTS];
   ia_hoa_config_struct str_hoa_config;
   WORD32 ele_length_present;
   ia_usac_ext_cfg_dmx_cfg dmx_cfg;
   WORD32 cicp_idx;
-  ia_usac_dec_element_config_struct str_usac_element_config[MAX_EXT_ELEMENTS];
+  ia_usac_dec_element_config_struct str_usac_element_config[MAX_NUM_ELEMENTS];
 
   WORD32 usac_cfg_ext_info_present[MAX_CONFIG_EXTENSIONS];
-  WORD32 usac_ext_ele_payload_present[MAX_EXT_ELEMENTS];
+  WORD32 usac_ext_ele_payload_present[MAX_NUM_ELEMENTS];
   WORD32 usac_cfg_ext_info_len[MAX_CONFIG_EXTENSIONS];
   WORD32 usac_cfg_ext_info_type[MAX_CONFIG_EXTENSIONS];
-  WORD32 usac_ext_ele_payload_len[MAX_EXT_ELEMENTS];
-  WORD32 usac_ext_gain_payload_len[MAX_EXT_ELEMENTS];
+  WORD32 usac_ext_ele_payload_len[MAX_NUM_ELEMENTS];
+  WORD32 usac_ext_gain_payload_len[MAX_NUM_ELEMENTS];
   WORD32 usac_ext_gain_payload_prev_len;
   UWORD8 usac_cfg_ext_info_buf[MAX_CONFIG_EXTENSIONS][MAX_EXT_ELE_PAYLOAD];
-  UWORD8 usac_ext_ele_payload_buf[MAX_EXT_ELEMENTS][MAX_EXT_ELE_PAYLOAD];
-  UWORD8 usac_ext_gain_payload_buf[MAX_EXT_ELEMENTS][MAX_AUDIO_PREROLLS * MAX_EXT_ELE_PAYLOAD];
+  UWORD8 usac_ext_ele_payload_buf[MAX_NUM_ELEMENTS][MAX_EXT_ELE_PAYLOAD];
+  UWORD8 usac_ext_gain_payload_buf[MAX_NUM_ELEMENTS][MAX_AUDIO_PREROLLS * MAX_EXT_ELE_PAYLOAD];
   UWORD8 usac_ext_gain_payload_prev_buf[MAX_EXT_ELE_PAYLOAD];
   WORD32 loudness_ext_config_present;
   WORD32 loudness_ext_config_idx;

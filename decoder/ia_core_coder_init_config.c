@@ -569,7 +569,7 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
   ia_usac_dec_element_config_struct *pstr_usac_element_config;
   pstr_usac_decoder_config = &pstr_usac_conf->str_usac_dec_config;
   memset(pstr_usac_decoder_config->num_output_chns, -1,
-         MAX_EXT_ELEMENTS * sizeof(pstr_usac_decoder_config->num_output_chns[0]));
+         MAX_NUM_ELEMENTS * sizeof(pstr_usac_decoder_config->num_output_chns[0]));
 
   ia_core_coder_read_escape_value(it_bit_buff, &(pstr_usac_decoder_config->num_elements), 4, 8,
                                   16);
@@ -577,7 +577,7 @@ static IA_ERRORCODE ia_core_coder_decoder_config(ia_bit_buf_struct *it_bit_buff,
   pstr_usac_decoder_config->preroll_flag = 0;
   pstr_usac_decoder_config->num_elements += 1;
 
-  if (pstr_usac_decoder_config->num_elements > MAX_EXT_ELEMENTS)
+  if (pstr_usac_decoder_config->num_elements > MAX_NUM_ELEMENTS)
   {
     return IA_MPEGH_DEC_EXE_FATAL_DECODE_FRAME_ERROR;
   }
@@ -1715,7 +1715,7 @@ VOID ia_core_coder_conf_default(ia_usac_config_struct *pstr_usac_conf)
 {
   WORD32 ele;
 
-  for (ele = 0; ele < MAX_EXT_ELEMENTS; ele++)
+  for (ele = 0; ele < MAX_NUM_ELEMENTS; ele++)
     pstr_usac_conf->str_usac_dec_config.usac_element_type[ele] = ID_USAC_INVALID;
 
   pstr_usac_conf->str_usac_dec_config.num_elements = 0;

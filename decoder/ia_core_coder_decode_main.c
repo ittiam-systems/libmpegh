@@ -2698,7 +2698,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
          (pstr_dec_data->str_drc_payload.pstr_drc_config != NULL)))
     {
       WORD32 index = 0;
-      for (WORD32 i = 0; i < MAX_EXT_ELEMENTS; i++)
+      for (WORD32 i = 0; i < MAX_NUM_ELEMENTS; i++)
       {
         if (ID_EXT_ELE_UNI_DRC ==
              pstr_asc->str_usac_config.str_usac_dec_config.ia_ext_ele_payload_type[i])
