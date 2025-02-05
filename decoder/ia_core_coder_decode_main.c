@@ -2912,13 +2912,6 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
               sizeof(WORD8);
         }
 
-        memcpy(pstr_asc->str_usac_config.str_usac_dec_config.usac_ext_gain_payload_buf[cnt] +
-                   payload_buffer_offeset,
-               pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config
-                       .str_usac_dec_config.usac_ext_gain_payload_buf[cnt] +
-                   payload_buffer_offeset,
-               copy_bytes);
-
         pstr_asc->str_usac_config.str_usac_dec_config.preroll_bytes[preroll_counter] = *out_bytes;
 
         preroll_counter++;
