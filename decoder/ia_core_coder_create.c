@@ -244,8 +244,9 @@ static IA_ERRORCODE ia_core_coder_decode_init(VOID *handle, ia_usac_data_struct 
   ia_usac_config_struct *ptr_usac_config = &(pstr_stream_config->str_usac_config);
   ia_usac_decoder_config_struct *ptr_usac_dec_config =
       &(pstr_stream_config->str_usac_config.str_usac_dec_config);
+  ia_signals_3d *pstr_signals = &ptr_usac_config->signals_3d;
 
-  WORD32 sample, ch, element_id = 0, slpd_index = 0, chan = 0,
+  WORD32 sample, ch, element_id = 0, slpd_index = 0, chan = 0, tot_chan = 0,
                      num_elements = ptr_usac_dec_config->num_elements, typ;
   UWORD32 element_type;
 
@@ -322,6 +323,12 @@ static IA_ERRORCODE ia_core_coder_decode_init(VOID *handle, ia_usac_data_struct 
 
     case ID_USAC_CPE:
     {
+      if (pstr_signals->inactive_signals[tot_chan])
+      {
+        tot_chan += 2;
+        break;
+      }
+      tot_chan += 2;
       if (chan > MAX_NUM_CHANNELS - 2)
         return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
       for (typ = 0; typ < 2; typ++)
@@ -348,6 +355,12 @@ static IA_ERRORCODE ia_core_coder_decode_init(VOID *handle, ia_usac_data_struct 
     break;
     case ID_USAC_LFE:
     {
+      if (pstr_signals->inactive_signals[tot_chan])
+      {
+        tot_chan += 1;
+        break;
+      }
+      tot_chan += 1;
       /*fix for bug:119118558*/
       if (chan > MAX_NUM_CHANNELS - 1)
         return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
@@ -358,6 +371,12 @@ static IA_ERRORCODE ia_core_coder_decode_init(VOID *handle, ia_usac_data_struct 
     break;
     case ID_USAC_SCE:
     {
+      if (pstr_signals->inactive_signals[tot_chan])
+      {
+        tot_chan += 1;
+        break;
+      }
+      tot_chan += 1;
       if (chan > MAX_NUM_CHANNELS - 1)
         return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
       usac_data->seed_value[chan] = 0x3039;

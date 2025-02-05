@@ -434,7 +434,10 @@ typedef struct
   UWORD32 group_type[MAX_AUDIO_GROUPS];
   UWORD32 num_sig[MAX_AUDIO_GROUPS];
   UWORD32 differs_from_ref_layout[MAX_AUDIO_GROUPS];
+  UWORD32 inactive_signals[MAX_NUM_CHANNELS];
+  UWORD32 inactive_signal_grp[MAX_AUDIO_GROUPS];
   UWORD32 num_grp_objs[MAX_AUDIO_GROUPS];
+  UWORD32 num_grp_tc[MAX_AUDIO_GROUPS];
   UWORD32 num_ch;
   UWORD32 num_audio_obj;
   UWORD32 num_saoc_transport_ch;

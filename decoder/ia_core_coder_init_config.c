@@ -1390,8 +1390,9 @@ IA_ERRORCODE ia_core_coder_mpegh_3da_config(ia_bit_buf_struct *it_bit_buff,
       }
       pstr_usac_conf->str_usac_dec_config.str_hoa_config.core_coder_frame_length =
           AUDIO_CODEC_FRAME_SIZE_MAX; // Hardcoded in ref code.
-      num_hoa_based_grps++;
+      ia_signals_3da->num_grp_tc[num_hoa_based_grps] = (num_sig + 1);
       ia_signals_3da->num_hoa_transport_ch += (num_sig + 1);
+      num_hoa_based_grps++;
       pstr_usac_conf->str_usac_dec_config.str_hoa_config.num_transport_ch =
           ia_signals_3da->num_hoa_transport_ch;
       break;
