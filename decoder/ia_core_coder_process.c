@@ -821,7 +821,7 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
       nr_core_coder_channels = 1;
       num_ch_out += 1;
 
-      if ((ch_offset >= MAX_NUM_CHANNELS_USAC_LVL2) || (num_ch_out > MAX_NUM_CHANNELS_USAC_LVL2))
+      if ((ch_offset >= MAX_NUM_CHANNELS) || (num_ch_out > MAX_NUM_CHANNELS))
         return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_CHANNELS;
 
       if (pstr_usac_dec_config->ele_length_present == 1)
@@ -850,7 +850,7 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
 
       num_ch_out += 2;
 
-      if ((ch_offset >= MAX_NUM_CHANNELS_USAC_LVL2) || (num_ch_out > MAX_NUM_CHANNELS_USAC_LVL2))
+      if ((ch_offset >= MAX_NUM_CHANNELS) || (num_ch_out > MAX_NUM_CHANNELS))
         return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_CHANNELS;
 
       if (pstr_usac_dec_config->ele_length_present == 1)
@@ -871,7 +871,7 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
       nr_core_coder_channels = 1;
       num_ch_out += 1;
 
-      if ((ch_offset >= MAX_NUM_CHANNELS_USAC_LVL2) || (num_ch_out > MAX_NUM_CHANNELS_USAC_LVL2))
+      if ((ch_offset >= MAX_NUM_CHANNELS) || (num_ch_out > MAX_NUM_CHANNELS))
         return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_CHANNELS;
 
       if (pstr_usac_dec_config->ele_length_present == 1)

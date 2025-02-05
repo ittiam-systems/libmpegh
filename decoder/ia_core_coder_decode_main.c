@@ -2405,7 +2405,11 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
 
   if (((pstr_asc->channel_configuration == 0) && (ia_signals_3da->num_hoa_transport_ch == 0) &&
        (ia_signals_3da->num_audio_obj == 0)) ||
+#ifndef LC_LEVEL_4
       (pstr_asc->channel_configuration > 16))
+#else
+      (pstr_asc->channel_configuration > 24))
+#endif
   {
     return IA_MPEGH_DEC_EXE_FATAL_INVALID_CHAN_CONFIG;
   }
@@ -2470,7 +2474,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
          (pstr_dec_data->str_drc_payload.pstr_drc_config != NULL)))
     {
       WORD32 index = 0;
-      for (WORD32 i = 0; i < MAX_ELEMENTS_USAC; i++)
+      for (WORD32 i = 0; i < MAX_EXT_ELEMENTS; i++)
       {
         if (ID_EXT_ELE_UNI_DRC ==
              pstr_asc->str_usac_config.str_usac_dec_config.ia_ext_ele_payload_type[i])

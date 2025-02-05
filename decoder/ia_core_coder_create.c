@@ -322,7 +322,7 @@ static IA_ERRORCODE ia_core_coder_decode_init(VOID *handle, ia_usac_data_struct 
 
     case ID_USAC_CPE:
     {
-      if (chan > MAX_NUM_CHANNELS_USAC_LVL2 - 2)
+      if (chan > MAX_NUM_CHANNELS - 2)
         return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
       for (typ = 0; typ < 2; typ++)
       {
@@ -349,7 +349,7 @@ static IA_ERRORCODE ia_core_coder_decode_init(VOID *handle, ia_usac_data_struct 
     case ID_USAC_LFE:
     {
       /*fix for bug:119118558*/
-      if (chan > MAX_NUM_CHANNELS_USAC_LVL2 - 1)
+      if (chan > MAX_NUM_CHANNELS - 1)
         return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
       usac_data->seed_value[chan] = 0x3039;
       chan++;
@@ -358,7 +358,7 @@ static IA_ERRORCODE ia_core_coder_decode_init(VOID *handle, ia_usac_data_struct 
     break;
     case ID_USAC_SCE:
     {
-      if (chan > MAX_NUM_CHANNELS_USAC_LVL2 - 1)
+      if (chan > MAX_NUM_CHANNELS - 1)
         return IA_MPEGH_DEC_INIT_FATAL_STREAM_CHAN_GT_MAX;
       usac_data->seed_value[chan] = 0x3039;
 
