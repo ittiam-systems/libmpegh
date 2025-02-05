@@ -2577,7 +2577,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
   WORD32 preroll_counter = 0;
   WORD32 suitable_tracks = 1;
   WORD32 num_samples_out;
-  WORD32 grp, channel, s, sig, cnt, elemIdx;
+  WORD32 grp, channel, s, sig, elemIdx;
   WORD32 mhas_offset = 0;
   WORD32 target_loudness;
   WORD32 loudness_norm_flag;
@@ -3106,32 +3106,12 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
       ia_core_coder_samples_sat((WORD8 *)outbuffer + tot_out_bytes, num_samples_out, pcmsize,
                                 &pstr_dec_data->ptr_binaural_output[0], out_ch_map,
                                 &mpegh_dec_handle->delay_in_samples, out_bytes, *num_channel_out);
-      {
-        WORD32 payload_buffer_offeset = 0;
-        WORD32 copy_bytes =
-            pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config
-                .str_usac_dec_config.usac_ext_gain_payload_len[preroll_counter] *
-            sizeof(WORD8);
+      pstr_asc->str_usac_config.str_usac_dec_config.preroll_bytes[preroll_counter] = *out_bytes;
 
-        pstr_asc->str_usac_config.str_usac_dec_config.usac_ext_gain_payload_len[preroll_counter] =
-            pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config
-                .str_usac_dec_config.usac_ext_gain_payload_len[preroll_counter];
+      preroll_counter++;
 
-        for (cnt = 0; cnt < preroll_counter; cnt++)
-        {
-          payload_buffer_offeset +=
-              pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config
-                  .str_usac_dec_config.usac_ext_gain_payload_len[cnt] *
-              sizeof(WORD8);
-        }
-
-        pstr_asc->str_usac_config.str_usac_dec_config.preroll_bytes[preroll_counter] = *out_bytes;
-
-        preroll_counter++;
-
-        if (preroll_counter > (MAX_AUDIO_PREROLLS + 1))
-          return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_PRE_ROLLS;
-      }
+      if (preroll_counter > (MAX_AUDIO_PREROLLS + 1))
+        return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_PRE_ROLLS;
 
       access_units++;
       preroll_units--;

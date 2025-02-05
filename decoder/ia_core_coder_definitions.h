@@ -49,7 +49,11 @@
 
 #define MAX_PREROLL_FRAMES (1)
 #define MAX_OUTPUT_PCM_SIZE (4)
+#ifdef LC_LEVEL_4
 #define MAX_USAC_CH (56)
+#else
+#define MAX_USAC_CH (32)
+#endif
 #define MAX_LOUD_SPEAKERS (24)
 #define MAX_OUT_SAMPLES_PER_FRAME (1024)
 #define MAX_USAC_ELEMENTS ((MAX_USAC_CH << 1) + (MAX_USAC_CH >> 1))
