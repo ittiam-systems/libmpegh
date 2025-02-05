@@ -143,9 +143,9 @@ static WORD32 ia_core_coder_igf_arith_decode_bits(ia_bit_buf_struct *it_bit_buf,
                                                   WORD32 *ptr_bit_offset, ia_state_arith *stat,
                                                   const WORD32 num_bits)
 {
-  WORD32 i;
+  WORD32 i = 0;
   WORD32 num_bits_read = 0;
-  WORD32 bit;
+  WORD32 bit = 0;
   for (i = num_bits - 1; i >= 0; --i)
   {
     *ptr_bit_offset = ia_core_coder_arith_decode(it_bit_buf, *ptr_bit_offset, &bit, stat,
@@ -176,8 +176,8 @@ static WORD32 ia_core_coder_igf_arith_decode_residual(ia_bit_buf_struct *it_bit_
                                                       const UWORD16 *ptr_cum_freq_table,
                                                       const WORD32 table_offset)
 {
-  WORD32 val;
-  WORD32 dec_res_val;
+  WORD32 val = 0;
+  WORD32 dec_res_val = 0;
 
   *ptr_bit_offset = ia_core_coder_arith_decode(it_bit_buf, *ptr_bit_offset, &val, stat,
                                                ptr_cum_freq_table, SYMBOLS_IN_TABLE);
