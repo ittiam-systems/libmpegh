@@ -70,7 +70,6 @@ typedef struct
   UWORD32 ui_pcm_wdsz;
   UWORD32 ui_samp_freq;
   UWORD32 ui_n_channels;
-  WORD32 i_channel_mask;
   UWORD32 ui_channel_mode;
   WORD32 ui_effect_type;
   WORD32 ui_target_loudness;

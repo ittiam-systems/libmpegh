@@ -234,7 +234,6 @@ static VOID impeghd_set_default_config(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
   p_obj_mpegh_dec->mpeghd_config.stream_samp_freq = IMPEGHD_CONFIG_PARAM_OUT_FS_DFLT_VAL;
   p_obj_mpegh_dec->mpeghd_config.ui_max_channels = IMPEGHD_CONFIG_PARAM_MAX_CHANS_DFLT_VAL;
   p_obj_mpegh_dec->mpeghd_config.ui_n_channels = 2;
-  p_obj_mpegh_dec->mpeghd_config.i_channel_mask = 3;
 }
 
 /**
@@ -458,7 +457,6 @@ static VOID ia_core_coder_fill_mpeghd_mem_tables(ia_mpegh_dec_api_struct *p_obj_
 static VOID impeghd_update_output_config(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
                                          ia_output_config *pstr_output_config)
 {
-  pstr_output_config->i_channel_mask = p_obj_mpegh_dec->mpeghd_config.i_channel_mask;
   pstr_output_config->i_samp_freq = (WORD32)p_obj_mpegh_dec->mpeghd_config.ui_samp_freq;
   pstr_output_config->i_num_chan = (WORD32)p_obj_mpegh_dec->mpeghd_config.ui_n_channels;
   pstr_output_config->i_pcm_wd_sz = (WORD32)p_obj_mpegh_dec->mpeghd_config.ui_pcm_wdsz;
@@ -846,7 +844,6 @@ IA_ERRORCODE ia_mpegh_dec_init(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOID p
   pstr_output_config->ui_init_done =
       (p_obj_mpegh_dec->p_state_mpeghd->ui_init_done == 1) && (err_code == 0) ? 1 : 0;
 
-  pstr_output_config->i_channel_mask = p_obj_mpegh_dec->mpeghd_config.i_channel_mask;
   if (pstr_input_config->enable_resamp)
   {
     pstr_output_config->i_samp_freq = p_obj_mpegh_dec->mpeghd_config.out_samp_freq;
@@ -860,6 +857,7 @@ IA_ERRORCODE ia_mpegh_dec_init(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOID p
   pstr_output_config->i_drc_effect = p_obj_mpegh_dec->mpeghd_config.ui_effect_type;
   pstr_output_config->i_target_loudness = p_obj_mpegh_dec->mpeghd_config.ui_target_loudness;
   pstr_output_config->i_loud_norm = p_obj_mpegh_dec->mpeghd_config.ui_loud_norm_flag;
+  pstr_output_config->cicp_index = p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx;
   if (pstr_input_config->extrn_rend_flag == 1)
   {
     pstr_output_config->ch_data_present = p_obj_mpegh_dec->mpeghd_config.ch_data_present;
@@ -1093,7 +1091,6 @@ IA_ERRORCODE ia_mpegh_dec_execute(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOI
   {
     pstr_output_config->num_out_bytes = p_obj_mpegh_dec->p_state_mpeghd->ui_out_bytes;
   }
-  pstr_output_config->i_channel_mask = p_obj_mpegh_dec->mpeghd_config.i_channel_mask;
   if (pstr_input_config->enable_resamp)
   {
     pstr_output_config->i_samp_freq = p_obj_mpegh_dec->mpeghd_config.out_samp_freq;
@@ -1113,6 +1110,10 @@ IA_ERRORCODE ia_mpegh_dec_execute(pVOID p_ia_mpegh_dec_obj, pVOID pv_input, pVOI
     pstr_output_config->pcm_payload_length = p_obj_mpegh_dec->mpeghd_config.pcm_data_length;
   }
   pstr_output_config->i_num_chan = p_obj_mpegh_dec->mpeghd_config.ui_n_channels;
+  if (p_obj_mpegh_dec->mpeghd_config.ui_cicp_layout_idx == 0)
+  {
+    pstr_output_config->cicp_index = ptr_audio_specific_config->ref_spk_layout.cicp_spk_layout_idx;
+  }
   return err_code;
 }
 

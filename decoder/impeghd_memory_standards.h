@@ -105,7 +105,6 @@ typedef struct
   WORD32 i_samp_freq;
   WORD32 i_num_chan;
   WORD32 i_pcm_wd_sz;
-  WORD32 i_channel_mask;
   WORD32 i_drc_effect;
   WORD32 i_target_loudness;
   WORD32 i_loud_norm;
