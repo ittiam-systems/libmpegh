@@ -13,7 +13,7 @@ jobs:
     runs-on: windows-2019
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Get current date
       id: date
@@ -42,7 +42,7 @@ jobs:
         copy "build/msvs/x64/Release/ia_mpeghd_lib.lib" "build/Release/ia_mpeghd_lib.lib"
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "MPEG-H 3D Audio Low Complexity Profile Decoder [${{steps.date.outputs.CurrentDate}}]-${{steps.vars.outputs.CurrentShortHash}}"
         path: "build/Release/"
