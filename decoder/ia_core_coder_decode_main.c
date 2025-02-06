@@ -665,8 +665,6 @@ IA_ERRORCODE impeghd_format_conv_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec,
 
       memset(&pstr_obj_renderer->str_obj_md_dec_state, 0, sizeof(*p_obj_md_cfg));
 
-      pstr_obj_renderer->str_obj_md_dec_state.p_obj_md_cfg = p_obj_md_cfg;
-      pstr_obj_renderer->str_obj_md_dec_state.num_objects = num_out_chn;
       pstr_obj_renderer->pstr_local_setup = &pstr_decoder->str_local_setup_interaction;
       pstr_obj_renderer->cicp_out_idx = cicp_idx;
 
@@ -904,163 +902,299 @@ static IA_ERRORCODE ia_core_coder_audio_preroll_parsing(ia_dec_data_struct *pstr
 }
 
 /**
- *  impeghd_mdp_dec_process
+ *  ia_asi_get_group_idx
  *
- *  \brief Metadata PreProcessing decoder main function
+ *  \brief Returns group index corresponding to the ID.
  *
- *  \param [in]     pstr_asc         Pointer to audio specific config structure
- *  \param [in,out] pstr_dec_data    Pointer to decoder data structure
- *  \param [in]     num_out_channels Pointer to number of output channels info
- *  \param [in]     scratch_mem      Pointer to scratch memory.
- *  \param [in]     preset_id        Preset id value from command line.
+ *  \param [in] group_id    Group ID.
+ *  \param [in] ptr_mae_asi Pointer to MAE data structure.
+ *
+ *  \return WORD32 Group index, 0 is returned when there is no match.
+ *
+ */
+WORD32 ia_asi_get_group_idx(WORD32 group_id, ia_mae_audio_scene_info *ptr_mae_asi)
+{
+  WORD32 g = 0;
+  for (g = 0; g < ptr_mae_asi->num_groups; g++)
+  {
+    if (ptr_mae_asi->group_definition[g].group_id == group_id)
+    {
+      return g;
+    }
+  }
+  return 0;
+}
+
+/**
+ *  ia_asi_get_sw_grp_idx
+ *
+ *  \brief Returns switch group index corresponding to the ID.
+ *
+ *  \param [in] sw_grp_id   Switch group ID.
+ *  \param [in] ptr_mae_asi Pointer to MAE data structure.
+ *
+ *  \return WORD32 Switch Group index, 0 is returned when there is no match.
+ *
+ */
+WORD32 ia_asi_get_sw_grp_idx(WORD32 sw_grp_id, ia_mae_audio_scene_info *ptr_mae_asi)
+{
+  WORD32 sg = 0;
+  for (sg = 0; sg < ptr_mae_asi->num_switch_groups; sg++)
+  {
+    if (ptr_mae_asi->switch_group_definition[sg].group_id == sw_grp_id)
+    {
+      return sg;
+    }
+  }
+  return 0;
+}
+
+/**
+ *  ia_asi_get_preset_idx
+ *
+ *  \brief Returns preset group index corresponding to the ID.
+ *
+ *  \param [in] pr_id       Preset id.
+ *  \param [in] ptr_mae_asi Pointer to MAE data structure.
+ *
+ *  \return WORD32 Preset index, 0 is returned when there is no match.
+ *
+ */
+WORD32 ia_asi_get_preset_idx(WORD32 pr_id, ia_mae_audio_scene_info *ptr_mae_asi)
+{
+  WORD32 pr = 0;
+  for (pr = 0; pr < ptr_mae_asi->num_group_presets; pr++)
+  {
+    if (ptr_mae_asi->group_presets_definition[pr].group_id == pr_id)
+    {
+      return pr;
+    }
+  }
+  return 0;
+}
+
+/**
+ *  ia_core_code_mdp
+ *
+ *  \brief Identifies the active and inactive signals based on ASI.
+ *
+ *  \param [in,out] handle       MPEG-H decoder handle
+ *  \param [in]     preset_id    Preset ID chosen by the user.
  *
  *  \return IA_ERRORCODE Processing error if any.
  *
  */
-IA_ERRORCODE impeghd_mdp_dec_process(ia_audio_specific_config_struct *pstr_asc,
-                                     ia_dec_data_struct *pstr_dec_data, WORD32 num_out_channels,
-                                     FLOAT32 *scratch_mem, WORD32 preset_id)
+IA_ERRORCODE ia_core_code_mdp(VOID *handle, WORD32 preset_id)
 {
-  WORD32 channel, grp, mbr, cond, ccfl, num_decoded_groups, num_elements = 0;
-  IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
-
-  FLOAT32 *audio_in_buff[MAX_NUM_CHANNELS], *audio_out_buff[MAX_NUM_CHANNELS];
+  ia_mpegh_dec_api_struct *p_obj_mpegh_dec = (ia_mpegh_dec_api_struct *)handle;
+  ia_audio_specific_config_struct *pstr_asc =
+      (ia_audio_specific_config_struct *)p_obj_mpegh_dec->p_state_mpeghd->ia_audio_specific_config;
+  WORD32 grp, mbr, cond, num_groups, num_elements = 0;
 
   ia_mae_audio_scene_info *ptr_mae_asi = &pstr_asc->str_mae_asi;
-
-  ccfl = pstr_dec_data->str_usac_data.ccfl;
-  num_decoded_groups = ptr_mae_asi->num_groups;
-
-  for (channel = 0; channel < num_out_channels; channel++)
+  if (!ptr_mae_asi->asi_present || ptr_mae_asi->num_groups == 0)
   {
-    audio_out_buff[channel] = scratch_mem + (channel * ccfl);
-    ia_core_coder_memset(audio_out_buff[channel], ccfl);
-    audio_in_buff[channel] = &pstr_dec_data->str_usac_data.time_sample_vector[channel][0];
+    return 0;
   }
 
-  for (grp = 0; grp < num_decoded_groups; grp++)
+  for (grp = 0; grp < MAX_NUM_CHANNELS; grp++)
   {
+    pstr_asc->str_usac_config.signals_3d.inactive_signals[grp] = 1;
+  }
+  for (grp = 0; grp < MAX_AUDIO_GROUPS; grp++)
+  {
+    pstr_asc->str_usac_config.signals_3d.inactive_signal_grp[grp] = 1;
+  }
+  num_groups = ptr_mae_asi->num_groups;
+
+  for (grp = 0; grp < num_groups; grp++)
+    {
     num_elements += ptr_mae_asi->group_definition[grp].group_num_members;
   }
 
-  /* Element interaction related processing has to happen here*/
-  if (ptr_mae_asi->ei_present || pstr_dec_data->str_element_interaction.ei_data_present ||
-      pstr_dec_data->str_scene_displacement.scene_dspl_data_present)
-  {
-    /* Element interaction related processing has to happen here*/
-    err_code = impeghd_mdp_dec_ei_process(pstr_asc, pstr_dec_data, num_out_channels,
-                                          (WORD8 *)scratch_mem, &preset_id);
-    if (err_code != IA_MPEGH_DEC_NO_ERROR)
-    {
-      return err_code;
-    }
-  }
-
-  /* Gain Interactivity processing block*/
   if (-1 != preset_id)
   {
     WORD32 pr_grp_idx = -1;
     WORD32 grp_idx = -1;
-    for (grp = 0; grp < num_decoded_groups; grp++)
+    for (grp = 0; grp < ptr_mae_asi->num_group_presets; grp++)
     {
       if (ptr_mae_asi->group_presets_definition[grp].group_id == preset_id)
       {
-        pr_grp_idx = grp;
+        pr_grp_idx = ia_asi_get_preset_idx(preset_id, ptr_mae_asi);
         break;
       }
     }
     if (pr_grp_idx == -1)
     {
-      /* Invalid Preset Id */
-      return IA_MPEGH_DEC_EXE_FATAL_INVALID_PRESET_ID;
+      pr_grp_idx = 0;
     }
-    for (grp = 0; grp < num_decoded_groups; grp++)
+    for (grp = 0; grp < num_groups; grp++)
     {
       WORD32 grp_id = ptr_mae_asi->group_definition[grp].group_id;
-      WORD32 member_id = 0;
-      WORD32 num_members = ptr_mae_asi->group_definition[grp].group_num_members;
       WORD32 has_conjuct_mbrs;
+      grp_idx = -1;
       for (cond = 0; cond < ptr_mae_asi->group_presets_definition[pr_grp_idx].num_conditions;
            cond++)
       {
-        if (ptr_mae_asi->group_presets_definition[pr_grp_idx].reference_id[cond] == grp_id)
+        if (ptr_mae_asi->group_presets_definition[pr_grp_idx].reference_id[cond] == grp_id &&
+            !(ptr_mae_asi->group_presets_ext_definition.has_switch_group_conditions[pr_grp_idx] &&
+            ptr_mae_asi->group_presets_ext_definition.is_switch_group_condition[pr_grp_idx][cond]))
         {
-          grp_idx = cond;
+          grp_idx = ia_asi_get_group_idx(grp_id, ptr_mae_asi);
           break;
         }
       }
       if (grp_idx == -1)
       {
-        /* Invalid Group Id */
-        return IA_MPEGH_DEC_EXE_FATAL_INVALID_GRP_ID;
+        continue;
       }
-      if (0 == ptr_mae_asi->group_presets_definition[pr_grp_idx].cond_on_off[grp_idx])
+      has_conjuct_mbrs = ptr_mae_asi->group_definition[grp_idx].has_conjunct_members;
+      if (0 != ptr_mae_asi->group_presets_definition[pr_grp_idx].cond_on_off[cond])
       {
-        has_conjuct_mbrs = ptr_mae_asi->group_definition[grp].has_conjunct_members;
+        if (has_conjuct_mbrs)
+      {
+          WORD32 start_offset = ptr_mae_asi->group_definition[grp_idx].start_id;
+          for (mbr = 0; mbr < ptr_mae_asi->group_definition[grp_idx].group_num_members; mbr++)
+          {
+            pstr_asc->str_usac_config.signals_3d.inactive_signals[start_offset + mbr] = 0;
+          }
       }
       else
       {
-        has_conjuct_mbrs = ptr_mae_asi->group_definition[cond].has_conjunct_members;
+          for (mbr = 0; mbr < ptr_mae_asi->group_definition[grp_idx].group_num_members; mbr++)
+          {
+            WORD32 idx = ptr_mae_asi->group_definition[grp_idx].metadata_ele_id[mbr];
+            pstr_asc->str_usac_config.signals_3d.inactive_signals[idx] = 0;
+          }
+        }
+      }
       }
 
-      for (mbr = 0; mbr < num_members; mbr++)
+    if (ptr_mae_asi->group_presets_ext_definition.has_switch_group_conditions[pr_grp_idx])
+    {
+      for (grp = 0; grp < ptr_mae_asi->num_switch_groups; grp++)
       {
-        if (0 == has_conjuct_mbrs)
+        WORD32 grp_id = ptr_mae_asi->switch_group_definition[grp].group_id;
+        grp_idx = -1;
+        for (cond = 0; cond < ptr_mae_asi->group_presets_definition[pr_grp_idx].num_conditions;
+             cond++)
         {
-          member_id = ptr_mae_asi->group_definition[grp].metadata_ele_id[mbr];
+          if (ptr_mae_asi->group_presets_definition[pr_grp_idx].reference_id[cond] == grp_id &&
+              ptr_mae_asi->group_presets_ext_definition.is_switch_group_condition[pr_grp_idx][cond])
+          {
+            grp_idx = cond;
+            break;
+          }
         }
-        else
+        if (grp_idx == -1)
         {
-          member_id = ptr_mae_asi->group_definition[grp].start_id + mbr;
-        }
-
-        if (member_id < 0 || member_id >= num_out_channels)
-        {
-          return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_CHANNELS;
+          continue;
         }
         if (0 != ptr_mae_asi->group_presets_definition[pr_grp_idx].cond_on_off[grp_idx])
         {
-          ia_core_coder_mem_cpy(audio_in_buff[member_id], audio_out_buff[member_id], ccfl);
+          WORD32 sg_idx = ia_asi_get_sw_grp_idx(grp_id, ptr_mae_asi);
+          grp_id = ptr_mae_asi->switch_group_definition[sg_idx].default_group_id;
+          grp_idx = ia_asi_get_group_idx(grp_id, ptr_mae_asi);
+          if (ptr_mae_asi->group_definition[grp_idx].has_conjunct_members)
+          {
+            WORD32 start_offset = ptr_mae_asi->group_definition[grp_idx].start_id;
+            for (mbr = 0; mbr < ptr_mae_asi->group_definition[grp_idx].group_num_members; mbr++)
+            {
+              pstr_asc->str_usac_config.signals_3d.inactive_signals[start_offset + mbr] = 0;
+            }
         }
         else
         {
-          ia_core_coder_memset(audio_out_buff[member_id], ccfl);
+            for (mbr = 0; mbr < ptr_mae_asi->group_definition[grp_idx].group_num_members; mbr++)
+            {
+              WORD32 idx = ptr_mae_asi->group_definition[grp_idx].metadata_ele_id[mbr];
+              pstr_asc->str_usac_config.signals_3d.inactive_signals[idx] = 0;
+            }
+          }
         }
       }
     }
   }
   else
   {
-    for (grp = 0; grp < num_decoded_groups; grp++)
+    WORD32 member_id = 0;
+    for (grp = 0; grp < num_groups; grp++)
     {
-      WORD32 num_members = ptr_mae_asi->group_definition[grp].group_num_members;
-      WORD32 member_id = 0;
-
-      for (mbr = 0; mbr < num_members; mbr++)
+      if (0 != ptr_mae_asi->group_definition[grp].default_on_off)
       {
-        if (0 == ptr_mae_asi->group_definition[grp].has_conjunct_members)
+        if (member_id < 0 || member_id >= num_elements)
         {
-          member_id = ptr_mae_asi->group_definition[grp].metadata_ele_id[mbr];
+          return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_CHANNELS;
+        }
+        if (ptr_mae_asi->group_definition[grp].has_conjunct_members)
+      {
+          WORD32 start_offset = ptr_mae_asi->group_definition[grp].start_id;
+          for (mbr = ptr_mae_asi->group_definition[grp].start_id; mbr < ptr_mae_asi->group_definition[grp].group_num_members; mbr++)
+        {
+            pstr_asc->str_usac_config.signals_3d.inactive_signals[start_offset + mbr] = 0;
+          }
         }
         else
         {
-          member_id = ptr_mae_asi->group_definition[grp].start_id + mbr;
+          for (mbr = 0; mbr < ptr_mae_asi->group_definition[grp].group_num_members; mbr++)
+          {
+            WORD32 idx = ptr_mae_asi->group_definition[grp].metadata_ele_id[mbr];
+            pstr_asc->str_usac_config.signals_3d.inactive_signals[idx] = 0;
+          }
         }
-        if (0 != ptr_mae_asi->group_definition[grp].default_on_off)
+      }
+        }
+    for (grp = 0; grp < ptr_mae_asi->num_switch_groups; grp++)
+    {
+      WORD32 grp_idx = 0;
+      member_id = ptr_mae_asi->switch_group_definition[grp].default_group_id;
+      grp_idx = ia_asi_get_group_idx(member_id, ptr_mae_asi);
+      if (0 != ptr_mae_asi->switch_group_definition[grp].default_on_off)
         {
-          if (member_id < 0 || member_id >= num_out_channels)
+        if (member_id < 0 || member_id >= num_elements)
           {
             return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_CHANNELS;
           }
-
-          ia_core_coder_mem_cpy(audio_in_buff[member_id], audio_out_buff[member_id], ccfl);
+        if (ptr_mae_asi->group_definition[grp_idx].has_conjunct_members)
+        {
+          WORD32 offset = ptr_mae_asi->group_definition[grp_idx].start_id;
+          for (mbr = 0; mbr < ptr_mae_asi->group_definition[grp_idx].group_num_members; mbr++)
+          {
+            pstr_asc->str_usac_config.signals_3d.inactive_signals[mbr + offset] = 0;
+          }
+        }
+        else
+        {
+          for (mbr = 0; mbr < ptr_mae_asi->group_definition[grp_idx].group_num_members; mbr++)
+          {
+            WORD32 idx = ptr_mae_asi->group_definition[grp_idx].metadata_ele_id[mbr];
+            pstr_asc->str_usac_config.signals_3d.inactive_signals[idx] = 0;
+          }
         }
       }
     }
-  }
-  for (channel = 0; channel < num_out_channels; channel++)
+        }
+  num_elements = 0;
+  for (grp = 0; grp < (WORD32)pstr_asc->str_usac_config.signals_3d.num_sig_group; grp++)
   {
-    ia_core_coder_mem_cpy(audio_out_buff[channel], audio_in_buff[channel], ccfl);
+    WORD32 all_sig_active = 0;
+    for (mbr = 0; mbr < (WORD32)pstr_asc->str_usac_config.signals_3d.num_sig[grp]; mbr++)
+    {
+      if (pstr_asc->str_usac_config.signals_3d.inactive_signals[mbr + num_elements] == 0)
+      {
+        all_sig_active = 1;
+      }
+      else
+      {
+        all_sig_active = 0;
+        break;
+    }
+  }
+    if (all_sig_active)
+  {
+        pstr_asc->str_usac_config.signals_3d.inactive_signal_grp[grp] = 0;
+    }
+    num_elements += pstr_asc->str_usac_config.signals_3d.num_sig[grp];
   }
   return IA_MPEGH_DEC_NO_ERROR;
 }
@@ -1308,16 +1442,18 @@ static IA_ERRORCODE impeghd_earcon_obj_md_dec_ren_process(ia_dec_data_struct *ps
   ia_earcon_info *pstr_earcon_info = &pstr_asc->str_mae_asi.earcon_info;
   ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state = &pstr_dec_data->str_obj_ren_dec_state;
   ia_oam_dec_state_struct *pstr_obj_md_dec_state = &pstr_obj_ren_dec_state->str_obj_md_dec_state;
+  ia_oam_dec_config_struct str_oam_md_cfg = { 0 };
 
-  num_objects = pstr_obj_md_dec_state->num_objects;
   ccfl = ia_pcm_frame_size_tbl[pstr_pcm_data_config->pcm_frame_size_idx];
   ptr_in_buf = &pstr_pcm_data_config->pcm_sample[0][0];
 
   ia_core_coder_memset(ptr_out_buf, (ccfl * pstr_obj_ren_dec_state->num_cicp_speakers));
 
   pstr_obj_md_dec_state->sub_frame_number = 1;
-  pstr_obj_md_dec_state->num_objects = (pstr_pcm_data_config->bs_num_pcm_signals + 1);
-  for (obj = 0; obj < pstr_obj_md_dec_state->num_objects; obj++)
+  num_objects = (pstr_pcm_data_config->bs_num_pcm_signals + 1);
+  str_oam_md_cfg.num_objects = num_objects;
+  str_oam_md_cfg.cc_frame_length = str_oam_md_cfg.frame_length = ccfl;
+  for (obj = 0; obj < num_objects; obj++)
   {
     pstr_obj_md_dec_state->radius[obj] = pstr_earcon_info->earcon_distance[0];
     pstr_obj_md_dec_state->elevation[obj] = pstr_earcon_info->earcon_elevation[0];
@@ -1336,12 +1472,12 @@ static IA_ERRORCODE impeghd_earcon_obj_md_dec_ren_process(ia_dec_data_struct *ps
     pstr_obj_md_dec_state->gain_descaled[obj] =
         (FLOAT32)pow(10.0f, (pstr_obj_md_dec_state->gain[obj] - 32.0f) / 40.0f);
   }
-  err_code = impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, ptr_in_buf, ptr_out_buf, ccfl);
+  err_code = impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, &str_oam_md_cfg, ptr_in_buf,
+                                      ptr_out_buf, ccfl);
   if (err_code)
   {
     return err_code;
   }
-  pstr_obj_md_dec_state->num_objects = num_objects;
   return err_code;
 }
 
@@ -1351,6 +1487,7 @@ static IA_ERRORCODE impeghd_earcon_obj_md_dec_ren_process(ia_dec_data_struct *ps
  *  \brief Object metadata renderer main process function.
  *
  *  \param [in,out] pstr_dec_data     Pointer to decoder data structure.
+ *  \param [in]  p_obj_md_cfg      Pointer to object metadata configuration buffer.
  *  \param [out] ptr_out_buf       Pointer to output buffer.
  *  \param [in,out] num_out_channels  Pointer to number of output channels parameter.
  *  \param [in]  ch_offset         Offest for audio object output.
@@ -1359,14 +1496,12 @@ static IA_ERRORCODE impeghd_earcon_obj_md_dec_ren_process(ia_dec_data_struct *ps
  *
  */
 IA_ERRORCODE
-impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data, FLOAT32 *ptr_out_buf,
+impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data,
+                               ia_oam_dec_config_struct *p_obj_md_cfg, FLOAT32 *ptr_out_buf,
                                WORD32 *num_out_channels, WORD32 ch_offset)
 {
-  ia_audio_specific_config_struct *pstr_audio_specific_cfg =
-      &pstr_dec_data->str_frame_data.str_audio_specific_config;
   ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state = &pstr_dec_data->str_obj_ren_dec_state;
   ia_oam_dec_state_struct *pstr_obj_md_dec_state = &pstr_obj_ren_dec_state->str_obj_md_dec_state;
-  ia_oam_dec_config_struct *p_obj_md_cfg = &pstr_audio_specific_cfg->str_usac_config.obj_md_cfg;
   FLOAT32 *ptr_in_buf = &pstr_dec_data->str_usac_data.time_sample_vector[ch_offset][0];
   WORD32 ccfl = pstr_dec_data->str_usac_data.output_samples;
   WORD32 i;
@@ -1382,7 +1517,8 @@ impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data, FLOAT32 *ptr_o
   if (p_obj_md_cfg->frame_length >= ccfl)
   {
     pstr_obj_md_dec_state->sub_frame_number = 1;
-    impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, ptr_in_buf, ptr_out_buf, ccfl);
+    impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, p_obj_md_cfg,
+                             ptr_in_buf, ptr_out_buf, ccfl);
   }
   else
   {
@@ -1404,7 +1540,7 @@ impeghd_obj_md_dec_ren_process(ia_dec_data_struct *pstr_dec_data, FLOAT32 *ptr_o
         pstr_obj_md_dec_state->sub_frame_number = num_iter;
       }
 
-      impeghd_obj_renderer_dec(pstr_obj_ren_dec_state,
+      impeghd_obj_renderer_dec(pstr_obj_ren_dec_state, p_obj_md_cfg,
                                ptr_in_buf + i * (p_obj_md_cfg->frame_length),
                                ptr_out_buf + i * (p_obj_md_cfg->frame_length), ccfl);
     }
@@ -1617,7 +1753,8 @@ impeghd_uni_drc_dec_process(ia_usac_decoder_config_struct *pstr_usac_dec_cfg,
         pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.loud_norm_gain_db,
         pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.boost,
         pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.compress,
-        pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.drc_characteristic_target);
+        pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.drc_characteristic_target,
+        &pstr_asc->str_usac_config.signals_3d.inactive_signals[0]);
     if (err_code != IA_MPEGH_DEC_NO_ERROR)
     {
       return IA_MPEGD_DRC_EXE_FATAL_PROCESS_FAIL;
@@ -1637,7 +1774,8 @@ impeghd_uni_drc_dec_process(ia_usac_decoder_config_struct *pstr_usac_dec_cfg,
         pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.loud_norm_gain_db,
         pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.boost,
         pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.compress,
-        pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.drc_characteristic_target);
+        pstr_drc_dec_payload->str_select_proc.uni_drc_sel_proc_output.drc_characteristic_target,
+        &pstr_asc->str_usac_config.signals_3d.inactive_signals[0]);
     if (err_code)
       return IA_MPEGD_DRC_EXE_FATAL_PROCESS_FAIL;
   }
@@ -1663,6 +1801,7 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
   WORD32 suitable_tracks = 1, delay, grp, channel, ele_idx, num_signals, drc_effect_type,
          num_elements;
   WORD32 ch_cnt = 0, sig_grp = 0, target_loudness, loudness_norm_flag, mct_cnt = 0;
+  WORD32 obj_grp_idx = 0;
 
   ia_mpegh_dec_api_struct *handle = (ia_mpegh_dec_api_struct *)temp_handle;
   ia_mpegh_dec_state_struct *mpegh_dec_handle = handle->p_state_mpeghd;
@@ -1760,16 +1899,11 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
       {
         memset(&pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state, 0,
                sizeof(pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state));
-        memset(&pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.obj_md_cfg
+        memset(&pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.obj_md_cfg[obj_grp_idx]
                     .is_screen_rel_obj[0],
                0, sizeof(pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config
-                             .obj_md_cfg.is_screen_rel_obj));
+                             .obj_md_cfg[obj_grp_idx].is_screen_rel_obj));
 
-        pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state.p_obj_md_cfg =
-            &pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.obj_md_cfg;
-        pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state.num_objects =
-            pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config.signals_3d
-                .num_audio_obj;
         pstr_dec_data->str_obj_ren_dec_state.pstr_local_setup =
             &pstr_dec_data->str_local_setup_interaction;
         err_code = impeghd_obj_renderer_dec_init(
@@ -1785,6 +1919,7 @@ IA_ERRORCODE ia_core_coder_dec_process_frame_zero(VOID *temp_handle, WORD32 *num
           oam_present = 1;
           *num_channel_out = pstr_dec_data->str_obj_ren_dec_state.num_cicp_speakers;
         }
+        obj_grp_idx++;
       }
       break;
       case ID_MPEGH_EXT_ELE_HOA:
@@ -1950,6 +2085,9 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 channel, ele, s, num_elements, ch_offset, num_samples_out;
+  WORD32 obj_grp_idx = 0;
+  UWORD32 grp_idx = 0;
+  WORD32 obj_sub_frm_off = 0, obj_start = 0;
 
   ia_mpegh_dec_api_struct *handle = (ia_mpegh_dec_api_struct *)temp_handle;
   ia_mpegh_dec_state_struct *mpegh_dec_handle = handle->p_state_mpeghd;
@@ -1985,15 +2123,14 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
       {
         ia_audio_specific_config_struct *pstr_audio_specific_cfg =
             &pstr_dec_data->str_frame_data.str_audio_specific_config;
-        ia_oam_dec_state_struct *pstr_obj_md_dec_state =
-            &pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state;
         ia_bit_buf_struct bit_buf_str;
+        ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_config->obj_md_cfg[obj_grp_idx];
         ia_core_coder_create_init_bit_buf(&bit_buf_str, ptr_bit_buf_base, bit_buf_size);
         bit_buf_str.xmpeghd_jmp_buf = pstr_dec_data->dec_bit_buf.xmpeghd_jmp_buf;
         pstr_dec_data->str_enh_obj_md_frame.p_enh_obj_md_cfg =
             &pstr_audio_specific_cfg->str_usac_config.enh_obj_md_cfg;
         err_code = impeghd_enh_obj_md_frame(&pstr_dec_data->str_enh_obj_md_frame, &bit_buf_str,
-                                            pstr_obj_md_dec_state->num_objects,
+                                            pstr_oam_cfg->num_objects,
                                             pstr_dec_data->str_usac_data.usac_independency_flg);
         if (err_code != IA_MPEGH_DEC_NO_ERROR)
         {
@@ -2006,14 +2143,20 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
       {
         WORD32 ccfl = pstr_dec_data->str_usac_data.output_samples;
         ia_bit_buf_struct bit_buf_str;
+        ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_config->obj_md_cfg[obj_grp_idx];
         ia_core_coder_create_init_bit_buf(&bit_buf_str, ptr_bit_buf_base, bit_buf_size);
         bit_buf_str.xmpeghd_jmp_buf = pstr_dec_data->dec_bit_buf.xmpeghd_jmp_buf;
-        if (bit_buf_size > 0)
+        while((ia_signals_3da->group_type[grp_idx] != SIG_GROUP_TYPE_OBJ) &&
+              (grp_idx < (WORD32)ia_signals_3da->num_sig_group))
+        {
+          grp_idx++;
+        }
+        if (bit_buf_size > 0 && (ia_signals_3da->inactive_signal_grp[grp_idx] == 0))
         {
           ia_audio_specific_config_struct *pstr_audio_specific_cfg =
               &pstr_dec_data->str_frame_data.str_audio_specific_config;
           ia_oam_dec_config_struct *p_obj_md_cfg =
-              &pstr_audio_specific_cfg->str_usac_config.obj_md_cfg;
+              &pstr_audio_specific_cfg->str_usac_config.obj_md_cfg[obj_grp_idx];
           ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state =
               &pstr_dec_data->str_obj_ren_dec_state;
           ia_oam_dec_state_struct *pstr_obj_md_dec_state =
@@ -2025,6 +2168,8 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
             return IA_MPEGH_OAM_EXE_FATAL_UNSUPPORTED_FRAMELENGTH;
           }
 
+          pstr_obj_md_dec_state->obj_sub_frm_off = obj_sub_frm_off;
+          pstr_obj_md_dec_state->obj_start = obj_start;
           if (p_obj_md_cfg->frame_length < ccfl)
           {
             WORD32 sub_frm;
@@ -2037,7 +2182,7 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
               if (pstr_obj_md_dec_state->sub_frame_obj_md_present[sub_frm])
               {
                 pstr_obj_md_dec_state->sub_frame_number++;
-                err_code = impeghd_obj_md_dec(pstr_obj_md_dec_state, &bit_buf_str);
+                err_code = impeghd_obj_md_dec(pstr_obj_md_dec_state, pstr_oam_cfg, &bit_buf_str);
                 if (err_code != IA_MPEGH_DEC_NO_ERROR)
                 {
                   return err_code;
@@ -2048,13 +2193,17 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
           else
           {
             pstr_obj_md_dec_state->sub_frame_number = 1;
-            err_code = impeghd_obj_md_dec(pstr_obj_md_dec_state, &bit_buf_str);
+            err_code = impeghd_obj_md_dec(pstr_obj_md_dec_state, p_obj_md_cfg, &bit_buf_str);
             if (err_code != IA_MPEGH_DEC_NO_ERROR)
             {
               return err_code;
             }
           }
+          obj_sub_frm_off += p_obj_md_cfg->num_objects * pstr_obj_md_dec_state->sub_frame_number;
+          obj_start += p_obj_md_cfg->num_objects;
         }
+        grp_idx++;
+        obj_grp_idx = obj_grp_idx + 1;
         break;
       }
       }
@@ -2095,17 +2244,7 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
     handle->mpeghd_config.pcm_data_length = 3 * AUDIO_CODEC_FRAME_SIZE_MAX * num_cc_channels;
   }
 
-  if (pstr_dec_data->str_frame_data.str_audio_specific_config.str_mae_asi.asi_present)
-  {
-    err_code = impeghd_mdp_dec_process(
-        &pstr_dec_data->str_frame_data.str_audio_specific_config, pstr_dec_data,
-        pstr_dec_data->str_frame_data.str_audio_specific_config.channel_configuration,
-        (FLOAT32 *)(mpegh_dec_handle->mpeghd_scratch_mem_v), handle->mpeghd_config.i_preset_id);
-    if (err_code != IA_MPEGH_DEC_NO_ERROR)
-    {
-      return err_code;
-    }
-  }
+
   for (ele = 0; ele < num_elements; ele++)
   {
     if ((ID_EXT_ELE_UNI_DRC == pstr_usac_dec_cfg->ia_ext_ele_payload_type[ele]) &&
@@ -2152,6 +2291,35 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
     }
   }
 
+  obj_grp_idx = 0;
+  grp_idx = 0;
+  ch_offset = 0;
+  obj_sub_frm_off = 0;
+  obj_start = 0;
+  for (grp_idx = 0; grp_idx < ia_signals_3da->num_sig_group; grp_idx++)
+  {
+    if (ia_signals_3da->group_type[grp_idx] == SIG_GROUP_TYPE_CHN && ia_signals_3da->inactive_signal_grp[grp_idx] == 0)
+    {
+      if (ia_signals_3da->num_sig[grp_idx] > 0)
+      {
+        if (ch_offset > 0)
+        {
+          for (channel = 0; channel < *num_channel_out; channel++)
+          {
+            for (s = 0; s < num_samples_out; s++)
+            {
+              pstr_dec_data->str_usac_data.time_sample_vector[channel][s] =
+                  ia_add_flt(pstr_dec_data->str_usac_data.time_sample_vector[channel][s],
+                             pstr_dec_data->str_usac_data.time_sample_vector[channel + ch_offset][s]);
+            }
+          }
+        }
+        ch_offset += ia_signals_3da->num_sig[grp_idx];
+      }
+    }
+  }
+  ch_offset = 0;
+  grp_idx = 0;
   for (ele = 0; ele < num_elements; ele++)
   {
     if (pstr_usac_dec_cfg->usac_ext_ele_payload_present[ele])
@@ -2160,12 +2328,35 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
       {
       case ID_MPEGH_EXT_ELE_OAM:
       {
+        ia_oam_dec_config_struct *p_obj_md_cfg = &pstr_usac_config->obj_md_cfg[obj_grp_idx];
+        ia_oam_dec_state_struct *p_str_obj_ren_dec_state = &pstr_dec_data->str_obj_ren_dec_state.str_obj_md_dec_state;
+        while((ia_signals_3da->group_type[grp_idx] != SIG_GROUP_TYPE_OBJ) &&
+              (grp_idx < (WORD32)ia_signals_3da->num_sig_group))
+        {
+          if (ia_signals_3da->inactive_signal_grp[grp_idx] == 0)
+          {
+            ch_offset += ia_signals_3da->num_sig[grp_idx];
+          }
+          grp_idx++;
+        }
+        if (ia_signals_3da->inactive_signal_grp[grp_idx] == 1)
+        {
+          grp_idx++;
+          obj_grp_idx++;
+          continue;
+        }
         if (ptr_out_buf == NULL)
         {
           ptr_out_buf = (FLOAT32 *)mpegh_dec_handle->mpeghd_scratch_mem_v;
         }
-        err_code = impeghd_obj_md_dec_ren_process(pstr_dec_data, ptr_out_buf, num_channel_out,
+        p_str_obj_ren_dec_state->obj_sub_frm_off = obj_sub_frm_off;
+        p_str_obj_ren_dec_state->obj_start = obj_start;
+        err_code = impeghd_obj_md_dec_ren_process(pstr_dec_data, p_obj_md_cfg, ptr_out_buf, num_channel_out,
                                                   ch_offset);
+        ch_offset += ia_signals_3da->num_sig[grp_idx];
+        grp_idx++;
+        obj_sub_frm_off += p_obj_md_cfg->num_objects * p_str_obj_ren_dec_state->sub_frame_number;
+        obj_start += p_obj_md_cfg->num_objects;
         if (err_code != IA_MPEGH_DEC_NO_ERROR)
         {
           return err_code;
@@ -2193,7 +2384,6 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
                              ptr_out_buf[channel * num_samples_out + s]);
             }
           }
-          ch_offset += pstr_usac_config->signals_3d.num_audio_obj;
         }
         else if (pstr_usac_config->signals_3d.num_hoa_transport_ch != 0)
         {
@@ -2213,10 +2403,11 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
               }
             }
           }
-          ch_offset += pstr_usac_config->signals_3d.num_audio_obj;
         }
         else
         {
+          if ((ch_offset - ia_signals_3da->num_sig[grp_idx - 1]) == 0)
+          {
           for (channel = 0; channel < *num_channel_out; channel++)
           {
             ia_core_coder_mem_cpy(&ptr_out_buf[channel * num_samples_out],
@@ -2224,7 +2415,20 @@ IA_ERRORCODE ia_core_coder_dec_ext_ele_proc(VOID *temp_handle, WORD32 *num_chann
                                   num_samples_out);
           }
         }
-
+          else
+          {
+            for (channel = 0; channel < *num_channel_out; channel++)
+            {
+              for (s = 0; s < num_samples_out; s++)
+              {
+                pstr_dec_data->str_usac_data.time_sample_vector[channel][s] =
+                    ia_add_flt(pstr_dec_data->str_usac_data.time_sample_vector[channel][s],
+                               ptr_out_buf[channel * num_samples_out + s]);
+              }
+            }
+          }
+        }
+        obj_grp_idx++;
         break;
       }
       case ID_MPEGH_EXT_ELE_HOA:
@@ -2373,7 +2577,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
   WORD32 preroll_counter = 0;
   WORD32 suitable_tracks = 1;
   WORD32 num_samples_out;
-  WORD32 grp, channel, s, sig, cnt, elemIdx;
+  WORD32 grp, channel, s, sig, elemIdx;
   WORD32 mhas_offset = 0;
   WORD32 target_loudness;
   WORD32 loudness_norm_flag;
@@ -2405,7 +2609,11 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
 
   if (((pstr_asc->channel_configuration == 0) && (ia_signals_3da->num_hoa_transport_ch == 0) &&
        (ia_signals_3da->num_audio_obj == 0)) ||
+#ifndef LC_LEVEL_4
       (pstr_asc->channel_configuration > 16))
+#else
+      (pstr_asc->channel_configuration > 24))
+#endif
   {
     return IA_MPEGH_DEC_EXE_FATAL_INVALID_CHAN_CONFIG;
   }
@@ -2431,8 +2639,13 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
     /* audio pre roll frame parsing*/
     if (0 == handle->mpeghd_config.ui_raw_flag)
     {
+      WORD16 asi_present = pstr_asc->str_mae_asi.asi_present;
       err_code =
           impeghd_mhas_parse(&pac_info, &pstr_asc->str_mae_asi, &pstr_dec_data->dec_bit_buf);
+      if ((asi_present == 0) && (pstr_asc->str_mae_asi.asi_present == 1))
+      {
+        (void)ia_core_code_mdp((VOID *)handle, handle->mpeghd_config.i_preset_id);
+      }
       if (err_code)
       {
         return err_code;
@@ -2470,7 +2683,7 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
          (pstr_dec_data->str_drc_payload.pstr_drc_config != NULL)))
     {
       WORD32 index = 0;
-      for (WORD32 i = 0; i < MAX_ELEMENTS_USAC; i++)
+      for (WORD32 i = 0; i < MAX_NUM_ELEMENTS; i++)
       {
         if (ID_EXT_ELE_UNI_DRC ==
              pstr_asc->str_usac_config.str_usac_dec_config.ia_ext_ele_payload_type[i])
@@ -2893,32 +3106,12 @@ IA_ERRORCODE ia_core_coder_dec_main(VOID *temp_handle, WORD8 *inbuffer, WORD8 *o
       ia_core_coder_samples_sat((WORD8 *)outbuffer + tot_out_bytes, num_samples_out, pcmsize,
                                 &pstr_dec_data->ptr_binaural_output[0], out_ch_map,
                                 &mpegh_dec_handle->delay_in_samples, out_bytes, *num_channel_out);
-      {
-        WORD32 payload_buffer_offeset = 0;
-        WORD32 copy_bytes =
-            pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config
-                .str_usac_dec_config.usac_ext_gain_payload_len[preroll_counter] *
-            sizeof(WORD8);
+      pstr_asc->str_usac_config.str_usac_dec_config.preroll_bytes[preroll_counter] = *out_bytes;
 
-        pstr_asc->str_usac_config.str_usac_dec_config.usac_ext_gain_payload_len[preroll_counter] =
-            pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config
-                .str_usac_dec_config.usac_ext_gain_payload_len[preroll_counter];
+      preroll_counter++;
 
-        for (cnt = 0; cnt < preroll_counter; cnt++)
-        {
-          payload_buffer_offeset +=
-              pstr_dec_data->str_frame_data.str_audio_specific_config.str_usac_config
-                  .str_usac_dec_config.usac_ext_gain_payload_len[cnt] *
-              sizeof(WORD8);
-        }
-
-        pstr_asc->str_usac_config.str_usac_dec_config.preroll_bytes[preroll_counter] = *out_bytes;
-
-        preroll_counter++;
-
-        if (preroll_counter > (MAX_AUDIO_PREROLLS + 1))
-          return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_PRE_ROLLS;
-      }
+      if (preroll_counter > (MAX_AUDIO_PREROLLS + 1))
+        return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_PRE_ROLLS;
 
       access_units++;
       preroll_units--;

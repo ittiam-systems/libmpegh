@@ -1316,18 +1316,21 @@ IA_ERRORCODE impeghd_obj_renderer_dec_init(ia_obj_ren_dec_state_struct *ptr_obj_
  */
 
 IA_ERRORCODE
-impeghd_obj_renderer_dec(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, FLOAT32 *p_in_buf,
+impeghd_obj_renderer_dec(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state,
+                         ia_oam_dec_config_struct *p_oam_md_cfg, FLOAT32 *p_in_buf,
                          FLOAT32 *p_out_buf, WORD32 cc_frame_len)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 ch, obj;
   WORD32 frame_length, num_objects, num_channels, sub_frame_offset;
-  WORD32 lfe_counter, obj_idx;
+  WORD32 lfe_counter, obj_idx, obj_start;
   ia_oam_dec_state_struct *ptr_obj_md_dec_state = &ptr_obj_ren_dec_state->str_obj_md_dec_state;
-  num_objects = ptr_obj_md_dec_state->num_objects;
-  frame_length = ptr_obj_md_dec_state->p_obj_md_cfg->frame_length;
+  num_objects = p_oam_md_cfg->num_objects;
+  frame_length = p_oam_md_cfg->frame_length;
   num_channels = ptr_obj_ren_dec_state->num_cicp_speakers;
   sub_frame_offset = (ptr_obj_md_dec_state->sub_frame_number - 1) * num_objects;
+  sub_frame_offset += ptr_obj_md_dec_state->obj_sub_frm_off;
+  obj_start = ptr_obj_md_dec_state->obj_start;
 
   for (obj = 0; obj < num_objects; obj++)
   {
@@ -1349,9 +1352,9 @@ impeghd_obj_renderer_dec(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, FLO
         WORD32 j = 0;
         WORD32 ch_idx = ch - lfe_counter;
         FLOAT32 step = ia_sub_flt(ptr_obj_ren_dec_state->final_gains[ch_idx],
-                                  ptr_obj_ren_dec_state->initial_gains[obj][ch_idx]) /
+                                  ptr_obj_ren_dec_state->initial_gains[obj + obj_start][ch_idx]) /
                        frame_length;
-        FLOAT32 scale = ptr_obj_ren_dec_state->initial_gains[obj][ch_idx] + step;
+        FLOAT32 scale = ptr_obj_ren_dec_state->initial_gains[obj + obj_start][ch_idx] + step;
         for (j = 0; j < frame_length; j++)
         {
           p_out_buf[j] = ia_mac_flt(p_out_buf[j], p_in_buf[j], scale);
@@ -1360,11 +1363,11 @@ impeghd_obj_renderer_dec(ia_obj_ren_dec_state_struct *ptr_obj_ren_dec_state, FLO
       }
       p_out_buf += cc_frame_len;
     }
-    memcpy(&ptr_obj_ren_dec_state->initial_gains[obj][0], &ptr_obj_ren_dec_state->final_gains[0],
+    memcpy(&ptr_obj_ren_dec_state->initial_gains[obj + obj_start][0], &ptr_obj_ren_dec_state->final_gains[0],
            sizeof(ptr_obj_ren_dec_state->final_gains[0]) * (num_channels - lfe_counter));
     p_out_buf -= (cc_frame_len * num_channels);
     p_in_buf += cc_frame_len;
-    ptr_obj_ren_dec_state->first_frame_flag[obj] = 0;
+    ptr_obj_ren_dec_state->first_frame_flag[obj + obj_start] = 0;
   }
   return err_code;
 }

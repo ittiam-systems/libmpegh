@@ -547,12 +547,12 @@ IA_ERRORCODE impeghd_write_oam_meta_data_for_ext_ren(
     ia_obj_ren_dec_state_struct *pstr_obj_ren_dec_state, ia_signals_3d *pstr_3d_signals,
     ia_enh_obj_md_frame_str *pstr_enh_oam_frm, ia_mae_audio_scene_info *pstr_mae_asi)
 {
-  ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_config->obj_md_cfg;
+  ia_oam_dec_config_struct *pstr_oam_cfg = &pstr_usac_config->obj_md_cfg[0];
   ia_oam_dec_state_struct *pstr_oam_dec_state = &pstr_obj_ren_dec_state->str_obj_md_dec_state;
   ia_enh_oam_config_struct *pstr_enh_oam_cfg = &pstr_usac_config->enh_obj_md_cfg;
   WORD32 audio_truncation_goa = 0, goa_num_samples = 0;
   WORD32 num_frames_goa = (pstr_oam_cfg->cc_frame_length / pstr_oam_cfg->frame_length);
-  WORD32 num_objects = pstr_oam_dec_state->num_objects;
+  WORD32 num_objects = pstr_oam_cfg->num_objects;
   WORD32 num_ext_elements, grp, mae_ele_id_offset = 0;
   /* FRAME CONFIGURATION */
   impeghd_write_bits_buf(pstr_bit_buf, (pstr_oam_cfg->frame_length >> 6), 6);
@@ -575,8 +575,8 @@ IA_ERRORCODE impeghd_write_oam_meta_data_for_ext_ren(
   }
 
   /* OBJECT METADATA */
-  impeghd_write_bits_buf(pstr_bit_buf, pstr_oam_dec_state->num_objects, 9);
-  for (WORD32 obj = 0; obj < pstr_oam_dec_state->num_objects; obj++)
+  impeghd_write_bits_buf(pstr_bit_buf, pstr_oam_cfg->num_objects, 9);
+  for (WORD32 obj = 0; obj < pstr_oam_cfg->num_objects; obj++)
   {
     impeghd_write_bits_buf(pstr_bit_buf, impeghd_get_goa_ele_id(pstr_mae_asi, grp, obj, mae_ele_id_offset), 9); /*goa_element_id[obj]*/
     impeghd_write_bits_buf(pstr_bit_buf, pstr_oam_cfg->dyn_obj_priority_present, 1);
@@ -662,7 +662,7 @@ IA_ERRORCODE impeghd_write_oam_meta_data_for_ext_ren(
       case ID_EXT_ELE_PROD_METADATA:
         impeghd_write_goa_prod_meta_data_for_ext_ren(pstr_bit_buf,
                                                      &pstr_usac_config->str_prod_metat_data,
-                                                     pstr_oam_dec_state->num_objects);
+                                                     pstr_oam_cfg->num_objects);
       }
     }
   }

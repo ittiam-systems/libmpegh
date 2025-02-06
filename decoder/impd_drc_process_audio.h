@@ -66,18 +66,21 @@ WORD32 impd_drc_td_process(FLOAT32 *audio_in_out_buf[],
                            ia_drc_gain_dec_struct *p_drc_gain_dec_structs,
                            ia_drc_config *pstr_drc_config, ia_drc_gain_struct *pstr_drc_gain,
                            FLOAT32 loud_norm_gain_db, FLOAT32 boost, FLOAT32 compress,
-                           WORD32 drc_characteristic);
+                           WORD32 drc_characteristic,
+                           UWORD32 *ptr_inactive_sig);
 
 WORD32 impd_drc_fd_process(FLOAT32 *audio_real_buff[], FLOAT32 *audio_imag_buff[],
                            ia_drc_gain_dec_struct *p_drc_gain_dec_structs,
                            ia_drc_config *pstr_drc_config, ia_drc_gain_struct *pstr_drc_gain,
                            FLOAT32 loud_norm_gain_db, FLOAT32 boost, FLOAT32 compress,
-                           WORD32 drc_characteristic);
+                           WORD32 drc_characteristic,
+                           UWORD32 *ptr_inactive_sig);
 
 WORD32
 impd_drc_apply_gains_subband(FLOAT32 *deinterleaved_audio_re[], FLOAT32 *deinterleaved_audio_im[],
                              ia_drc_instructions_struct *pstr_drc_instruction_arr,
-                             ia_drc_gain_dec_struct *pstr_drc_gain_dec, WORD32 sel_drc_idx);
+                             ia_drc_gain_dec_struct *pstr_drc_gain_dec, WORD32 sel_drc_idx,
+                             UWORD32 *ptr_inactive_sig);
 
 WORD32 impd_drc_filter_banks_process(FLOAT32 *audio_io_buf[],
                                      ia_drc_instructions_struct *pstr_drc_instruction_arr,

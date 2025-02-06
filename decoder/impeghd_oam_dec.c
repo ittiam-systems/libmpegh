@@ -70,12 +70,13 @@
  *
  */
 IA_ERRORCODE impeghd_obj_md_dec(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                                ia_oam_dec_config_struct *p_obj_md_cfg,
                                 ia_bit_buf_struct *ptr_bit_buf)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
-  if (ptr_oam_dec_state->p_obj_md_cfg->ld_md_coding_present != 0)
+  if (p_obj_md_cfg->ld_md_coding_present != 0)
   {
-    err_code = impeghd_obj_md_low_delay_dec(ptr_oam_dec_state, ptr_bit_buf);
+    err_code = impeghd_obj_md_low_delay_dec(ptr_oam_dec_state, p_obj_md_cfg, ptr_bit_buf);
   }
   else
   {

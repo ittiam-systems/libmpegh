@@ -36,6 +36,7 @@
 #define IMPEGHD_OAM_DEC_H
 
 IA_ERRORCODE impeghd_obj_md_low_delay_dec(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                                          ia_oam_dec_config_struct *p_obj_md_cfg,
                                           ia_bit_buf_struct *ptr_bit_buf);
 
 IA_ERRORCODE impeghd_obj_md_cfg(ia_oam_dec_config_struct *p_obj_md_cfg,
@@ -43,9 +44,11 @@ IA_ERRORCODE impeghd_obj_md_cfg(ia_oam_dec_config_struct *p_obj_md_cfg,
                                 WORD32 num_objects);
 
 IA_ERRORCODE impeghd_obj_md_dec(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                                ia_oam_dec_config_struct *p_obj_md_cfg,
                                 ia_bit_buf_struct *ptr_bit_buf);
 
-VOID impeghd_descale_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state);
+VOID impeghd_descale_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                               ia_oam_dec_config_struct *p_obj_md_cfg);
 
 IA_ERRORCODE impeghd_enh_obj_md_config(ia_enh_oam_config_struct *p_enh_obj_md_cfg,
                                        ia_bit_buf_struct *ptr_bit_buf, WORD32 num_objects);

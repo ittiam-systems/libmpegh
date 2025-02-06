@@ -199,7 +199,7 @@ IA_ERRORCODE ia_core_coder_read_tns_tcx(WORD32 sfb_per_sbk,
           top - ia_core_coder_read_bits_buf(it_bit_buff, TNS_SHORT_START_BAND_BITS);
       if (top <= 0)
       {
-        return IA_MPEGH_DEC_EXE_FATAL_INVALID_START_BAND;
+        //return IA_MPEGH_DEC_EXE_FATAL_INVALID_START_BAND;
       }
       pstr_tns_filt->order = ia_core_coder_read_bits_buf(it_bit_buff, TNS_SHORT_ORDER_BITS);
 
@@ -292,7 +292,7 @@ IA_ERRORCODE ia_core_coder_read_tns_u(ia_sfb_info_struct *ptr_sfb_info,
           top - ia_core_coder_read_bits_buf(it_bit_buff, start_band_bits);
       if (top <= 0)
       {
-        return IA_MPEGH_DEC_EXE_FATAL_INVALID_START_BAND;
+        //return IA_MPEGH_DEC_EXE_FATAL_INVALID_START_BAND;
       }
       pstr_tns_filt->order = ia_core_coder_read_bits_buf(it_bit_buff, order_bits);
 

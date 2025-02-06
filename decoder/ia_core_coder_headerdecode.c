@@ -221,4 +221,36 @@ IA_ERRORCODE ia_core_coder_headerdecode(ia_mpegh_dec_api_struct *p_obj_mpegh_dec
   }
   return IA_MPEGH_DEC_NO_ERROR;
 }
+
+/**
+ *  ia_core_coder_search_asi
+ *
+ *  \brief Search for ASI packet in the input stream.
+ *
+ *  \param [in] handle      Decoder api handle
+ *  \param [in] buffer      Input bit buffer stream
+ *  \param [in] buffer_len  Length of input buffer in bytes
+ *
+ *  \return IA_ERRORCODE
+ *
+ */
+IA_ERRORCODE ia_core_coder_search_asi(VOID *handle, UWORD8 *buffer,
+                                        WORD32 buffer_len)
+{
+  ia_mpegh_dec_api_struct *p_obj_mpegh_dec = (ia_mpegh_dec_api_struct *)handle;
+  ia_mhas_pac_info info;
+  struct ia_bit_buf_struct it_bit_buff = {0}, *handle_bit_buff;
+  ia_mpegh_dec_state_struct *mpeghd_state_struct = p_obj_mpegh_dec->pp_mem_mpeghd[PERSIST_IDX];
+  ia_audio_specific_config_struct *pstr_asc =
+      (ia_audio_specific_config_struct *)mpeghd_state_struct->ia_audio_specific_config;
+  handle_bit_buff =
+      ia_core_coder_create_bit_buf(&it_bit_buff, (UWORD8 *)buffer, (WORD16)buffer_len);
+  if (handle_bit_buff->cnt_bits <= 0)
+  {
+    return 0;
+  }
+  handle_bit_buff->cnt_bits += (buffer_len << 3);
+  impeghd_mhas_parse(&info, &pstr_asc->str_mae_asi, handle_bit_buff);
+  return 0;
+}
 /** @} */ /* End of CoreDecConfParse */

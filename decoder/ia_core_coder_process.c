@@ -788,6 +788,7 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
   ia_usac_config_struct *pstr_usac_config = &(fd->str_audio_specific_config.str_usac_config);
   ia_usac_decoder_config_struct *pstr_usac_dec_config =
       &(fd->str_audio_specific_config.str_usac_config.str_usac_dec_config);
+  UWORD32 *ptr_inactive_signal = &pstr_usac_config->signals_3d.inactive_signals[0];
 
   WORD16 nr_core_coder_channels = 0;
   WORD32 ch_offset = 0;
@@ -797,7 +798,7 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
   WORD32 num_elements = pstr_usac_dec_config->num_elements;
   ia_usac_tmp_core_coder_struct str_tmp_core_coder[MAX_NUM_CHANNELS] = {{0}};
   ia_usac_tmp_core_coder_struct *pstr_core_coder;
-  WORD32 ch_cnt = 0;
+  WORD32 ch_cnt = 0, tot_chan = 0;
   WORD32 sig_group, i;
 
   pstr_usac_data->is_base_line_profile_3b = p_state_mpegh_dec->is_base_line_profile_3b;
@@ -812,22 +813,31 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
 
   for (elem_idx = 0; elem_idx < num_elements; elem_idx++)
   {
+    WORD16 tmp = 0;
     WORD32 stereo_config_index =
         pstr_usac_config->str_usac_dec_config.str_usac_element_config[elem_idx]
             .stereo_config_index;
     switch (ele_id = pstr_usac_dec_config->usac_element_type[elem_idx])
     {
     case ID_USAC_SCE:
+      if (pstr_usac_dec_config->ele_length_present == 1)
+      {
+        //ia_core_coder_skip_bits_buf(it_bit_buff, 16);
+        tmp = ia_core_coder_read_bits_buf(it_bit_buff, 16);
+        if (ptr_inactive_signal[tot_chan])
+        {
+          ia_core_coder_skip_bits_buf(it_bit_buff, tmp);
+          tot_chan++;
+          break;
+        }
+        tot_chan++;
+      }
       nr_core_coder_channels = 1;
       num_ch_out += 1;
 
-      if ((ch_offset >= MAX_NUM_CHANNELS_USAC_LVL2) || (num_ch_out > MAX_NUM_CHANNELS_USAC_LVL2))
+      if ((ch_offset >= MAX_NUM_CHANNELS) || (num_ch_out > MAX_NUM_CHANNELS))
         return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_CHANNELS;
 
-      if (pstr_usac_dec_config->ele_length_present == 1)
-      {
-        ia_core_coder_skip_bits_buf(it_bit_buff, 16);
-      }
       pstr_core_coder = &str_tmp_core_coder[ch_cnt];
       err = ia_core_coder_data(ele_id, pstr_usac_data, elem_idx, ch_offset, it_bit_buff,
                                nr_core_coder_channels, pstr_usac_dec_config, pstr_core_coder);
@@ -839,6 +849,18 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
       break;
 
     case ID_USAC_CPE:
+      if (pstr_usac_dec_config->ele_length_present == 1)
+      {
+        tmp = ia_core_coder_read_bits_buf(it_bit_buff, 16);
+        if (ptr_inactive_signal[tot_chan])
+        {
+          ia_core_coder_skip_bits_buf(it_bit_buff, tmp);
+          tot_chan += 2;
+          break;
+        }
+        tot_chan += 2;
+      }
+
       if (1 == stereo_config_index)
       {
         nr_core_coder_channels = 1;
@@ -850,13 +872,9 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
 
       num_ch_out += 2;
 
-      if ((ch_offset >= MAX_NUM_CHANNELS_USAC_LVL2) || (num_ch_out > MAX_NUM_CHANNELS_USAC_LVL2))
+      if ((ch_offset >= MAX_NUM_CHANNELS) || (num_ch_out > MAX_NUM_CHANNELS))
         return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_CHANNELS;
 
-      if (pstr_usac_dec_config->ele_length_present == 1)
-      {
-        ia_core_coder_skip_bits_buf(it_bit_buff, 16);
-      }
       pstr_core_coder = &str_tmp_core_coder[ch_cnt];
       err = ia_core_coder_data(ele_id, pstr_usac_data, elem_idx, ch_offset, it_bit_buff,
                                nr_core_coder_channels, pstr_usac_dec_config, pstr_core_coder);
@@ -868,16 +886,23 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
       break;
 
     case ID_USAC_LFE:
+      if (pstr_usac_dec_config->ele_length_present == 1)
+      {
+        tmp = ia_core_coder_read_bits_buf(it_bit_buff, 16);
+        if (ptr_inactive_signal[tot_chan])
+        {
+          ia_core_coder_skip_bits_buf(it_bit_buff, tmp);
+          tot_chan += 1;
+          break;
+        }
+        tot_chan += 1;
+      }
       nr_core_coder_channels = 1;
       num_ch_out += 1;
 
-      if ((ch_offset >= MAX_NUM_CHANNELS_USAC_LVL2) || (num_ch_out > MAX_NUM_CHANNELS_USAC_LVL2))
+      if ((ch_offset >= MAX_NUM_CHANNELS) || (num_ch_out > MAX_NUM_CHANNELS))
         return IA_MPEGH_DEC_EXE_FATAL_UNSUPPORTED_NUM_CHANNELS;
 
-      if (pstr_usac_dec_config->ele_length_present == 1)
-      {
-        ia_core_coder_skip_bits_buf(it_bit_buff, 16);
-      }
       pstr_core_coder = &str_tmp_core_coder[ch_cnt];
       err = ia_core_coder_data(ele_id, pstr_usac_data, elem_idx, ch_offset, it_bit_buff,
                                nr_core_coder_channels, pstr_usac_dec_config, pstr_core_coder);
@@ -914,6 +939,12 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
   {
     if (pstr_usac_dec_config->ia_ext_ele_payload_type[elem_idx] == ID_MPEGH_EXT_ELE_MCT)
     {
+      WORD32 ch_start = pstr_usac_dec_config->ia_mcdata[mct_cnt].start_channel;
+      if (pstr_usac_config->signals_3d.inactive_signals[ch_start] == 1)
+      {
+        mct_cnt++;
+        continue;
+      }
       err = impeghd_mc_parse(&pstr_usac_dec_config->ia_mcdata[mct_cnt],
                              pstr_usac_dec_config->usac_ext_gain_payload_buf[elem_idx],
                              pstr_usac_dec_config->usac_ext_gain_payload_len[elem_idx],
@@ -933,6 +964,11 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
   }
   for (sig_group = 0; sig_group < mct_cnt; sig_group++)
   {
+    WORD32 ch_start = pstr_usac_dec_config->ia_mcdata[sig_group].start_channel;
+    if (pstr_usac_config->signals_3d.inactive_signals[ch_start] == 1)
+    {
+      continue;
+    }
     for (i = 0; i < pstr_usac_dec_config->ia_mcdata[sig_group].num_pairs; i++)
     {
       WORD32 mct_band_offset = 0, mct_bands_per_win;
@@ -1079,6 +1115,11 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
   {
     ia_multichannel_data *mct = &pstr_usac_dec_config->ia_mcdata[sig_group];
     WORD32 ch;
+    WORD32 ch_start = pstr_usac_dec_config->ia_mcdata[sig_group].start_channel;
+    if (pstr_usac_config->signals_3d.inactive_signals[ch_start] == 1)
+    {
+      continue;
+    }
     for (ch = 0; ch < mct->num_ch_to_apply; ch++)
     {
       const WORD32 chIdx = mct->channel_map[ch + mct->start_channel];
@@ -1093,6 +1134,7 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
 
   ch_cnt = 0;
   ch_offset = 0;
+  tot_chan = 0;
   /* process elements */
   for (elem_idx = 0; elem_idx < num_elements; elem_idx++)
   {
@@ -1105,6 +1147,12 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
     {
     case ID_USAC_SCE:
     case ID_USAC_LFE:
+      if (ptr_inactive_signal[tot_chan])
+      {
+        tot_chan += 1;
+        break;
+      }
+      tot_chan += 1;
       pstr_core_coder = &str_tmp_core_coder[ch_cnt];
 
       err = ia_core_coder_data_process(pstr_usac_data, elem_idx, ch_offset, 1, pstr_core_coder);
@@ -1114,6 +1162,12 @@ IA_ERRORCODE ia_core_coder_usac_process(ia_dec_data_struct *pstr_dec_data, VOID 
       ch_cnt++;
       break;
     case ID_USAC_CPE:
+      if (ptr_inactive_signal[tot_chan])
+      {
+        tot_chan += 2;
+        break;
+      }
+      tot_chan += 2;
       if (1 == stereo_config_index)
       {
         num_ch_per_ele = 1;

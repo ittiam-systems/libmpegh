@@ -68,11 +68,12 @@
  *
  *
  */
-static VOID impeghd_limit_range_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state)
+static VOID impeghd_limit_range_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                                          WORD32 num_elements,
+                                          WORD32 uniform_spread)
 {
-  WORD32 n, num_elements;
+  WORD32 n;
   FLOAT32 minval, maxval;
-  num_elements = ptr_oam_dec_state->num_objects;
   /* radius */
   maxval = 16.f;
   minval = 0.5f;
@@ -113,7 +114,7 @@ static VOID impeghd_limit_range_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_s
     ptr_oam_dec_state->spread_width_descaled[n] =
         ia_min_int(ia_max_int(ptr_oam_dec_state->spread_width_descaled[n], minval), maxval);
   }
-  if (!ptr_oam_dec_state->p_obj_md_cfg->uniform_spread_present)
+  if (!uniform_spread)
   {
     /* spread depth */
     maxval = 15.5f;
@@ -152,13 +153,15 @@ static VOID impeghd_limit_range_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_s
  *  \return IA_ERRORCODE Error code if any.
  *
  */
-static IA_ERRORCODE impeghd_obj_md_descale_limit(ia_oam_dec_state_struct *ptr_oam_dec_state)
+static IA_ERRORCODE impeghd_obj_md_descale_limit(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                                                 ia_oam_dec_config_struct *p_obj_md_cfg)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
 
-  impeghd_descale_ld_obj_md(ptr_oam_dec_state);
+  impeghd_descale_ld_obj_md(ptr_oam_dec_state, p_obj_md_cfg);
 
-  impeghd_limit_range_ld_obj_md(ptr_oam_dec_state);
+  impeghd_limit_range_ld_obj_md(ptr_oam_dec_state, p_obj_md_cfg->num_objects,
+                                p_obj_md_cfg->uniform_spread_present);
 
   return err_code;
 }
@@ -300,6 +303,7 @@ static VOID impeghd_ic_oam_ld_unsigned_param_dec(WORD32 fix_val_flag, WORD32 par
  *
  */
 static IA_ERRORCODE impeghd_single_dyn_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                                              ia_oam_dec_config_struct *p_obj_md_cfg,
                                               ia_bit_buf_struct *ptr_bit_buf,
                                               WORD32 flag_absolute, WORD32 obj_idx)
 {
@@ -347,7 +351,7 @@ static IA_ERRORCODE impeghd_single_dyn_obj_md(ia_oam_dec_state_struct *ptr_oam_d
     }
     if (!ptr_oam_dec_state->spread_fixed)
     {
-      if (!ptr_oam_dec_state->p_obj_md_cfg->uniform_spread_present)
+      if (!p_obj_md_cfg->uniform_spread_present)
       {
         WORD32 num_bits = ia_min_int(OAM_SPREAD_WIDTH_BITS + 1, nbits);
         if (ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_FLAG_BITS))
@@ -385,7 +389,7 @@ static IA_ERRORCODE impeghd_single_dyn_obj_md(ia_oam_dec_state_struct *ptr_oam_d
       ptr_oam_dec_state->spread_height[obj_idx] = 0;
       ptr_oam_dec_state->spread_depth[obj_idx] = 0;
     }
-    if (ptr_oam_dec_state->p_obj_md_cfg->dyn_obj_priority_present)
+    if (p_obj_md_cfg->dyn_obj_priority_present)
     {
       if (ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_FLAG_BITS))
       {
@@ -440,7 +444,7 @@ static IA_ERRORCODE impeghd_single_dyn_obj_md(ia_oam_dec_state_struct *ptr_oam_d
     }
     else
     {
-      if (!ptr_oam_dec_state->p_obj_md_cfg->uniform_spread_present)
+      if (!p_obj_md_cfg->uniform_spread_present)
       {
         ptr_oam_dec_state->spread_width[obj_idx] =
             ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_SPREAD_WIDTH_BITS);
@@ -455,7 +459,7 @@ static IA_ERRORCODE impeghd_single_dyn_obj_md(ia_oam_dec_state_struct *ptr_oam_d
             ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_SPREAD_WIDTH_BITS);
       }
     }
-    if (ptr_oam_dec_state->p_obj_md_cfg->dyn_obj_priority_present)
+    if (p_obj_md_cfg->dyn_obj_priority_present)
     {
       if (!ptr_oam_dec_state->dynamic_obj_priority_fixed)
       {
@@ -484,12 +488,15 @@ static IA_ERRORCODE impeghd_single_dyn_obj_md(ia_oam_dec_state_struct *ptr_oam_d
  *
  */
 static IA_ERRORCODE impeghd_ic_obj_md_ld_dec(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                                             ia_oam_dec_config_struct *p_obj_md_cfg,
                                              ia_bit_buf_struct *ptr_bit_buf)
 {
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
-  WORD32 num_objects = ptr_oam_dec_state->num_objects;
+  WORD32 num_objects = p_obj_md_cfg->num_objects;
   WORD32 obj_idx_start = (ptr_oam_dec_state->sub_frame_number - 1) * num_objects;
   WORD32 obj_idx_end = (ptr_oam_dec_state->sub_frame_number) * num_objects;
+  obj_idx_start += ptr_oam_dec_state->obj_sub_frm_off;
+  obj_idx_end += ptr_oam_dec_state->obj_sub_frm_off;
   if (!(num_objects > 1))
   {
     /* Azimuth */
@@ -510,7 +517,7 @@ static IA_ERRORCODE impeghd_ic_obj_md_ld_dec(ia_oam_dec_state_struct *ptr_oam_de
         impeghd_oam_read_sign_param(ptr_bit_buf, OAM_GAIN_BITS);
 
     /* Spread */
-    if (!ptr_oam_dec_state->p_obj_md_cfg->uniform_spread_present)
+    if (!p_obj_md_cfg->uniform_spread_present)
     {
       ptr_oam_dec_state->spread_width[obj_idx_start] =
           ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_SPREAD_WIDTH_BITS);
@@ -525,7 +532,7 @@ static IA_ERRORCODE impeghd_ic_obj_md_ld_dec(ia_oam_dec_state_struct *ptr_oam_de
           ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_SPREAD_WIDTH_BITS);
     }
     /* Dynamic Object Priority */
-    if (ptr_oam_dec_state->p_obj_md_cfg->dyn_obj_priority_present)
+    if (p_obj_md_cfg->dyn_obj_priority_present)
     {
       ptr_oam_dec_state->dyn_obj_priority[obj_idx_start] =
           ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_DYN_OBJ_PRI_BITS);
@@ -579,7 +586,7 @@ static IA_ERRORCODE impeghd_ic_obj_md_ld_dec(ia_oam_dec_state_struct *ptr_oam_de
       com_val_flag = ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_FLAG_BITS);
       if (com_val_flag)
       {
-        if (ptr_oam_dec_state->p_obj_md_cfg->uniform_spread_present)
+        if (p_obj_md_cfg->uniform_spread_present)
         {
           param_val = ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_SPREAD_WIDTH_BITS);
           for (i = obj_idx_start; i < obj_idx_end; i++)
@@ -602,7 +609,7 @@ static IA_ERRORCODE impeghd_ic_obj_md_ld_dec(ia_oam_dec_state_struct *ptr_oam_de
       }
       else
       {
-        if (ptr_oam_dec_state->p_obj_md_cfg->uniform_spread_present)
+        if (p_obj_md_cfg->uniform_spread_present)
         {
           for (i = obj_idx_start; i < obj_idx_end; i++)
           {
@@ -627,7 +634,7 @@ static IA_ERRORCODE impeghd_ic_obj_md_ld_dec(ia_oam_dec_state_struct *ptr_oam_de
     }
     else
     {
-      if (ptr_oam_dec_state->p_obj_md_cfg->uniform_spread_present)
+      if (p_obj_md_cfg->uniform_spread_present)
       {
         param_val = ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_SPREAD_WIDTH_BITS);
         for (i = 0; i < num_objects; i++)
@@ -649,7 +656,7 @@ static IA_ERRORCODE impeghd_ic_obj_md_ld_dec(ia_oam_dec_state_struct *ptr_oam_de
       }
     }
     /* Dynamic Object Priority */
-    if (ptr_oam_dec_state->p_obj_md_cfg->dyn_obj_priority_present)
+    if (p_obj_md_cfg->dyn_obj_priority_present)
     {
       ptr_oam_dec_state->dynamic_obj_priority_fixed =
           ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_FLAG_BITS);
@@ -671,18 +678,21 @@ static IA_ERRORCODE impeghd_ic_obj_md_ld_dec(ia_oam_dec_state_struct *ptr_oam_de
  *
  *
  */
-VOID impeghd_descale_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state)
+VOID impeghd_descale_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                               ia_oam_dec_config_struct *p_obj_md_cfg)
 {
   WORD32 o;
-  WORD32 num_objects = ptr_oam_dec_state->num_objects;
+  WORD32 num_objects = p_obj_md_cfg->num_objects;
   WORD32 obj_start_idx = (ptr_oam_dec_state->sub_frame_number - 1) * num_objects;
   WORD32 obj_end_idx = (ptr_oam_dec_state->sub_frame_number) * num_objects;
+  obj_start_idx += ptr_oam_dec_state->obj_sub_frm_off;
+  obj_end_idx += ptr_oam_dec_state->obj_sub_frm_off;
   for (o = obj_start_idx; o < obj_end_idx; o++)
   {
     ptr_oam_dec_state->dyn_obj_priority_descaled[o] =
         (FLOAT32)ptr_oam_dec_state->dyn_obj_priority[o];
   }
-  if (ptr_oam_dec_state->p_obj_md_cfg->uniform_spread_present != 1)
+  if (p_obj_md_cfg->uniform_spread_present != 1)
   {
     for (o = obj_start_idx; o < obj_end_idx; o++)
     {
@@ -727,25 +737,28 @@ VOID impeghd_descale_ld_obj_md(ia_oam_dec_state_struct *ptr_oam_dec_state)
  *
  */
 IA_ERRORCODE impeghd_obj_md_low_delay_dec(ia_oam_dec_state_struct *ptr_oam_dec_state,
+                                          ia_oam_dec_config_struct *p_obj_md_cfg,
                                           ia_bit_buf_struct *ptr_bit_buf)
 {
   WORD32 i;
+  WORD32 num_objects = p_obj_md_cfg->num_objects;
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
   WORD32 intra_obj_md_present = ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_FLAG_BITS);
 
   if (!intra_obj_md_present)
   {
     WORD32 flag_absolute = ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_FLAG_BITS);
-    WORD32 num_objects = ptr_oam_dec_state->num_objects;
     WORD32 obj_start_idx = (ptr_oam_dec_state->sub_frame_number - 1) * num_objects;
     WORD32 obj_end_idx = (ptr_oam_dec_state->sub_frame_number) * num_objects;
+    obj_start_idx += ptr_oam_dec_state->obj_sub_frm_off;
+    obj_end_idx += ptr_oam_dec_state->obj_sub_frm_off;
     for (i = obj_start_idx; i < obj_end_idx; i++)
     {
       WORD32 obj_md_present = ia_core_coder_read_bits_buf(ptr_bit_buf, OAM_FLAG_BITS);
       ptr_oam_dec_state->has_obj_md[obj_start_idx] = obj_md_present;
       if (obj_md_present)
       {
-        err_code = impeghd_single_dyn_obj_md(ptr_oam_dec_state, ptr_bit_buf, flag_absolute, i);
+        err_code = impeghd_single_dyn_obj_md(ptr_oam_dec_state, p_obj_md_cfg, ptr_bit_buf, flag_absolute, i);
         if (err_code)
         {
           return err_code;
@@ -755,16 +768,16 @@ IA_ERRORCODE impeghd_obj_md_low_delay_dec(ia_oam_dec_state_struct *ptr_oam_dec_s
   }
   else
   {
-    err_code = impeghd_ic_obj_md_ld_dec(ptr_oam_dec_state, ptr_bit_buf);
+    err_code = impeghd_ic_obj_md_ld_dec(ptr_oam_dec_state, p_obj_md_cfg, ptr_bit_buf);
   }
 
   if (err_code)
   {
     return err_code;
   }
-  err_code = impeghd_obj_md_descale_limit(ptr_oam_dec_state);
-  for (i = 0; i < ptr_oam_dec_state->num_objects; i++)
-    ptr_oam_dec_state->sample[i] += ptr_oam_dec_state->p_obj_md_cfg->frame_length;
+  err_code = impeghd_obj_md_descale_limit(ptr_oam_dec_state, p_obj_md_cfg);
+  for (i = 0; i < num_objects; i++)
+    ptr_oam_dec_state->sample[i] += p_obj_md_cfg->frame_length;
 
   return err_code;
 }

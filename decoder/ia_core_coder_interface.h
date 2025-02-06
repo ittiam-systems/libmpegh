@@ -58,6 +58,10 @@ enum
   LEN_PC_COMM = 8,
 };
 
+IA_ERRORCODE ia_core_coder_search_asi(VOID *handle, UWORD8 *buffer,
+                                        WORD32 buffer_len);
+IA_ERRORCODE ia_core_code_mdp(VOID *handle, WORD32 preset_id);
+
 IA_ERRORCODE ia_core_coder_dec_main(VOID *handle, WORD8 *inbuffer, WORD8 *outbuffer,
                                     WORD32 *out_bytes, WORD32 frames_done, WORD32 pcmsize,
                                     WORD32 *num_channel_out);

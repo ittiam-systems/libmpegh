@@ -61,6 +61,7 @@
  *  \param [in] pstr_drc_instruction_arr  Pointer to instructions structure
  *  \param [in] impd_apply_gains  apply gain flag
  *  \param [in] sel_drc_idx  drc index
+ *  \param [in] ptr_inactive_sig Pointer to active signal information.
  *
  *
  *
@@ -68,7 +69,8 @@
 static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_dec,
                                          FLOAT32 *channel_audio[],
                                          ia_drc_instructions_struct *pstr_drc_instruction_arr,
-                                         WORD32 impd_apply_gains, WORD32 sel_drc_idx)
+                                         WORD32 impd_apply_gains, WORD32 sel_drc_idx,
+                                         UWORD32 *ptr_inactive_sig)
 {
   ia_drc_params_struct *pstr_ia_drc_params = &pstr_drc_gain_dec->ia_drc_params_struct;
   ia_drc_gain_buffer_struct *pstr_gain_buf =
@@ -84,6 +86,7 @@ static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_d
   FLOAT32 *lpcm_gain;
   FLOAT32 **deinterleaved_audio = pstr_drc_gain_dec->audio_band_buffer.non_interleaved_audio;
   ia_drc_instructions_struct *pstr_drc_instruction = &(pstr_drc_instruction_arr[drc_instrns_idx]);
+  WORD32 ch_offset = 0;
 
   if (0 <= drc_instrns_idx)
   {
@@ -121,8 +124,8 @@ static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_d
           }
         }
 
-        for (num_ch_grp = pstr_drc_instruction->num_drc_ch_groups - 1; num_ch_grp >= 0;
-             num_ch_grp--)
+        for (num_ch_grp = 0; num_ch_grp < pstr_drc_instruction->num_drc_ch_groups;
+             num_ch_grp++)
         {
           for (num_band = pstr_drc_instruction->band_count_of_ch_group[num_ch_grp] - 1;
                num_band >= 0; num_band--)
@@ -136,15 +139,21 @@ static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_d
 
               if (1 != impd_apply_gains)
               {
+                ch_offset = 0;
                 for (num_ch = pstr_ia_drc_params->channel_offset;
                      num_ch <
                      pstr_ia_drc_params->channel_offset + pstr_ia_drc_params->num_ch_process;
                      num_ch++)
 
                 {
+                  if (ptr_inactive_sig[num_ch])
+                  {
+                    ch_offset++;
+                    continue;
+                  }
                   if (num_ch_grp == pstr_drc_instruction->channel_group_of_ch[num_ch])
                   {
-                    sig_idx = sig_idx_ch[num_ch] + num_band;
+                    sig_idx = sig_idx_ch[num_ch] + num_band - ch_offset;
 
                     for (fr_size = pstr_ia_drc_params->drc_frame_size - 1; fr_size >= 0;
                          fr_size--)
@@ -156,15 +165,21 @@ static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_d
               }
               else
               {
+                ch_offset = 0;
                 for (num_ch = pstr_ia_drc_params->channel_offset;
                      num_ch <
                      pstr_ia_drc_params->channel_offset + pstr_ia_drc_params->num_ch_process;
                      num_ch++)
 
                 {
+                  if (ptr_inactive_sig[num_ch])
+                  {
+                    ch_offset++;
+                    continue;
+                  }
                   if (num_ch_grp == pstr_drc_instruction->channel_group_of_ch[num_ch])
                   {
-                    sig_idx = sig_idx_ch[num_ch] + num_band;
+                    sig_idx = sig_idx_ch[num_ch] + num_band - ch_offset;
 
                     for (fr_size = pstr_ia_drc_params->drc_frame_size - 1; fr_size >= 0;
                          fr_size--)
@@ -186,16 +201,23 @@ static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_d
 
   if (0 >= pstr_drc_instruction->drc_set_id)
   {
-    for (num_ch = pstr_ia_drc_params->num_ch_process - 1; num_ch >= 0; num_ch--)
+    ch_offset = 0;
+    for (num_ch = 0; num_ch < pstr_ia_drc_params->num_ch_process; num_ch++)
     {
+      if (ptr_inactive_sig[num_ch])
+    {
+        ch_offset++;
+        continue;
+      }
       for (fr_size = pstr_ia_drc_params->drc_frame_size - 1; fr_size >= 0; fr_size--)
       {
-        channel_audio[num_ch][fr_size] = deinterleaved_audio[num_ch][fr_size];
+        channel_audio[num_ch - ch_offset][fr_size] = deinterleaved_audio[num_ch - ch_offset][fr_size];
       }
     }
   }
   else
   {
+    ch_offset = 0;
     for (num_ch = pstr_ia_drc_params->channel_offset;
          num_ch < pstr_ia_drc_params->channel_offset + pstr_ia_drc_params->num_ch_process;
          num_ch++)
@@ -204,6 +226,10 @@ static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_d
       if (num_ch_grp < 0)
       {
         sig_idx++;
+        if (ptr_inactive_sig[num_ch])
+        {
+          ch_offset++;
+        }
       }
       else
       {
@@ -213,9 +239,9 @@ static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_d
           for (num_band = pstr_drc_instruction->band_count_of_ch_group[num_ch_grp] - 1;
                num_band >= 0; num_band--)
           {
-            sum = ia_add_flt(sum, (deinterleaved_audio[sig_idx + num_band][fr_size]));
+            sum = ia_add_flt(sum, (deinterleaved_audio[sig_idx + num_band - ch_offset][fr_size]));
           }
-          channel_audio[num_ch - pstr_ia_drc_params->channel_offset][fr_size] = sum;
+          channel_audio[num_ch - pstr_ia_drc_params->channel_offset - ch_offset][fr_size] = sum;
         }
         sig_idx += pstr_drc_instruction->band_count_of_ch_group[num_ch_grp];
       }
@@ -235,6 +261,7 @@ static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_d
  *  \param [in] pstr_drc_instruction_arr  Pointer to instructions structure
  *  \param [in] pstr_drc_gain_dec  Pointer to drc gain structure
  *  \param [in] sel_drc_idx  drc index
+ *  \param [in] ptr_inactive_sig Pointer to active signal information
  *
 *  \return IA_ERRORCODE error
  *
@@ -242,7 +269,8 @@ static VOID impd_drc_apply_gains_and_add(ia_drc_gain_dec_struct *pstr_drc_gain_d
 IA_ERRORCODE
 impd_drc_apply_gains_subband(FLOAT32 *deinterleaved_audio_re[], FLOAT32 *deinterleaved_audio_im[],
                              ia_drc_instructions_struct *pstr_drc_instruction_arr,
-                             ia_drc_gain_dec_struct *pstr_drc_gain_dec, WORD32 sel_drc_idx)
+                             ia_drc_gain_dec_struct *pstr_drc_gain_dec, WORD32 sel_drc_idx,
+                             UWORD32 *ptr_inactive_sig)
 {
   ia_drc_instructions_struct *pstr_drc_instruction;
   ia_drc_params_struct *pstr_ia_drc_params = &pstr_drc_gain_dec->ia_drc_params_struct;
@@ -261,6 +289,7 @@ impd_drc_apply_gains_subband(FLOAT32 *deinterleaved_audio_re[], FLOAT32 *deinter
 
   FLOAT32 *lpcm_gain;
   FLOAT32 gain_sb, gain_lr;
+  WORD32 ch_offset = 0;
 
   switch (pstr_ia_drc_params->sub_band_domain_mode)
   {
@@ -318,6 +347,12 @@ impd_drc_apply_gains_subband(FLOAT32 *deinterleaved_audio_re[], FLOAT32 *deinter
              num_ch++)
         {
           num_ch_grp = pstr_drc_instruction->channel_group_of_ch[num_ch];
+          if (ptr_inactive_sig[num_ch] == 1)
+          {
+            ch_offset++;
+            sig_idx++;
+            continue;
+          }
           if (0 <= num_ch_grp)
           {
             for (size = drc_frame_size_sb - 1; size >= 0; size--)
@@ -333,8 +368,8 @@ impd_drc_apply_gains_subband(FLOAT32 *deinterleaved_audio_re[], FLOAT32 *deinter
                 for (cnt = 0; cnt < num_dec_sb; cnt++)
                 {
 
-                  deinterleaved_audio_re[sig_idx][size * num_dec_sb + cnt] *= (FLOAT32)gain_sb;
-                  deinterleaved_audio_im[sig_idx][size * num_dec_sb + cnt] *= (FLOAT32)gain_sb;
+                  deinterleaved_audio_re[sig_idx - ch_offset][size * num_dec_sb + cnt] *= (FLOAT32)gain_sb;
+                  deinterleaved_audio_im[sig_idx - ch_offset][size * num_dec_sb + cnt] *= (FLOAT32)gain_sb;
                 }
               }
               else
@@ -359,17 +394,17 @@ impd_drc_apply_gains_subband(FLOAT32 *deinterleaved_audio_re[], FLOAT32 *deinter
                                        .overlap_weight[cnt],
                                    gain_lr));
                   }
-                  deinterleaved_audio_re[sig_idx][size * num_dec_sb + cnt] *= gain_sb;
+                  deinterleaved_audio_re[sig_idx - ch_offset][size * num_dec_sb + cnt] *= gain_sb;
                   if (SUBBAND_DOMAIN_MODE_STFT256 != pstr_ia_drc_params->sub_band_domain_mode)
                   {
-                    deinterleaved_audio_im[sig_idx][size * num_dec_sb + cnt] *= gain_sb;
+                    deinterleaved_audio_im[sig_idx - ch_offset][size * num_dec_sb + cnt] *= gain_sb;
                   }
                   else
                   {
                     if (0 != cnt)
-                      deinterleaved_audio_im[sig_idx][size * num_dec_sb + cnt] *= gain_sb;
+                      deinterleaved_audio_im[sig_idx - ch_offset][size * num_dec_sb + cnt] *= gain_sb;
                     if (cnt == (num_dec_sb - 1))
-                      deinterleaved_audio_im[sig_idx][size * num_dec_sb + 0] *= gain_sb;
+                      deinterleaved_audio_im[sig_idx - ch_offset][size * num_dec_sb + 0] *= gain_sb;
                   }
                 }
               }
@@ -521,6 +556,7 @@ IA_ERRORCODE impd_drc_filter_banks_process(FLOAT32 *audio_io_buf[],
  *  \param [in]  boost_fac   boost_fac factor
  *  \param [in]  compress_fac   compression factor
  *  \param [in]  drc_characteristic_target   characteristic target
+ *  \param [in]  ptr_inactive_sig   Pointer to active signal information.
  *
  *  \return IA_ERRORCODE error
  *
@@ -531,7 +567,8 @@ IA_ERRORCODE impd_drc_td_process(FLOAT32 *audio_in_out_buf[],
                                  ia_drc_config *pstr_drc_config,
                                  ia_drc_gain_struct *pstr_drc_gain, FLOAT32 ln_gain_db,
                                  FLOAT32 boost_fac, FLOAT32 compress_fac,
-                                 WORD32 drc_characteristic_target)
+                                 WORD32 drc_characteristic_target,
+                                 UWORD32 *ptr_inactive_sig)
 {
   ia_drc_instructions_struct *pstr_drc_instruction = pstr_drc_config->str_drc_instruction_str;
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
@@ -551,7 +588,6 @@ IA_ERRORCODE impd_drc_td_process(FLOAT32 *audio_in_out_buf[],
       }
     }
 
-    {
       for (sel_drc_idx = pstr_drc_gain_dec->ia_drc_params_struct.drc_set_counter - 1;
            sel_drc_idx >= 0; sel_drc_idx--)
       {
@@ -582,8 +618,7 @@ IA_ERRORCODE impd_drc_td_process(FLOAT32 *audio_in_out_buf[],
         }
 
         impd_drc_apply_gains_and_add(pstr_drc_gain_dec, audio_in_out_buf, pstr_drc_instruction, 1,
-                                     sel_drc_idx);
-      }
+                                   sel_drc_idx, ptr_inactive_sig);
     }
   }
   return err_code;
@@ -612,7 +647,8 @@ IA_ERRORCODE impd_drc_fd_process(FLOAT32 *audio_real_buff[], FLOAT32 *audio_imag
                                  ia_drc_config *pstr_drc_config,
                                  ia_drc_gain_struct *pstr_drc_gain, FLOAT32 ln_gain_db,
                                  FLOAT32 boost_fac, FLOAT32 compress_fac,
-                                 WORD32 drc_characteristic_target)
+                                 WORD32 drc_characteristic_target,
+                                 UWORD32 *ptr_inactive_sig)
 {
   ia_drc_instructions_struct *pstr_drc_instruction = pstr_drc_config->str_drc_instruction_str;
   IA_ERRORCODE err_code = IA_MPEGH_DEC_NO_ERROR;
@@ -638,7 +674,7 @@ IA_ERRORCODE impd_drc_fd_process(FLOAT32 *audio_real_buff[], FLOAT32 *audio_imag
       {
         err_code =
             impd_drc_apply_gains_subband(audio_real_buff, audio_imag_buff, pstr_drc_instruction,
-                                         pstr_drc_gain_dec, sel_drc_idx);
+                                         pstr_drc_gain_dec, sel_drc_idx, ptr_inactive_sig);
         if (err_code != IA_MPEGH_DEC_NO_ERROR)
         {
           return (err_code);

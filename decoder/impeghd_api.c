@@ -1283,6 +1283,11 @@ ia_core_coder_dec_init(ia_mpegh_dec_api_struct *p_obj_mpegh_dec)
       }
 
       p_state_mpegh_dec->i_bytes_consumed = header_bytes_consumed;
+      {
+        (void)ia_core_coder_search_asi((VOID *)p_obj_mpegh_dec, (UWORD8 *)in_buffer + header_bytes_consumed,
+                                        p_state_mpegh_dec->ui_in_bytes - header_bytes_consumed);
+        (void)ia_core_code_mdp((VOID *)p_obj_mpegh_dec, p_obj_mpegh_dec->mpeghd_config.i_preset_id);
+      }
 
       if (return_val == 0)
       {
